@@ -10,6 +10,7 @@ https://education.github.com/students
 # Git und GitHub in RStudio einrichten:
 Online-Tutorials, z. B. hier:
 https://github.com/llendway/github_for_collaboration/blob/master/github_for_collaboration.md
+
 https://www.youtube.com/watch?v=QLFc9gw_Hfs
 
 # EWS-Respository mit dem RProject klonen (über RStudio)
