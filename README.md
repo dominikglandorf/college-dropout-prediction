@@ -2,9 +2,11 @@
 Here we can share  and develop R code for the EWS 
 
 # Git installieren:
+Falls auf dem System noch nicht vorhanden
 https://git-scm.com/book/en/v2/Getting-Started-Installing-Git
 
-# Bei GitHub registrieren (für education/als student):
+# Bei GitHub registrieren:
+Für education/als student, bietet mehr Optionen als die freie Version
 https://education.github.com/students
 
 # Git und GitHub in RStudio einrichten:
@@ -14,4 +16,4 @@ https://github.com/llendway/github_for_collaboration/blob/master/github_for_coll
 https://www.youtube.com/watch?v=QLFc9gw_Hfs
 
 # EWS-Respository mit dem RProject klonen (über RStudio)
-https://github.com/Maribel9002/EWS.git
+Auf den (grünen) Button "Code" klicken, dann den Link kopieren und über R-Studio -> file -> new project -> version control das R-Projekt klonen
