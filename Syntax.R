@@ -380,3 +380,9 @@ ggplot(data = first_and_last_term, aes(x = number_of_years, fill = "red")) +
   labs(title = "How long are students enroled?",
        x = "number of years",
        y = "")
+
+#####deskriptive Daten####
+summary(first_and_last_term$number_of_years)
+sd(first_and_last_term$number_of_years) #On average, students are enrolled for 2.86 years (SD = 1.29).
+summary(enrolment_data$age_at_enrolment)
+sd(enrolment_data$age_at_enrolment) #On average, students are 19.24 years old at their first enrolment (SD = 2.94).
