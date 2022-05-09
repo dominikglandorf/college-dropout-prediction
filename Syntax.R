@@ -244,3 +244,125 @@ ggplot(data = first_and_last_term, aes(y = last_term_enroled, fill = last_term_e
        x = "",
        y = "") +
   scale_x_continuous(limit = c(0, 8000))
+
+#####Variablenkodierung: age at enrolment####
+birth_data <- student_background_data %>% select(mellon_id, birth_year, birth_month)
+enrolment_data <- cbind(birth_data, first_and_last_term)
+enrolment_data <- enrolment_data[, -4]
+enrolment_data$first_year_enroled <- case_when(
+  enrolment_data$first_term_enroled == "Winter 2008" ~ 2008,
+  enrolment_data$first_term_enroled == "Spring 2008" ~ 2008,
+  enrolment_data$first_term_enroled == "Summer 2008" ~ 2008,
+  enrolment_data$first_term_enroled == "Fall 2008" ~ 2008,
+  enrolment_data$first_term_enroled == "Winter 2009" ~ 2009,
+  enrolment_data$first_term_enroled == "Spring 2009" ~ 2009,
+  enrolment_data$first_term_enroled == "Summer 2009" ~ 2009,
+  enrolment_data$first_term_enroled == "Fall 2009" ~ 2009,
+  enrolment_data$first_term_enroled == "Winter 2010" ~ 2010,
+  enrolment_data$first_term_enroled == "Spring 2010" ~ 2010,
+  enrolment_data$first_term_enroled == "Summer 2010" ~ 2010,
+  enrolment_data$first_term_enroled == "Fall 2010" ~ 2010,
+  enrolment_data$first_term_enroled == "Winter 2011" ~ 2011,
+  enrolment_data$first_term_enroled == "Spring 2011" ~ 2011,
+  enrolment_data$first_term_enroled == "Summer 2011" ~ 2011,
+  enrolment_data$first_term_enroled == "Fall 2011" ~ 2011,
+  enrolment_data$first_term_enroled == "Winter 2012" ~ 2012,
+  enrolment_data$first_term_enroled == "Spring 2012" ~ 2012,
+  enrolment_data$first_term_enroled == "Summer 2012" ~ 2012,
+  enrolment_data$first_term_enroled == "Fall 2012" ~ 2012,
+  enrolment_data$first_term_enroled == "Winter 2013" ~ 2013,
+  enrolment_data$first_term_enroled == "Spring 2013" ~ 2013,
+  enrolment_data$first_term_enroled == "Summer 2013" ~ 2013,
+  enrolment_data$first_term_enroled == "Fall 2013" ~ 2013,
+  enrolment_data$first_term_enroled == "Winter 2014" ~ 2014,
+  enrolment_data$first_term_enroled == "Spring 2014" ~ 2014,
+  enrolment_data$first_term_enroled == "Summer 2014" ~ 2014,
+  enrolment_data$first_term_enroled == "Fall 2014" ~ 2014,
+  enrolment_data$first_term_enroled == "Winter 2015" ~ 2015,
+  enrolment_data$first_term_enroled == "Spring 2015" ~ 2015,
+  enrolment_data$first_term_enroled == "Summer 2015" ~ 2015,
+  enrolment_data$first_term_enroled == "Fall 2015" ~ 2015,
+  enrolment_data$first_term_enroled == "Winter 2016" ~ 2016,
+  enrolment_data$first_term_enroled == "Spring 2016" ~ 2016,
+  enrolment_data$first_term_enroled == "Summer 2016" ~ 2016,
+  enrolment_data$first_term_enroled == "Fall 2016" ~ 2016,
+  enrolment_data$first_term_enroled == "Winter 2017" ~ 2017,
+  enrolment_data$first_term_enroled == "Spring 2017" ~ 2017,
+  enrolment_data$first_term_enroled == "Summer 2017" ~ 2017,
+  enrolment_data$first_term_enroled == "Fall 2017" ~ 2017,
+  enrolment_data$first_term_enroled == "Winter 2018" ~ 2018,
+  enrolment_data$first_term_enroled == "Spring 2018" ~ 2018,
+  enrolment_data$first_term_enroled == "Summer 2018" ~ 2018,
+  enrolment_data$first_term_enroled == "Fall 2018" ~ 2018,
+  enrolment_data$first_term_enroled == "Winter 2019" ~ 2019,
+  enrolment_data$first_term_enroled == "Spring 2019" ~ 2019,
+  enrolment_data$first_term_enroled == "Summer 2019" ~ 2019,
+  enrolment_data$first_term_enroled == "Fall 2019" ~ 2019,
+  enrolment_data$first_term_enroled == "Winter 2020" ~ 2020,
+  enrolment_data$first_term_enroled == "Spring 2020" ~ 2020,
+  enrolment_data$first_term_enroled == "Summer 2020" ~ 2020,
+  enrolment_data$first_term_enroled == "Fall 2020" ~ 2020,
+  enrolment_data$first_term_enroled == "Winter 2021" ~ 2021,
+  enrolment_data$first_term_enroled == "Spring 2021" ~ 2021,
+  enrolment_data$first_term_enroled == "Summer 2021" ~ 2021,
+  enrolment_data$first_term_enroled == "Fall 2021" ~ 2021
+)
+enrolment_data$first_month_enroled <- case_when(
+  enrolment_data$first_term_enroled == "Winter 2008" ~ 1,
+  enrolment_data$first_term_enroled == "Spring 2008" ~ 3,
+  enrolment_data$first_term_enroled == "Fall 2008" ~ 9,
+  enrolment_data$first_term_enroled == "Winter 2009" ~ 1,
+  enrolment_data$first_term_enroled == "Spring 2009" ~ 3,
+  enrolment_data$first_term_enroled == "Fall 2009" ~ 9,
+  enrolment_data$first_term_enroled == "Winter 2010" ~ 1,
+  enrolment_data$first_term_enroled == "Spring 2010" ~ 3,
+  enrolment_data$first_term_enroled == "Fall 2010" ~ 9,
+  enrolment_data$first_term_enroled == "Winter 2011" ~ 1,
+  enrolment_data$first_term_enroled == "Spring 2011" ~ 3,
+  enrolment_data$first_term_enroled == "Fall 2011" ~ 9,
+  enrolment_data$first_term_enroled == "Winter 2012" ~ 1,
+  enrolment_data$first_term_enroled == "Spring 2012" ~ 3,
+  enrolment_data$first_term_enroled == "Fall 2012" ~ 9,
+  enrolment_data$first_term_enroled == "Winter 2013" ~ 1,
+  enrolment_data$first_term_enroled == "Spring 2013" ~ 3,
+  enrolment_data$first_term_enroled == "Fall 2013" ~ 9,
+  enrolment_data$first_term_enroled == "Winter 2014" ~ 1,
+  enrolment_data$first_term_enroled == "Spring 2014" ~ 3,
+  enrolment_data$first_term_enroled == "Fall 2014" ~ 9,
+  enrolment_data$first_term_enroled == "Winter 2015" ~ 1,
+  enrolment_data$first_term_enroled == "Spring 2015" ~ 3,
+  enrolment_data$first_term_enroled == "Fall 2015" ~ 9,
+  enrolment_data$first_term_enroled == "Winter 2016" ~ 1,
+  enrolment_data$first_term_enroled == "Spring 2016" ~ 3,
+  enrolment_data$first_term_enroled == "Fall 2016" ~ 9,
+  enrolment_data$first_term_enroled == "Winter 2017" ~ 1,
+  enrolment_data$first_term_enroled == "Spring 2017" ~ 3,
+  enrolment_data$first_term_enroled == "Fall 2017" ~ 9,
+  enrolment_data$first_term_enroled == "Winter 2018" ~ 1,
+  enrolment_data$first_term_enroled == "Spring 2018" ~ 3,
+  enrolment_data$first_term_enroled == "Fall 2018" ~ 9,
+  enrolment_data$first_term_enroled == "Winter 2019" ~ 1,
+  enrolment_data$first_term_enroled == "Spring 2019" ~ 3,
+  enrolment_data$first_term_enroled == "Fall 2019" ~ 9,
+  enrolment_data$first_term_enroled == "Winter 2020" ~ 1,
+  enrolment_data$first_term_enroled == "Spring 2020" ~ 3,
+  enrolment_data$first_term_enroled == "Fall 2020" ~ 9,
+  enrolment_data$first_term_enroled == "Winter 2021" ~ 1,
+  enrolment_data$first_term_enroled == "Spring 2021" ~ 3,
+  enrolment_data$first_term_enroled == "Fall 2021" ~ 9
+)
+enrolment_data$age_at_enrolment_without_month <- enrolment_data$first_year_enroled - enrolment_data$birth_year
+enrolment_data$month_difference <- enrolment_data$first_month_enroled - enrolment_data$birth_month
+enrolment_data$month_difference_binary <- case_when(
+  enrolment_data$month_difference < 0 ~ -1,
+  enrolment_data$month_difference >= 0 ~ 0
+)
+enrolment_data$age_at_enrolment <- enrolment_data$age_at_enrolment_without_month + enrolment_data$month_difference_binary
+ggplot(data = enrolment_data, aes(x = age_at_enrolment, fill = "red")) +
+  geom_bar() +
+  theme_minimal() +
+  theme(legend.position = "none") +
+  geom_text(aes(label = ..count..), stat = "count", size = 2.0, nudge_y = 500) +
+  labs(title = "How old are students when they enrol for the first time?",
+       x = "",
+       y = "")
