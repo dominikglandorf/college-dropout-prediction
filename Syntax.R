@@ -362,7 +362,7 @@ ggplot(data = enrolment_data, aes(x = age_at_enrolment, fill = "red")) +
   geom_bar() +
   theme_minimal() +
   theme(legend.position = "none") +
-  geom_text(aes(label = ..count..), stat = "count", size = 2.0, nudge_y = 500) +
+  geom_text(aes(label = ..count..), stat = "count", size = 1.5, nudge_y = 500) +
   labs(title = "How old are students when they enrol for the first time?",
        x = "",
        y = "")
