@@ -366,3 +366,17 @@ ggplot(data = enrolment_data, aes(x = age_at_enrolment, fill = "red")) +
   labs(title = "How old are students when they enrol for the first time?",
        x = "",
        y = "")
+
+#####Variablenkodierung: number of years####
+term_data$number_of_terms <- term_data$last_term_enroled_numeric - term_data$first_term_enroled_numeric
+first_and_last_term <- term_data %>% select(mellon_id, first_term_enroled, last_term_enroled, number_of_terms)
+first_and_last_term <- first_and_last_term[!duplicated(first_and_last_term),]
+first_and_last_term$number_of_years <- (first_and_last_term$number_of_terms)/4
+ggplot(data = first_and_last_term, aes(x = number_of_years, fill = "red")) +
+  geom_bar() +
+  theme_minimal() +
+  theme(legend.position = "none") +
+  geom_text(aes(label = ..count..), stat = "count", size = 1.5, nudge_y = 300) +
+  labs(title = "How long are students enroled?",
+       x = "number of years",
+       y = "")
