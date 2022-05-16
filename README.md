@@ -17,3 +17,6 @@ https://www.youtube.com/watch?v=QLFc9gw_Hfs
 
 # EWS-Respository mit dem RProject klonen (über RStudio)
 Auf den (grünen) Button "Code" klicken, dann den Link kopieren und über R-Studio -> file -> new project -> version control das R-Projekt klonen
+
+# Konfiguration
+Die Datei `config.R.example` duplizieren und in `config.g` umbenennen. Dann die entsprechenden Werte (u.a. Working Directory) anpassen.
