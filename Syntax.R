@@ -403,3 +403,82 @@ ggplot(data = first_and_last_term, aes(x = number_of_years, fill = transfer_stud
        x = "number of years",
        y = "",
        caption = "One bar corresponds to one term")
+
+#####descriptive data####
+table(enrolment_data$age_at_enrolment)/length(enrolment_data$age_at_enrolment)
+table(student_background_data$household_size_app)/length(student_background_data$household_size_app)
+
+#####enrolment data splitted by cohort####
+cohort_2010 <- filter(first_and_last_term, first_term_enroled == "Fall 2010")
+cohort_2011 <- filter(first_and_last_term, first_term_enroled == "Fall 2011")
+cohort_2012 <- filter(first_and_last_term, first_term_enroled == "Fall 2012")
+cohort_2013 <- filter(first_and_last_term, first_term_enroled == "Fall 2013")
+cohort_2014 <- filter(first_and_last_term, first_term_enroled == "Fall 2014")
+ggplot(data = cohort_2010, aes(x = number_of_years, fill = transfer_student)) +
+  geom_bar() +
+  theme_minimal() +
+  scale_x_continuous(breaks = c(0,1,2,3,4,5,6,7,8,9,10,11,12)) +
+  theme(legend.key.size = unit(0.3, 'cm'),
+        legend.title = element_text(size=8.5)) +
+  labs(title = "How long are students enroled?",
+       x = "number of years",
+       y = "",
+       subtitle = "First term fall 2010",
+       caption = "One bar corresponds to one term")
+ggplot(data = cohort_2011, aes(x = number_of_years, fill = transfer_student)) +
+  geom_bar() +
+  theme_minimal() +
+  scale_x_continuous(breaks = c(0,1,2,3,4,5,6,7,8,9,10,11,12)) +
+  theme(legend.key.size = unit(0.3, 'cm'),
+        legend.title = element_text(size=8.5)) +
+  labs(title = "How long are students enroled?",
+       x = "number of years",
+       y = "",
+       subtitle = "First term fall 2011",
+       caption = "One bar corresponds to one term")
+ggplot(data = cohort_2012, aes(x = number_of_years, fill = transfer_student)) +
+  geom_bar() +
+  theme_minimal() +
+  scale_x_continuous(breaks = c(0,1,2,3,4,5,6,7,8,9,10,11,12)) +
+  theme(legend.key.size = unit(0.3, 'cm'),
+        legend.title = element_text(size=8.5)) +
+  labs(title = "How long are students enroled?",
+       x = "number of years",
+       y = "",
+       subtitle = "First term fall 2012",
+       caption = "One bar corresponds to one term")
+ggplot(data = cohort_2013, aes(x = number_of_years, fill = transfer_student)) +
+  geom_bar() +
+  theme_minimal() +
+  scale_x_continuous(breaks = c(0,1,2,3,4,5,6,7,8,9,10,11,12)) +
+  theme(legend.key.size = unit(0.3, 'cm'),
+        legend.title = element_text(size=8.5)) +
+  labs(title = "How long are students enroled?",
+       x = "number of years",
+       y = "",
+       subtitle = "First term fall 2013",
+       caption = "One bar corresponds to one term")
+ggplot(data = cohort_2014, aes(x = number_of_years, fill = transfer_student)) +
+  geom_bar() +
+  theme_minimal() +
+  scale_x_continuous(breaks = c(0,1,2,3,4,5,6,7,8,9,10,11,12)) +
+  theme(legend.key.size = unit(0.3, 'cm'),
+        legend.title = element_text(size=8.5)) +
+  labs(title = "How long are students enroled?",
+       x = "number of years",
+       y = "",
+       subtitle = "First term fall 2014",
+       caption = "One bar corresponds to one term")
+cohorts <- filter(first_and_last_term, first_term_enroled == "Fall 2010" | first_term_enroled == "Fall 2011" | first_term_enroled == "Fall 2012" | first_term_enroled == "Fall 2013" | first_term_enroled == "Fall 2014")
+ggplot(data = cohorts, aes(x = number_of_years, fill = transfer_student)) +
+  geom_bar() +
+  theme_minimal() +
+  scale_x_continuous(breaks = c(0,1,2,3,4,5,6,7,8,9,10,11,12)) +
+  theme(legend.key.size = unit(0.3, 'cm'),
+        legend.title = element_text(size=8.5)) +
+  labs(title = "How long are students enroled?",
+       subtitle = "sorted by start cohorts",
+       x = "number of years",
+       y = "",
+       caption = "One bar corresponds to one term") +
+  facet_wrap(~ first_term_enroled)
