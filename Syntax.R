@@ -56,7 +56,7 @@ ggplot(data = first_and_last_term, aes(y = reorder(last_term_enroled, -last_code
   labs(title = "When did students enrol for the last time?",
        x = "",
        y = "") +
-  scale_x_continuous(limit = c(0, 8000)) # Was ist der Grund f�r diese Zeile?
+  scale_x_continuous(limit = c(0, 8000)) # Was ist der Grund f?r diese Zeile?
 
 #####Variablenkodierung: age at enrolment####
 birth_data <- student_background_data %>% select(mellon_id, birth_year, birth_month)
@@ -93,10 +93,18 @@ summary(enrolment_data$age_at_enrolment)
 sd(enrolment_data$age_at_enrolment) #On average, students are 19.24 years old at their first enrolment (SD = 2.94).
 
 #####Variablenkodierung: transfer_student####
-student_background_data$transfer_student <- case_when(
-  student_background_data$entry_units_completed_transfer == 0 ~ "no",
-  student_background_data$entry_units_completed_transfer > 0 ~ "yes"
-)
+
+# Die Zahlen erscheinen bei der Codierung über entry_units_completed_transfer unrealistisch, daher über application status:
+student_background_data$transfer_student <- recode_factor(student_background_data$application_status,
+                                                          "Transfer" = "yes", "Freshmen" = "no", "Senior" = "no"
+                                                          )
+  summary(student_background_data$transfer_student)
+  # sehr viele Missings, hierbei stimmt also auch was nicht, dennoch (sofern Variable korrigiert) vermutlich der richtige Weg
+
+# student_background_data$transfer_student <- case_when(
+#   student_background_data$entry_units_completed_transfer == 0 ~ "no",
+#   student_background_data$entry_units_completed_transfer > 0 ~ "yes"
+# )
 first_and_last_term$transfer_student <- student_background_data$transfer_student
 ggplot(data = first_and_last_term, aes(x = number_of_years, fill = transfer_student)) +
   geom_bar() +
