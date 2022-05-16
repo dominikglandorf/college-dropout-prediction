@@ -56,7 +56,7 @@ ggplot(data = first_and_last_term, aes(y = reorder(last_term_enroled, -last_code
   labs(title = "When did students enrol for the last time?",
        x = "",
        y = "") +
-  scale_x_continuous(limit = c(0, 8000))
+  scale_x_continuous(limit = c(0, 8000)) # Was ist der Grund für diese Zeile?
 
 #####Variablenkodierung: age at enrolment####
 birth_data <- student_background_data %>% select(mellon_id, birth_year, birth_month)
@@ -110,7 +110,8 @@ ggplot(data = first_and_last_term, aes(x = number_of_years, fill = transfer_stud
        caption = "One bar corresponds to one term")
 
 #####descriptive data####
-table(enrolment_data$age_at_enrolment)/length(enrolment_data$age_at_enrolment)
+enrolment_data$age_at_enrolment_disc = as.integer(enrolment_data$age_at_enrolment)
+table(enrolment_data$age_at_enrolment_disc)/length(enrolment_data$age_at_enrolment_disc)
 table(student_background_data$household_size_app)/length(student_background_data$household_size_app)
 
 #####enrolment data splitted by cohort####
@@ -187,3 +188,4 @@ ggplot(data = cohorts, aes(x = number_of_years, fill = transfer_student)) +
        y = "",
        caption = "One bar corresponds to one term") +
   facet_wrap(~ first_term_enroled)
+
