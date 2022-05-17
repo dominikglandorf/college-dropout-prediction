@@ -26,17 +26,18 @@ table(student_background_data$first_language)/length(student_background_data$fir
 table(term_data[,c("term_part_code", "term_part_desc")])
 term_part_codes = data.frame(code=c("03","14","25","51","92"),
                              desc=c("Winter","Spring","Summer","Summer","Fall"),
-                             month=c(1, 3, 6, 6, 9))
+                             start_month=c(1, 4, 7, 7, 9),
+                             end_month=c(3, 6, 8, 8, 12))
 
 first_and_last_term = group_by(term_data, mellon_id) %>% summarise(first_code = min(term_code), last_code = max(term_code))
 first_and_last_term$first_year = as.integer(substr(first_and_last_term$first_code, 0, 4))
 first_and_last_term$first_term = substr(first_and_last_term$first_code, 5, 6)
-first_and_last_term$first_month = term_part_codes$month[match(first_and_last_term$first_term, term_part_codes$code)]
+first_and_last_term$first_month = term_part_codes$start_month[match(first_and_last_term$first_term, term_part_codes$code)]
 first_and_last_term$first_term_enroled = paste(term_part_codes$desc[match(first_and_last_term$first_term, term_part_codes$code)], first_and_last_term$first_year)
 first_and_last_term$last_year = as.integer(substr(first_and_last_term$last_code, 0, 4))
 first_and_last_term$last_term = substr(first_and_last_term$last_code, 5, 6)
 first_and_last_term$last_term_enroled = paste(term_part_codes$desc[match(first_and_last_term$last_term, term_part_codes$code)], first_and_last_term$last_year)
-first_and_last_term$last_month = term_part_codes$month[match(first_and_last_term$last_term, term_part_codes$code)]
+first_and_last_term$last_month = term_part_codes$end_month[match(first_and_last_term$last_term, term_part_codes$code)]
 
 #####Grafiken erstellen####
 ggplot(data = first_and_last_term, aes(y = reorder(first_term_enroled, -first_code), fill = first_term_enroled)) +
@@ -77,7 +78,7 @@ ggplot(data = enrolment_data, aes(x = as.integer(age_at_enrolment), fill = "red"
 #####Variablenkodierung: number of years####
 first_and_last_term$number_of_years <- with(first_and_last_term, {last_year - first_year + (last_month - first_month)/12})
 
-ggplot(data = first_and_last_term, aes(x = number_of_years, fill = "red")) +
+ggplot(data = first_and_last_term, aes(x = round(number_of_years*4)/4, fill = "red")) +
   geom_bar() +
   theme_minimal() +
   theme(legend.position = "none") +
