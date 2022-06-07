@@ -6,13 +6,13 @@ library(stringr)
 library(dplyr)
 library(ggplot2)
 library(RColorBrewer)
-# configuration
-source("config.R")
-setwd(path_wd)
-# read data
-student_background_data <- read_csv("cleaned_student_background_data(20210622).csv")
+
+source('read_data.R')
+
+student_background_data = get_student_background_data()
+term_data <- read_csv("")
 student_term_course_section <- read_csv("cleaned_student_term_course_section(20210817).csv")
-term_data <- read_csv("cleaned_student_term_data(20210809).csv")
+
 
 #####deskriptive Daten####
 table(student_background_data$gender)/length(student_background_data$gender)
