@@ -66,7 +66,7 @@ summary(student_vars$number_of_years)
 sd(first_and_last_term$number_of_years) #On average, students are enrolled for 2.86 years (SD = 1.29).
 
 # transfer students
-table(student_background_data$application_status)
+table(student_background_data$application_status)/length(student_vars$start_as_freshman)
 sum(is.na(student_background_data$application_status))/length(student_background_data$application_status)
 table(student_vars$start_as_freshman)
 ggplot(data = student_vars, aes(x = as.integer(number_of_years), fill = start_as_freshman)) +
@@ -98,6 +98,7 @@ for (term in fall_terms[order(fall_terms)]) {
          caption = "One bar corresponds to one term"))
 }
 
+# TODO: select cohorts in focus
 cohorts <- filter(student_vars, first_term_desc == "Fall 2010" | first_term_desc == "Fall 2011" | first_term_desc == "Fall 2012" | first_term_desc == "Fall 2013" | first_term_desc == "Fall 2014")
 ggplot(data = cohorts, aes(x = number_of_years, fill = transfer_student)) +
   geom_bar() +

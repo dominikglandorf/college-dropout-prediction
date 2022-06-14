@@ -71,3 +71,20 @@ which(!is.na(data_term$major_graduated_3))
 
 print(data_term[data_term$mellon_id==data_term$mellon_id[1079441],c('term_desc','major_graduated_1','major_graduated_2'
                                                 ,'major_graduated_3','major_graduated_4')])
+i=0
+j = 0
+for (id in mellon_ids) {
+  term_codes = data_term$term_code[data_term$mellon_id==id]
+  maximum_diff = max(diff(term_codes[order(term_codes)]))
+  if (maximum_diff > 200) {
+    i = i+1
+    print(paste(id, ":", maximum_diff))
+  }
+  j = j+1
+  if (j%%1000 == 0) {
+    print(j)
+  }    
+}
+print(i) # 2064
+print(data_term[data_term$mellon_id=='178376',c('term_desc','major_graduated_1','major_graduated_2'
+                                          ,'major_graduated_3','major_graduated_4')])

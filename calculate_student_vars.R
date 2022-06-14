@@ -31,19 +31,33 @@ transfer_data = data.frame(
   start_as_freshman = (student_background_data$application_status == "Freshmen"))
 student_vars = merge(student_vars, transfer_data, by="mellon_id")
 
-# dropout
+## dropout ##
+# count non-NA in the four major_graduated columns per students
 graduate_data = group_by(term_data, mellon_id) %>% summarise(
   graduated_1 = sum(!is.na(major_graduated_1)),
   graduated_2 = sum(!is.na(major_graduated_2)),
   graduated_3 = sum(!is.na(major_graduated_3)),
   graduated_4 = sum(!is.na(major_graduated_4)))
+# aggregate per student if any of the columns has a non-NA entry
 graduate_data$graduated = graduate_data$graduated_1 > 0 |
   graduate_data$graduated_2 > 0 |
   graduate_data$graduated_3 > 0 |
   graduate_data$graduated_4 > 0
+# merge graduated variable into student vars
 student_vars = merge(student_vars, graduate_data[,c('mellon_id', 'graduated')], by="mellon_id")
+# create dropout variable
 student_vars$dropout = NA
-term_filter = student_vars$last_code < 202000
+# create filter for students, not enrolled in after Winter 2020 (TODO: make dynamic) and with breaks longer than 2 years
+max_break = data_term %>%
+  group_by(mellon_id) %>%
+  arrange(term_code, .by_group = TRUE) %>% 
+  summarise(max_break = max(diff(term_code)))
+#max_diffs[max_diffs$max_diff > 2000,]
+student_vars = merge(student_vars, max_break, by="mellon_id")
+term_filter = student_vars$last_code < 202005 | student_vars$max_break > 200
+# decide for students in filter if they have dropped out
+# no graduation and not enrolled in the last 2 years = TRUE
+# graduation = FALSE
 student_vars$dropout[term_filter] = !student_vars$graduated[term_filter]
 
 # save to file
