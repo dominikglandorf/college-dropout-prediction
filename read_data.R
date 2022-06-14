@@ -1,3 +1,5 @@
+library(tidyverse)
+
 source("config.R")
 
 col_types_background = cols(
@@ -5,12 +7,10 @@ col_types_background = cols(
   best_subject_code_1 = col_character(),
   best_subject_code_1 = col_character(), 
   best_subject_code_2 = col_character(), 
-  best_subject_code_3 = col_character(), 
-  #best_subject_code_4 = col_character(), 
+  best_subject_code_3 = col_character(),
   best_subject_score_1 = col_integer(),
   best_subject_score_2 = col_integer(),
   best_subject_score_3 = col_integer(),
-  #best_subject_score_4= col_integer(),
   ap_essay_flag_1 = col_double(),
   ap_essay_flag_2 = col_double(),
   ap_essay_flag_3 = col_double(),
@@ -94,10 +94,26 @@ col_types_background = cols(
 )
 
 get_student_background_data = function () {
-  data = read_csv(file.path(path_data,"cleaned_student_background_data(20220512).csv"), col_types = col_types_background)
+  data = read_csv(file.path(path_data, file_background_data), col_types = col_types_background)
   data$foster_care[data$foster_care=='Y'] = 1
   data$foster_care = as.integer(data$foster_care)
   return(data)
 }
 
+get_term_data = function () {
+  data = read_csv(file.path(path_data, file_term_data), col_types = cols(
+    new_student=col_character(),
+    enrollment_open_date=col_character(),
+    enrollment_close_date=col_character(),
+    instruction_start_date=col_character(),
+    instruction_end_date=col_character(),
+    major_code_3=col_character(),
+    major_code_4=col_character()
+  ))
+  return(data)
+}
 
+get_student_vars = function () {
+  data = read_csv(file.path(path_data, 'student_vars.csv'))
+  return(data)
+}

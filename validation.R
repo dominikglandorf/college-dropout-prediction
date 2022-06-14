@@ -52,6 +52,7 @@ columns[65]
 names(data_term)
 table(data_term$new_student)
 
+data_term = get_term_data()
 table(data_term$major_graduated_1)
 table(data_term$major_graduated_2)
 table(data_term$major_graduated_3)
@@ -67,4 +68,6 @@ data_term[313,'mellon_id']
 print(data_term[data_term$mellon_id=='173683',c('term_desc','major_graduated_1','major_graduated_2'
                                           ,'major_graduated_3','major_graduated_4')])
 which(!is.na(data_term$major_graduated_3))
-data_term['1079441']
+
+print(data_term[data_term$mellon_id==data_term$mellon_id[1079441],c('term_desc','major_graduated_1','major_graduated_2'
+                                                ,'major_graduated_3','major_graduated_4')])
