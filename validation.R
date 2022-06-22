@@ -1,15 +1,6 @@
-# check if variable calculation has worked out
-mellon_ids = unique(term_data$mellon_id)
-sample_ids = sample(mellon_ids, size=10)
-
-for (id in sample_ids) {
-  print(term_data[term_data$mellon_id == id,"term_desc"])
-  print(first_and_last_term[first_and_last_term$mellon_id == id,c("first_term_enroled","last_term_enroled","number_of_years")])
-  print(enrolment_data[enrolment_data$mellon_id == id,c("birth_year","birth_month","age_at_enrolment")])
-}
-
-
 source("read_data.R")
+# Added so that if package is not loaded or even installed the script will run: ####
+if(!require(psych)) install.packages('psych')
 
 # find out difference between raw and cleaned
 data_bg_raw = read_csv(file.path(path_data, "..", "raw", "Student_Background_20220512.csv"))
@@ -88,3 +79,18 @@ for (id in mellon_ids) {
 print(i) # 2064
 print(data_term[data_term$mellon_id=='178376',c('term_desc','major_graduated_1','major_graduated_2'
                                           ,'major_graduated_3','major_graduated_4')])
+
+# environment saved here because needed in "calculate students vars" script: ####
+  # -> not precisely checked what is required from the environment (except for data_term), adjust if necessary
+save.image(file.path(path_data, 'validation_data.RData'))
+
+# Code put here and commented out because not executable without prior operations (and data loading): ####
+# check if variable calculation has worked out
+# mellon_ids = unique(term_data$mellon_id)
+# sample_ids = sample(mellon_ids, size=10)
+# 
+# for (id in sample_ids) {
+#   print(term_data[term_data$mellon_id == id,"term_desc"])
+#   print(first_and_last_term[first_and_last_term$mellon_id == id,c("first_term_enroled","last_term_enroled","number_of_years")])
+#   print(enrolment_data[enrolment_data$mellon_id == id,c("birth_year","birth_month","age_at_enrolment")])
+# }

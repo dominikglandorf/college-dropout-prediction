@@ -1,4 +1,6 @@
-library(tidyverse)
+#library(tidyverse)
+# Customized so that even if the installation is not present, the script will run: ####
+if(!require(tidyverse)) install.packages('tidyverse')
 
 source("config.R")
 

@@ -1,5 +1,8 @@
-library(psych)
-library(ggplot2)
+# library(psych)
+# library(ggplot2)
+# Customized so that even if the installation is not present, the script will run: ####
+if(!require(psych)) install.packages('psych')
+if(!require(ggplot2)) install.packages('ggplot2')
 
 source('read_data.R')
 student_background_data = get_student_background_data()
@@ -63,7 +66,8 @@ ggplot(data = student_vars, aes(x = round(number_of_years*4)/4, fill = "red")) +
        y = "")
 
 summary(student_vars$number_of_years)
-sd(first_and_last_term$number_of_years) #On average, students are enrolled for 2.86 years (SD = 1.29).
+# will not run because object first_and_last_term does not exist ####
+#sd(first_and_last_term$number_of_years) #On average, students are enrolled for 2.86 years (SD = 1.29).
 
 # transfer students
 table(student_background_data$application_status)/length(student_vars$start_as_freshman)
