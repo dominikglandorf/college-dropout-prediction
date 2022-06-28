@@ -80,9 +80,7 @@ print(i) # 2064
 print(data_term[data_term$mellon_id=='178376',c('term_desc','major_graduated_1','major_graduated_2'
                                           ,'major_graduated_3','major_graduated_4')])
 
-# environment saved here because needed in "calculate students vars" script: ####
-  # -> not precisely checked what is required from the environment (except for data_term), adjust if necessary
-save.image(file.path(path_data, 'validation_data.RData'))
+
 
 # Code put here and commented out because not executable without prior operations (and data loading): ####
 # check if variable calculation has worked out

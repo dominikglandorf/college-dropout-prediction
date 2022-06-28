@@ -47,18 +47,12 @@ graduate_data$graduated = graduate_data$graduated_1 > 0 |
 student_vars = merge(student_vars, graduate_data[,c('mellon_id', 'graduated')], by="mellon_id")
 # create dropout variable
 student_vars$dropout = NA
-# create filter for students, not enrolled in after Winter 2020 (TODO: make dynamic) and with breaks longer than 2 years
-max_break = term_data %>% # data_term created in validation script ####
-  group_by(mellon_id) %>%
-  arrange(term_code, .by_group = TRUE) %>% 
-  summarise(max_break = max(diff(term_code)))
-#max_break[max_break$max_break > 200,]
-student_vars = merge(student_vars, max_break, by="mellon_id")
-term_filter = student_vars$last_code < 202005 | student_vars$max_break > 200
-# decide for students in filter if they have dropped out
-# no graduation and not enrolled in the last 2 years = TRUE
-# graduation = FALSE
-student_vars$dropout[term_filter] = !student_vars$graduated[term_filter]
+# create filter for students, not enrolled in last two years
+two_years_padding = student_vars$last_code < max(student_vars$last_code-200)
+# decide for students in filter:
+# CONDITION: no graduation -> DROPOUT = TRUE
+# CONDITION: graduation -> DROPOUT = FALSE
+student_vars$dropout[two_years_padding] = !student_vars$graduated[two_years_padding]
 
 # save to file
 write_csv(student_vars, file.path(path_data, 'student_vars.csv'))
