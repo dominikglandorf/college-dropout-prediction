@@ -80,7 +80,17 @@ print(i) # 2064
 print(data_term[data_term$mellon_id=='178376',c('term_desc','major_graduated_1','major_graduated_2'
                                           ,'major_graduated_3','major_graduated_4')])
 
+sum(!student_vars$graduated) == sum(student_vars$dropout, na.rm=T) + sum((student_vars$last_code >= max(student_vars$last_code)-200))
+sum(is.na(student_vars$dropout) | !student_vars$dropout) == sum(student_vars$graduated) + sum(student_vars$last_code > (max(student_vars$last_code)-200))
 
+# admit date
+sum(is.na(student_vars$admitdate))
+admitdates = student_vars$admitdate
+admitdates[is.na(admitdates)] = "NA"
+table(admitdates) / length(admitdates)
+
+tab_dates = table(paste(admitdates, student_vars$first_term_desc))
+tab_dates[order(-tab_dates)]
 
 # Code put here and commented out because not executable without prior operations (and data loading): ####
 # check if variable calculation has worked out

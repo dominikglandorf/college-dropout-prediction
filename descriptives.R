@@ -68,7 +68,7 @@ summary(student_vars$number_of_years)
 #sd(first_and_last_term$number_of_years) #On average, students are enrolled for 2.86 years (SD = 1.29).
 
 # transfer students
-table(student_background_data$application_status)/length(student_vars$start_as_freshman)
+table(student_background_data$application_status)
 sum(is.na(student_background_data$application_status))/length(student_background_data$application_status)
 table(student_vars$start_as_freshman)
 ggplot(data = student_vars, aes(x = as.integer(number_of_years), fill = start_as_freshman)) +
@@ -117,3 +117,121 @@ ggplot(data = cohorts, aes(x = number_of_years, fill = transfer_student)) +
 
 # dropout
 summary(student_vars$dropout)
+
+
+# filter by date of admissions and enrolled in a fall term from 2008 on
+admit_year = as.integer(substr(student_vars$admitdate, 2,3))
+filter_admit = str_detect(student_vars$admitdate, "F08") | 
+         admit_year >= 9 &
+         admit_year < 50
+table(filter_admit)
+
+## distribution of NAs
+sum(is.na(filter_admit))/nrow(student_vars)
+ggplot(as.data.frame(table(substr(student_vars$first_term_desc[is.na(admit_year)],1,4))), aes(x=Var1, y = Freq)) + 
+  geom_bar(stat="identity") + labs(x="First term recorded",title="First term of missing admit date")+theme_minimal()
+
+## filter properties
+table(filter_admit)/length(filter_admit)
+ggplot(data = student_vars, aes(x = admitdate, fill = filter_admit)) +
+  geom_bar() +
+  theme_minimal() +
+  theme(text = element_text(size = 16),
+        legend.key.size = unit(0.3, 'cm'),
+        axis.text.x=element_text(size=10,angle=90, hjust=1)) +
+  labs(title = "Date of admission",
+       x = "Code",
+       y = "", fill="Included")
+
+filter_admit[is.na(filter_admit)] = F
+student_vars_2 = student_vars[filter_admit,]
+ggplot(data = student_vars_2, aes(x = first_term_desc, fill = start_as_freshman)) +
+  geom_bar() +
+  theme_minimal() +
+  theme(text = element_text(size = 16),
+        legend.key.size = unit(0.3, 'cm'),
+        axis.text.x=element_text(size=10,angle=90, hjust=1,vjust=0.5)) +
+  labs(title = "First term enrolled and application status",
+       x = "Term",
+       y = "", fill="Freshman")
+sum(is.na(student_vars_2$start_as_freshman))/nrow(student_vars_2)
+filter_fall_cohorts = student_vars_2$first_term == 92 &
+                      student_vars_2$first_year < 2017 &
+                      student_vars_2$start_as_freshman
+filter_fall_cohorts[is.na(filter_fall_cohorts)] = F
+table(filter_fall_cohorts)/length(filter_fall_cohorts)
+student_vars_3 = student_vars_2[filter_fall_cohorts,]
+ggplot(data = student_vars_3, aes(x = first_term_desc, fill = dropout)) +
+  geom_bar() +
+  theme_minimal() +
+  theme(text = element_text(size = 16),
+        legend.key.size = unit(0.3, 'cm'),
+        axis.text.x=element_text(size=10,angle=90, hjust=1,vjust=0.5)) +
+  labs(title = "Selected cohorts",
+       x = "Start",
+       y = "", fill="Dropout")
+# dropout rates over cohorts
+dropout_rates = aggregate(student_vars_3$dropout, by=list(student_vars_3$first_term_desc),FUN=function(x) {
+  x[is.na(x)]=F
+  return(mean(x))
+})
+ggplot(data = dropout_rates, aes(x =Group.1, y=x)) +
+  geom_bar(stat="identity") +
+  theme_minimal() +
+  geom_text(aes(label=round(x,2)), vjust = -0.5) + 
+  theme(text = element_text(size = 16),
+        legend.key.size = unit(0.3, 'cm'),
+        axis.text.x=element_text(size=10,angle=90, hjust=1,vjust=0.5)) +
+  labs(title = "Dropout rates",
+       x = "Cohort",
+       y = "Dropout rate")
+
+# dropout rates over age at enrollment
+dropout_rates_age = aggregate(student_vars_3$dropout, by=list(as.integer(student_vars_3$age_at_enrolment)),FUN=function(x) {
+  x[is.na(x)]=F
+  return(mean(x))
+})
+ggplot(data = dropout_rates_age, aes(x=Group.1, y=x)) +
+  geom_bar(stat="identity") +
+  theme_minimal() +
+  geom_text(aes(label=round(x,2)), vjust = -0.5) + 
+  theme(text = element_text(size = 16),
+        legend.key.size = unit(0.3, 'cm'),
+        axis.text.x=element_text(size=10,angle=90, hjust=1,vjust=0.5)) +
+  labs(title = "Dropout rates by age",
+       x = "Age at enrollment",
+       y = "Dropout rate")
+
+# dropout rates over period from first to last term
+dropout_rates_period = aggregate(student_vars_3$dropout, by=list(as.integer(student_vars_3$number_of_years)),FUN=function(x) {
+  x[is.na(x)]=F
+  return(mean(x))
+})
+ggplot(data = dropout_rates_period, aes(x=Group.1, y=x)) +
+  geom_bar(stat="identity") +
+  theme_minimal() +
+  geom_text(aes(label=round(x,2)), vjust = -0.5) + 
+  theme(text = element_text(size = 16),
+        legend.key.size = unit(0.3, 'cm'),
+        axis.text.x=element_text(size=10,angle=90, hjust=1,vjust=0.5)) +
+  labs(title = "Dropout rates by time span of enrollment",
+       x = "Time span from first to last term",
+       y = "Dropout rate")
+
+dropout_rates_transfer = aggregate(student_vars_2$dropout, by=list(student_vars_2$start_as_freshman),FUN=function(x) {
+  x[is.na(x)]=F
+  return(mean(x))
+})
+ggplot(data = dropout_rates_transfer, aes(x=Group.1, y=x)) +
+  geom_bar(stat="identity") +
+  theme_minimal() +
+  geom_text(aes(label=round(x,2)), vjust = -0.5) + 
+  theme(text = element_text(size = 16),
+        legend.key.size = unit(0.3, 'cm'),
+        axis.text.x=element_text(size=10,angle=90, hjust=1,vjust=0.5)) +
+  labs(title = "Dropout rates by start as freshman",
+       x = "Start as freshman",
+       y = "Dropout rate")
+
+table(student_vars_3$dropout)
+sum(is.na(student_vars_3$dropout))

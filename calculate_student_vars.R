@@ -47,12 +47,16 @@ graduate_data$graduated = graduate_data$graduated_1 > 0 |
 student_vars = merge(student_vars, graduate_data[,c('mellon_id', 'graduated')], by="mellon_id")
 # create dropout variable
 student_vars$dropout = NA
-# create filter for students, not enrolled in last two years
+student_vars$dropout[student_vars$graduated] = F
+# create filter for students not enrolled in last two years
 two_years_padding = student_vars$last_code < max(student_vars$last_code-200)
 # decide for students in filter:
 # CONDITION: no graduation -> DROPOUT = TRUE
 # CONDITION: graduation -> DROPOUT = FALSE
 student_vars$dropout[two_years_padding] = !student_vars$graduated[two_years_padding]
+
+# add admitdate
+student_vars = merge(student_vars, student_background_data[,c("mellon_id","admitdate")], by="mellon_id") 
 
 # save to file
 write_csv(student_vars, file.path(path_data, 'student_vars.csv'))
