@@ -1,6 +1,4 @@
 source('read_data.R')
-# load saved environment from valiation script here to source script:
-load(file.path(path_data, 'validation_data.RData'))
 
 student_background_data = get_student_background_data()
 term_data <- get_term_data()
@@ -50,11 +48,11 @@ student_vars = merge(student_vars, graduate_data[,c('mellon_id', 'graduated')], 
 # create dropout variable
 student_vars$dropout = NA
 # create filter for students, not enrolled in after Winter 2020 (TODO: make dynamic) and with breaks longer than 2 years
-max_break = data_term %>% # data_term created in validation script ####
+max_break = term_data %>% # data_term created in validation script ####
   group_by(mellon_id) %>%
   arrange(term_code, .by_group = TRUE) %>% 
   summarise(max_break = max(diff(term_code)))
-#max_diffs[max_diffs$max_diff > 2000,]
+#max_break[max_break$max_break > 200,]
 student_vars = merge(student_vars, max_break, by="mellon_id")
 term_filter = student_vars$last_code < 202005 | student_vars$max_break > 200
 # decide for students in filter if they have dropped out

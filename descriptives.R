@@ -1,5 +1,3 @@
-# library(psych)
-# library(ggplot2)
 # Customized so that even if the installation is not present, the script will run: ####
 if(!require(psych)) install.packages('psych')
 if(!require(ggplot2)) install.packages('ggplot2')

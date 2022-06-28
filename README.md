@@ -1,22 +1,30 @@
 # EWS
-Here we can share  and develop R code for the EWS 
+Here we can share and develop R code for the EWS 
 
-# Git installieren:
-Falls auf dem System noch nicht vorhanden
-https://git-scm.com/book/en/v2/Getting-Started-Installing-Git
+# Install Git
+If not yet installed: https://git-scm.com/book/en/v2/Getting-Started-Installing-Git
 
-# Bei GitHub registrieren:
-Für education/als student, bietet mehr Optionen als die freie Version
-https://education.github.com/students
+# Register on GitHub
+For students (more functions): https://education.github.com/students
 
-# Git und GitHub in RStudio einrichten:
-Online-Tutorials, z. B. hier:
-https://github.com/llendway/github_for_collaboration/blob/master/github_for_collaboration.md
+# Setup RStudio for Git and GitHub
+Online-Tutorials, such as:
+- https://github.com/llendway/github_for_collaboration/blob/master/github_for_collaboration.md
+- https://www.youtube.com/watch?v=QLFc9gw_Hfs
 
-https://www.youtube.com/watch?v=QLFc9gw_Hfs
+# Clone repository (via RStudio)
+1. Copy link of this page
+2. In RStudio: File -> New porject -> Version control 
 
-# EWS-Respository mit dem RProject klonen (über RStudio)
-Auf den (grünen) Button "Code" klicken, dann den Link kopieren und über R-Studio -> file -> new project -> version control das R-Projekt klonen
 
-# Konfiguration
-Die Datei `config.R.example` duplizieren und in `config.R` umbenennen. Dann die entsprechenden Werte (u.a. Working Directory) anpassen.
+# Create data set
+
+## Setup
+
+- You need the CSV file containing the student background data and the CSV file with the term data for the students. 
+
+- Create a copy of `config.R.example` called `config.R` and change the configuration variables according to your local machine.
+
+## Variable calculation
+
+- Run `calculate_student_vars.R`, which will create `student_vars.csv` in the data directory.
