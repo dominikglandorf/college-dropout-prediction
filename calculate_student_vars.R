@@ -1,10 +1,11 @@
+# set wd to source file directory
 source('read_data.R')
 
 student_background_data = get_student_background_data()
 term_data <- get_term_data()
 
 # first_term, last_term
-student_vars = group_by(term_data, mellon_id) %>% summarise(first_code = min(term_code), last_code = max(term_code))
+student_vars = group_by(term_data, mellon_id) %>% summarise(first_code = min(term_code), last_code = max(term_code), num_terms = n())
 student_vars$first_year = as.integer(substr(student_vars$first_code, 0, 4))
 student_vars$first_term = substr(student_vars$first_code, 5, 6)
 student_vars$first_month = term_part_codes$start_month[match(student_vars$first_term, term_part_codes$code)]
@@ -14,6 +15,7 @@ student_vars$last_year = as.integer(substr(student_vars$last_code, 0, 4))
 student_vars$last_term = substr(student_vars$last_code, 5, 6)
 student_vars$last_term_desc = paste(term_part_codes$desc[match(student_vars$last_term, term_part_codes$code)], student_vars$last_year)
 student_vars$last_month = term_part_codes$end_month[match(student_vars$last_term, term_part_codes$code)]
+
 
 # number of years enrolled
 student_vars$number_of_years <- with(student_vars, {last_year - first_year + (last_month - first_month)/12})
@@ -28,7 +30,8 @@ student_vars$age_at_enrolment = with(student_vars, {
 # started as freshman
 transfer_data = data.frame(
   mellon_id = student_background_data$mellon_id,
-  start_as_freshman = (student_background_data$application_status == "Freshmen"))
+  start_as_freshman = (student_background_data$application_status == "Freshmen"),
+  appl_status = student_background_data$application_status)
 student_vars = merge(student_vars, transfer_data, by="mellon_id")
 
 ## dropout ##
@@ -48,12 +51,15 @@ student_vars = merge(student_vars, graduate_data[,c('mellon_id', 'graduated')], 
 # create dropout variable
 student_vars$dropout = NA
 student_vars$dropout[student_vars$graduated] = F
+student_vars$dropout_alt = student_vars$dropout
 # create filter for students not enrolled in last two years
 two_years_padding = student_vars$last_code < max(student_vars$last_code-200)
+four_terms_padding = student_vars$last_code < max(student_vars$last_code-100)
 # decide for students in filter:
 # CONDITION: no graduation -> DROPOUT = TRUE
 # CONDITION: graduation -> DROPOUT = FALSE
 student_vars$dropout[two_years_padding] = !student_vars$graduated[two_years_padding]
+student_vars$dropout_alt[four_terms_padding] = !student_vars$graduated[four_terms_padding]
 
 # add admitdate
 student_vars = merge(student_vars, student_background_data[,c("mellon_id","admitdate")], by="mellon_id") 

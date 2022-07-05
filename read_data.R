@@ -119,3 +119,8 @@ get_student_vars = function () {
   data = read_csv(file.path(path_data, 'student_vars.csv'))
   return(data)
 }
+
+get_student_sub = function() {
+  data = read_csv(file.path(path_data, 'student_vars_subset.csv'))
+  return(data)
+}
