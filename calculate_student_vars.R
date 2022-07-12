@@ -4,6 +4,7 @@ source('read_data.R')
 student_background_data = get_student_background_data()
 term_data <- get_term_data()
 
+## feature calculation ##
 # first_term, last_term
 student_vars = group_by(term_data, mellon_id) %>% summarise(first_code = min(term_code), last_code = max(term_code), num_terms = n())
 student_vars$first_year = as.integer(substr(student_vars$first_code, 0, 4))
@@ -34,7 +35,29 @@ transfer_data = data.frame(
   appl_status = student_background_data$application_status)
 student_vars = merge(student_vars, transfer_data, by="mellon_id")
 
-## dropout ##
+# pre-university scores
+scaled_total_scores = data.frame(act=student_background_data$act_total_score/36,
+                           sat=student_background_data$sat_total_score/2400,
+                           uc=student_background_data$uc_total_score/300)
+num_total_scores = rowSums(!is.na(scaled_total_scores))
+
+scaled_math_scores = data.frame(act=student_background_data$act_math_score/36,
+                                sat=student_background_data$sat_math_score / 800,
+                                uc=student_background_data$uc_math_score / 100)
+num_math_scores = rowSums(!is.na(scaled_math_scores))
+
+scaled_writing_scores = data.frame(act=student_background_data$act_write_score/36,
+                                   sat=student_background_data$sat_writing_score / 800,
+                                   uc=num_total_scores$uc_writing_score / 100)
+num_writing_scores = rowSums(!is.na(scaled_writing_scores))
+
+scores = data.frame(mellon_id=student_background_data$mellon_id,
+                    total_score = rowSums(scaled_total_scores, na.rm=T) / num_total_scores,
+                    math_score = rowSums(scaled_math_scores, na.rm=T) / num_math_scores,
+                    writing_score = rowSums(scaled_writing_scores, na.rm=T) / num_writing_scores)
+student_vars = merge(student_vars, scores, by="mellon_id")
+
+## target/label: dropout ##
 # count non-NA in the four major_graduated columns per students
 graduate_data = group_by(term_data, mellon_id) %>% summarise(
   graduated_1 = sum(!is.na(major_graduated_1)),

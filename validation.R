@@ -110,3 +110,8 @@ sum(is.na(student_vars$start_as_freshman))
 
 student_sub = get_student_sub()
 dim(student_sub)
+
+# validate pre-university scores
+names(student_background_data)
+
+     

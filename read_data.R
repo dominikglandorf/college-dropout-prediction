@@ -99,6 +99,7 @@ get_student_background_data = function () {
   data = read_csv(file.path(path_data, file_background_data), col_types = col_types_background)
   data$foster_care[data$foster_care=='Y'] = 1
   data$foster_care = as.integer(data$foster_care)
+  data[data$mellon_id==335510,c("uc_read_score","uc_math_score","uc_writing_score","uc_total_score")] = NA
   return(data)
 }
 

@@ -1,6 +1,7 @@
 # Customized so that even if the installation is not present, the script will run: ####
 if(!require(psych)) install.packages('psych')
 if(!require(ggplot2)) install.packages('ggplot2')
+if(!require(ggcorrplot)) install.packages('ggcorrplot')
 
 source('read_data.R')
 student_background_data = get_student_background_data()
@@ -189,25 +190,6 @@ ggplot(data = dropout_rates_transfer, aes(x=Group.1, y=x)) +
        x = "Start as freshman",
        y = "Dropout rate")
 
-ggplot(data = student_vars_2, aes(x=as.integer(age_at_enrolment), fill=start_as_freshman )) +
-  geom_bar() +
-  theme_minimal() +
-  theme(text = element_text(size = 16),
-        legend.key.size = unit(0.3, 'cm'),
-        axis.text.x=element_text(size=10,angle=90, hjust=1,vjust=0.5)) +
-  labs(title = "Freshman rates by age at enrolment",
-       x = "Age")+
-  xlim(15,35)
-
-ggplot(data = student_vars_2[!student_vars_2$start_as_freshman,], aes(x=as.integer(age_at_enrolment), fill=appl_status )) +
-  geom_bar() +
-  theme_minimal() +
-  theme(text = element_text(size = 16),
-        legend.key.size = unit(0.3, 'cm'),
-        axis.text.x=element_text(size=10,angle=90, hjust=1,vjust=0.5)) +
-  labs(title = "Application status other than freshman",
-       x = "Age", y="Frequency") +
-  xlim(15,35)
 
 # FROM NOW ANALYSIS WITH SUBSET
 student_sub = get_student_sub()
@@ -284,3 +266,151 @@ ggplot(data = student_sub[!is.na(student_sub$dropout),], aes(x = num_terms, fill
   labs(title = "How long are students enrolled?",
        x = "number of terms",
        y = "", fill="Dropout")
+
+# pre university scores
+bg_sub = merge(student_background_data, student_sub[,c("mellon_id","admitdate")], by="mellon_id")
+sat_cols = c("sat_math_score", "sat_verb_score" ,"sat_writing_score","sat_total_score")
+summary(bg_sub[,sat_cols])
+sat_not_NA = as.data.frame(!is.na(bg_sub[,sat_cols]))
+sat_not_NA$sat_count_non_NA = rowSums(sat_not_NA)
+summary(bg_sub[sat_not_NA$sat_count_non_NA==1,sat_cols])
+summary(bg_sub[sat_not_NA$sat_count_non_NA==2,sat_cols])
+cor(bg_sub[sat_not_NA$sat_count_non_NA==2,c("sat_writing_score","sat_total_score")], use="complete.obs")
+summary(bg_sub[sat_not_NA$sat_count_non_NA==3,sat_cols])
+cor(bg_sub[sat_not_NA$sat_count_non_NA==3,c("sat_writing_score","sat_math_score","sat_total_score")], use="complete.obs")
+cor(bg_sub[sat_not_NA$sat_count_non_NA==3,"sat_total_score"],bg_sub[sat_not_NA$sat_count_non_NA==3,"sat_writing_score"]+bg_sub[sat_not_NA$sat_count_non_NA==3,"sat_math_score"], use="complete.obs")
+
+ggcorrplot(cor(bg_sub[sat_not_NA$sat_count_non_NA==4,sat_cols], use="complete.obs"), type = "lower", lab = TRUE)
+
+ggplot(data = sat_not_NA, aes(x = sat_count_non_NA)) +
+  geom_bar() +
+  theme_minimal() +
+  theme(text=element_text(size=16)) +
+  geom_text(aes(label = ..count..), stat = "count", nudge_y = 400) +
+  labs(title = "How many SAT scores do we know?",
+       x = "number of scores",
+       y = "")
+
+act_cols = c("act_english_score","act_math_score","act_reading_score","act_scireason_score","act_write_score","act_total_score")
+summary(bg_sub[,act_cols])
+act_not_NA = as.data.frame(!is.na(bg_sub[,act_cols]))
+act_not_NA$act_count_non_NA = rowSums(act_not_NA)
+ggplot(data = act_not_NA, aes(x = act_count_non_NA)) +
+  geom_bar() +
+  theme_minimal() +
+  theme(text=element_text(size=16)) +
+  geom_text(aes(label = ..count..), stat = "count", nudge_y = 700) +
+  labs(title = "How many ACT scores do we know?",
+       x = "number of scores",
+       y = "")
+ggcorrplot(cor(bg_sub[act_not_NA$act_count_non_NA==6,act_cols], use="complete.obs"), type = "lower", lab = TRUE)
+
+uc_cols = c("uc_read_score","uc_math_score","uc_writing_score","uc_total_score")
+summary(bg_sub[,uc_cols])
+ggplot(bg_sub, aes(x=uc_total_score)) + 
+  geom_histogram(binwidth=5)
+bg_sub$uc_read_score[bg_sub$uc_read_score>100] = NA
+bg_sub$uc_math_score[bg_sub$uc_math_score>100] = NA
+bg_sub$uc_total_score[bg_sub$uc_total_score>300] = NA
+
+uc_not_NA = as.data.frame(!is.na(bg_sub[,uc_cols]))
+uc_not_NA$uc_count_non_NA = rowSums(uc_not_NA)
+ggplot(data = uc_not_NA, aes(x = uc_count_non_NA)) +
+  geom_bar() +
+  theme_minimal() +
+  theme(text=element_text(size=16)) +
+  geom_text(aes(label = ..count..), stat = "count", nudge_y = 800) +
+  labs(title = "How many UC scores do we know?",
+       x = "number of scores",
+       y = "")
+ggcorrplot(cor(bg_sub[,uc_cols], use="complete.obs"), type = "lower", lab = TRUE)
+
+summary(bg_sub[,"toefl_score"])
+summary(bg_sub[,"ielts_score"])
+
+pre_not_NA = data.frame(act = act_not_NA$act_count_non_NA>0, sat = sat_not_NA$sat_count_non_NA>0, uc=uc_not_NA$uc_count_non_NA>0)
+pre_not_NA$sum = rowSums(pre_not_NA)
+ggplot(data = pre_not_NA, aes(x = sum)) +
+  geom_bar() +
+  theme_minimal() +
+  theme(text=element_text(size=16)) +
+  geom_text(aes(label = ..count..), stat = "count", nudge_y = 700) +
+  labs(title = "How many tests do we know scores from?",
+       x = "number of scores",
+       y = "")
+
+
+scaled_scores = data.frame(act=bg_sub$act_total_score/36,sat=bg_sub$sat_total_score/2400,uc=bg_sub$uc_total_score/300)
+num_scores = rowSums(!is.na(scaled_scores))
+
+total_score = rowSums(scaled_scores, na.rm=T) / num_scores
+
+ggplot() +
+  aes(total_score) +
+  geom_histogram() +
+  labs(title = "Distribution of total score")
+summary(total_score) / length(total_score)
+
+scores = data.frame(bg_sub[,c("act_total_score","sat_total_score","uc_total_score")], t=total_score)
+scores[30:40,]
+
+scaled_math_scores = data.frame(act=bg_sub$act_math_score/36,sat=bg_sub$sat_math_score / 800,uc=bg_sub$uc_math_score / 100)
+num_math_scores = rowSums(!is.na(scaled_math_scores))
+math_score = rowSums(scaled_math_scores, na.rm=T) / num_math_scores
+
+ggplot() +
+  aes(math_score) +
+  geom_histogram() +
+  labs(title = "Distribution of math score")
+summary(math_score) / length(math_score)
+
+math_scores = data.frame(bg_sub[,c("act_math_score","sat_math_score","uc_math_score")], m=math_score)
+math_scores[30:50,]
+
+scaled_writing_scores = data.frame(act=bg_sub$act_write_score/36,sat=bg_sub$sat_writing_score / 800,uc=bg_sub$uc_writing_score / 100)
+num_writing_scores = rowSums(!is.na(scaled_writing_scores))
+writing_score = rowSums(scaled_writing_scores, na.rm=T) / num_writing_scores
+
+ggplot() +
+  aes(writing_score) +
+  geom_histogram() +
+  labs(title = "Distribution of writing score")
+summary(writing_score) / length(writing_score)
+
+writing_scores = data.frame(bg_sub[,c("act_write_score","sat_writing_score","uc_writing_score")], w=writing_score)
+writing_scores[40070:41090,]
+
+compound_scores = data.frame(student_sub, total=total_score, math=math_score, writing=writing_score)
+
+ggplot(data = compound_scores, aes(x=admitdate, fill=!is.na(total))) +
+  geom_bar() +
+  theme_minimal() +
+  theme(text = element_text(size = 16),
+        legend.key.size = unit(0.3, 'cm'),
+        axis.text.x=element_text(size=10,angle=90, hjust=1,vjust=0.5)) +
+  labs(title = "Total score availability by admission",
+       x = "Admission",
+       y = "Number of scores",
+       fill = "Available")
+
+ggplot(data = compound_scores, aes(x=admitdate, fill=!is.na(math))) +
+  geom_bar() +
+  theme_minimal() +
+  theme(text = element_text(size = 16),
+        legend.key.size = unit(0.3, 'cm'),
+        axis.text.x=element_text(size=10,angle=90, hjust=1,vjust=0.5)) +
+  labs(title = "Math score availability by admission",
+       x = "Admission",
+       y = "Number of scores",
+       fill = "Available")
+
+ggplot(data = compound_scores, aes(x=admitdate, fill=!is.na(writing))) +
+  geom_bar() +
+  theme_minimal() +
+  theme(text = element_text(size = 16),
+        legend.key.size = unit(0.3, 'cm'),
+        axis.text.x=element_text(size=10,angle=90, hjust=1,vjust=0.5)) +
+  labs(title = "Writing score availability by admission",
+       x = "Admission",
+       y = "Number of scores",
+       fill = "Available")
