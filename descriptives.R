@@ -414,3 +414,33 @@ ggplot(data = compound_scores, aes(x=admitdate, fill=!is.na(writing))) +
        x = "Admission",
        y = "Number of scores",
        fill = "Available")
+
+dropout_scores = aggregate(compound_scores[,c("total","math","writing")], by=list(student_sub$dropout),FUN=function(x) {
+  x[is.na(x)]=F
+  return(mean(x))
+})
+library(reshape2)
+means.long<-melt(dropout_scores,id.vars="Group.1")
+ggplot(data = means.long, aes(x=variable,y=value,fill=factor(Group.1))) +
+  geom_bar(stat="identity",position="dodge") +
+  theme_minimal() +
+  theme(text = element_text(size = 16),
+        legend.key.size = unit(0.3, 'cm'),
+        axis.text.x=element_text(size=10,angle=90, hjust=1,vjust=0.5)) +
+  labs(title = "Pre-university test score by dropout",
+       x = "Test",
+       y="Score",
+       fill="Dropout")
+
+avg_credits = aggregate(term_data$current_units_completed_total, by=list(term_data$mellon_id), FUN=mean)
+student_sub = merge(student_sub, avg_credits, by.x="mellon_id",by.y="Group.1")
+cor(student_sub$dropout, student_sub$x, use="complete.obs")
+
+model =lm(uc_total_score ~ sat_total_score + act_total_score, bg_sub)
+summary(model)
+summary(lm(sat_total_score ~ act_total_score, bg_sub))
+data = bg_sub[!is.na(bg_sub$uc_total_score) & rowSums(!is.na(bg_sub[,sat_cols])==0),c(uc_cols,sat_cols,act_cols)]
+lm(uc_total_score ~ act_total_score, data)
+data[order(-data$uc_math_score)[1000:1100],c("uc_math_score","act_math_score","sat_math_score")]
+cor(data)
+bg_sub[sample(1:40000,10),c(uc_cols,act_cols,sat_cols)]
