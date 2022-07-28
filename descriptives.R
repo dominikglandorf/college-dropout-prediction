@@ -35,20 +35,6 @@ ggplot(data = student_vars, aes(y = reorder(last_term_desc, -last_code), fill = 
        y = "") +
   theme(text = element_text(size = 16))
 
-# age at enrollment
-ggplot(data = student_vars, aes(x = as.integer(age_at_enrolment), fill = "red")) +
-  geom_bar() +
-  theme_minimal() +
-  theme(legend.position = "none") +
-  geom_text(aes(label = ..count..), stat = "count", nudge_y = 3000,angle=90) +
-  labs(title = "How old are students when they enrol for the first time?",
-       x = "",
-       y = "") +
-  xlim(15, 75) +
-  theme(text = element_text(size = 16))
-summary(student_vars$age_at_enrolment)
-sd(student_vars$age_at_enrolment) #On average, students are 19.24 years old at their first enrollment (SD = 2.94).
-
 #####descriptive data####
 student_vars$age_at_enrolment_disc = as.integer(student_vars$age_at_enrolment)
 table(student_vars$age_at_enrolment_disc)/length(student_vars$age_at_enrolment_disc)
@@ -190,11 +176,47 @@ ggplot(data = dropout_rates_transfer, aes(x=Group.1, y=x)) +
        x = "Start as freshman",
        y = "Dropout rate")
 
-
+###############################
 # FROM NOW ANALYSIS WITH SUBSET
+###############################
 student_sub = get_student_sub()
+dim(student_sub)
+term_data = get_term_data()
+term_sub = term_data[term_data$mellon_id %in% student_sub$mellon_id,]
+course_data = get_course_data()
+course_sub = course_data[course_data$mellon_id %in% student_sub$mellon_id,]
+bg_sub = merge(student_background_data, student_sub[,c("mellon_id","admitdate")], by="mellon_id")
+
+# age at enrollment
+ggplot(data = student_sub, aes(x = as.integer(age_at_enrolment))) +
+  geom_bar() +
+  theme_minimal() +
+  theme(legend.position = "none") +
+  geom_text(aes(label = ..count..), stat = "count", nudge_y = 3000, nudge_x=-0.08,angle=90) +
+  labs(title = "Distribution of age at enrolment",
+       x = "Age",
+       y = "Frequency") +
+  xlim(16, 24) +
+  ylim(0, 42000) +
+  theme(text = element_text(size = 16))
+summary(student_sub$age_at_enrolment)
+sd(student_sub$age_at_enrolment) #On average, students are 19.24 years old at their first enrollment (SD = 2.94).
+
+# gender
+table(bg_sub$gender)/length(bg_sub$gender)
+table(bg_sub$ethnicity)/length(bg_sub$ethnicity)*100
+ggplot(data = bg_sub, aes(x = ethnicity)) +
+  geom_bar() +
+  theme_minimal() +
+  theme(legend.position = "none", axis.text.x = element_text(angle = 90, hjust=1)) +
+  geom_text(aes(label = ..count..), stat = "count", nudge_y = 3000, nudge_x=-0.0,angle=0) +
+  ylim(0,32000)+
+  labs(title = "Distribution of ethnicity",
+       x = "Ethnicity",
+       y = "Frequency")
+
 # dropout rates over cohorts
-dropout_rates = aggregate(student_sub$dropout, by=list(student_sub$first_term_desc),FUN=function(x) {
+dropout_rates = aggregate(student_sub$dropout_alt, by=list(student_sub$first_term_desc),FUN=function(x) {
   x[is.na(x)]=F
   return(mean(x))
 })
@@ -205,9 +227,10 @@ ggplot(data = dropout_rates, aes(x =Group.1, y=x)) +
   theme(text = element_text(size = 16),
         legend.key.size = unit(0.3, 'cm'),
         axis.text.x=element_text(size=10,angle=90, hjust=1,vjust=0.5)) +
-  labs(title = "Dropout rates",
+  labs(title = "Dropout by cohort",
        x = "Cohort",
-       y = "Dropout rate")
+       y = "Dropout rate") +
+  ylim(0, 0.15)
 
 dropout_rates_alt = aggregate(student_sub$dropout_alt, by=list(student_sub$first_term_desc),FUN=function(x) {
   x[is.na(x)]=F
@@ -268,7 +291,6 @@ ggplot(data = student_sub[!is.na(student_sub$dropout),], aes(x = num_terms, fill
        y = "", fill="Dropout")
 
 # pre university scores
-bg_sub = merge(student_background_data, student_sub[,c("mellon_id","admitdate")], by="mellon_id")
 sat_cols = c("sat_math_score", "sat_verb_score" ,"sat_writing_score","sat_total_score")
 summary(bg_sub[,sat_cols])
 sat_not_NA = as.data.frame(!is.na(bg_sub[,sat_cols]))
@@ -441,6 +463,38 @@ summary(model)
 summary(lm(sat_total_score ~ act_total_score, bg_sub))
 data = bg_sub[!is.na(bg_sub$uc_total_score) & rowSums(!is.na(bg_sub[,sat_cols])==0),c(uc_cols,sat_cols,act_cols)]
 lm(uc_total_score ~ act_total_score, data)
-data[order(-data$uc_math_score)[1000:1100],c("uc_math_score","act_math_score","sat_math_score")]
+data[order(-data$uc_math_score)[900:1100],c("uc_math_score","act_math_score","act_scireason_score","sat_math_score")]
 cor(data)
-bg_sub[sample(1:40000,10),c(uc_cols,act_cols,sat_cols)]
+scores = bg_sub[1:45000,c(uc_cols,act_cols,sat_cols)]
+names(scores)=substr(names(scores),1,7)
+sort_act = scores[order(scores$sat_mat),]
+sort_act[,]
+ucests = data.frame(est_uc = 300 - (240 - scores[is.na(scores$act_tot),]$sat_to / 10), uc=scores[is.na(scores$act_tot),]$uc_tota)
+table(ucests$uc == ucests$est_uc)
+
+# UC_read=act_read, UC_mat=act_mat, UC_writ=act_wri
+# 51, 11
+# 53, 12
+# 54, 13
+# 56, 14
+# 58, 15
+# 60, 16
+# 62, 17
+# 63, 18
+# 65, 19
+# 67, 20
+# 69, 21
+# 71, 22
+# 73, 23
+# 75, 24
+# 77, 25
+# 79, 26
+# 81, 27
+# 83, 28
+# 85, 29
+# 87, 30
+# 89, 31
+# 92, 32
+# 94, 33
+# 97, 34
+# 100, 35

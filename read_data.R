@@ -116,6 +116,11 @@ get_term_data = function () {
   return(data)
 }
 
+get_course_data = function () {
+  data = read_csv(file.path(path_data, file_course_data))
+  return(data)
+}
+
 get_student_vars = function () {
   data = read_csv(file.path(path_data, 'student_vars.csv'))
   return(data)

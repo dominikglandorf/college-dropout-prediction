@@ -1,6 +1,7 @@
 path_data = "C:/Users/Dominik Glandorf/Documents/EWS_Project_UCI_Admin_Data/Daten/2205/cleaned"
 file_background_data = "cleaned_student_background_data(20220512).csv"
 file_term_data = "cleaned_student_term_data(20220512).csv"
+file_course_data = "cleaned_student_term_course_section(20220512).csv"
 
 term_part_codes = data.frame(code=c("03","14","25","51","92"),
                              desc=c("Winter","Spring","Summer","Summer","Fall"),
