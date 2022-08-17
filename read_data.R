@@ -127,6 +127,6 @@ get_student_vars = function () {
 }
 
 get_student_sub = function() {
-  data = read_csv(file.path(path_data, 'student_vars_subset.csv'))
+  data = read_csv(file.path(path_data, 'student_vars_subset.csv'), show_col_types = FALSE)
   return(data)
 }

@@ -1,0 +1,192 @@
+---
+title: "Prediction of pre-university scores"
+author: "Dominik Glandorf"
+date: '2022-08-16'
+output: pdf_document
+---
+
+```{r setup, include=FALSE}
+if(!require(gridExtra)) install.packages('gridExtra')
+source('read_data.R')
+```
+
+```{r prepare data}
+student_background_data = get_student_background_data()
+student_sub = get_student_sub()
+bg_sub = student_background_data[student_background_data$mellon_id %in% student_sub$mellon_id,]
+```
+
+# Plot UC math scores for ACT scores
+```{r}
+ggplot(bg_sub, aes(x=sat_math_score, y=uc_math_score)) + 
+ geom_bin2d(na.rm=T) 
+```
+Lots of noise and maybe two different mappings. Let's filter out SAT score entries and plot by admission.
+```{r}
+ggplot(bg_sub[is.na(bg_sub$sat_math_score),], aes(x=act_math_score, y=uc_math_score)) + 
+ geom_bin2d(na.rm=T) +
+  facet_wrap(vars(admitdate))
+```
+It looks like there was a change in the mapping starting from admitdate Fall 2012.
+```{r}
+filter_pre_F12 = as.integer(substr(bg_sub$admitdate, 2,3))<12
+act_only_F11 = bg_sub[filter_pre_F12&is.na(bg_sub$sat_math_score),]
+table(act_only_F11$act_math_score, act_only_F11$uc_math_score)
+```
+There is a clear mapping for admitdate=F11.
+
+```{r}
+filter_post_F12 = as.integer(substr(bg_sub$admitdate, 2,3))>=12
+act_only_postF12 = bg_sub[filter_post_F12 & is.na(bg_sub$sat_math_score),]
+table(act_only_postF12$act_math_score, act_only_postF12$uc_math_score)
+```
+
+Let's create the mapping.
+```{r}
+uc_scores_11 = unique(act_only_F11$uc_math_score)
+uc_scores_11 = uc_scores_11[!is.na(uc_scores_11)][-24] # remove 86
+uc_scores_post12 = unique(act_only_postF12$uc_math_score)
+uc_scores_post12 = uc_scores_post12[!is.na(uc_scores_post12)]
+uc_scores_post12 = c(uc_scores_post12[order(uc_scores_post12)][-c(1, 10)], 100) # remove 40, 70, add 100
+uc_act = data.frame(act=14:36, uc_pre_12=uc_scores_11[order(uc_scores_11)], uc_post_12=uc_scores_post12)
+uc_act
+```
+```{r}
+lm(uc_pre_12~act,uc_act)
+```
+```{r}
+uc_act$uc_pre_12 == round(uc_act$act*10/3-20)
+```
+```{r}
+lm(uc_post_12~act,uc_act)
+```
+```{r}
+uc_act$uc_post_12 == round(uc_act$act*2.036+26.63)
+```
+This does not look linear enough. Let's then print the mapping for the config.
+```{r, echo=FALSE}
+print(paste0('data.frame(act=c(', paste(uc_act$act,collapse=','), '),',
+             "uc_pre_12=c(", paste(uc_act$uc_pre_12, collapse=','),"),",
+             "uc_post_12=c(", paste(uc_act$uc_post_12, collapse=','), "))"
+             ))
+```
+
+
+# Plot SAT to UC math score by admission
+```{r}
+ggplot(bg_sub[is.na(bg_sub$act_math_score),], aes(x=sat_math_score, y=uc_math_score)) + 
+ geom_bin2d(na.rm=T) +
+  facet_wrap(vars(admitdate))
+```
+Just a little bit of noise but also a change between 11 and 12. So, let's also separate for the admit data to find the mapping.
+```{r}
+options(max.print=3000)
+sat_only_pre_F12 = bg_sub[filter_pre_F12&is.na(bg_sub$act_math_score),]
+mappings = table(sat_only_pre_F12$sat_math_score, sat_only_pre_F12$uc_math_score)
+mappings
+```
+```{r}
+mappings['700','90']=0 # fix the only outlier
+uc_sat_pre_12 = data.frame(sat = as.integer(rownames(mappings)[(row(mappings)[which(mappings != 0)])]),
+                      uc = as.integer(colnames(mappings)[(col(mappings)[which(mappings != 0)])]))
+uc_sat_pre_12
+```
+Try to find a formula.
+```{r}
+lm(uc ~ sat, uc_sat_pre_12)
+```
+```{r}
+uc_sat_pre_12$uc == round((uc_sat_pre_12$sat - 200) / 6)
+```
+
+```{r}
+sat_only_post_F12 = bg_sub[filter_post_F12&is.na(bg_sub$act_math_score),]
+mappings = table(sat_only_post_F12$sat_math_score, sat_only_post_F12$uc_math_score)
+mappings
+```
+```{r}
+ # fix outliers
+mappings['590','53']=0
+mappings['550','69']=0
+mappings['540','71']=0
+mappings['540','84']=0
+mappings['630','78']=0
+mappings['650','75']=0
+mappings['660','77']=0
+mappings['660','79']=0
+mappings['690','79']=0
+mappings['750','92']=0
+mappings['800','88']=0
+#mappings
+```
+```{r}
+uc_sat_post_12 = data.frame(sat = as.integer(rownames(mappings)[(row(mappings)[which(mappings != 0)])]),
+                            uc = as.integer(colnames(mappings)[(col(mappings)[which(mappings != 0)])]))
+uc_sat_post_12$uc == (uc_sat_post_12$sat + 200) / 10
+```
+
+# Prediction of math score from SAT, ACT and Combination
+- SAT scores to UC are two affine transformations:
+```{r}
+print(get_uc_from_sat)
+```
+- ACT follows an almost-linear mapping
+```{r}
+uc_math_from_sat = mapply(get_uc_from_sat, bg_sub$sat_math_score, filter_pre_F12)
+uc_math_from_act = mapply(get_uc_from_act, bg_sub$act_math_score, filter_pre_F12)
+uc_math_from_sat_and_act = round(0.75 * uc_math_from_sat + 0.25 * uc_math_from_act)
+```
+
+# Plot predictions
+```{r}
+uc_math_scores = data.frame(uc_true=bg_sub$uc_math_score,
+                            from_sat=uc_math_from_sat,
+                            from_act=uc_math_from_act,
+                            from_both=uc_math_from_sat_and_act,
+                            admitdate=bg_sub$admitdate)
+p1 = ggplot(uc_math_scores[is.na(bg_sub$act_math_score),], aes(x=uc_true, y=from_sat)) + 
+  geom_point(na.rm=T)
+p2 = ggplot(uc_math_scores[is.na(bg_sub$sat_math_score),], aes(x=uc_true, y=from_act)) +
+  geom_point(na.rm=T)
+p3 = ggplot(uc_math_scores, aes(x=uc_true, y=from_both)) +
+  geom_point(na.rm=T)
+grid.arrange(p1, p2, p3, ncol=3)
+```
+```{r}
+print('Break grid arrange')
+```
+
+# Plot prediction errors by admission
+```{r,fig.height=6,fig.width=10,echo=FALSE}
+ggplot(uc_math_scores, aes(x=from_both-uc_true)) +
+  geom_histogram(binwidth=1, na.rm = TRUE) +
+  facet_wrap(vars(admitdate))
+```
+- combination has some problems, that do not depend on admission year.
+
+```{r}
+model = lm(uc_true ~ from_act + from_sat, uc_math_scores)
+summary(model)
+```
+Let's check predictions
+```{r}
+table(uc_math_scores$uc - round(predict(model, uc_math_scores)))
+```
+Although majority is predicted very well, it looks like the formula does not quite get it right. Maybe let's see what information we have in the important three years.
+
+```{r}
+table(!is.na(bg_sub$act_math_score[filter_pre_F12]))
+```
+```{r}
+table(!is.na(bg_sub$sat_math_score[filter_pre_F12]))
+```
+```{r}
+table(is.na(bg_sub$sat_math_score[filter_pre_F12]) & !is.na(bg_sub$act_math_score[filter_pre_F12]))
+```
+
+We mostly have SAT scores and only 1268 cases where we exclusively know the ACT math score, which means that we might ignore the remaining residuals.
+
+Next steps:
+- use the prediction for math scores
+- investigate on meaning of UC score: https://blog.prepscholar.com/historical-act-percentiles-2015-2014-2013-2012-2011
+- check predictiveness of UC scores for dropout
