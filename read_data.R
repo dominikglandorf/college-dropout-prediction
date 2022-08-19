@@ -95,15 +95,16 @@ col_types_background = cols(
   ap_year_20 = col_integer()
 )
 
-get_student_background_data = function () {
+get_student_background_data = function (ids = c()) {
   data = read_csv(file.path(path_data, file_background_data), col_types = col_types_background)
   data$foster_care[data$foster_care=='Y'] = 1
   data$foster_care = as.integer(data$foster_care)
   data[data$mellon_id==335510,c("uc_read_score","uc_math_score","uc_writing_score","uc_total_score")] = NA
+  if (length(ids)) { return(data[data$mellon_id %in% ids,])}
   return(data)
 }
 
-get_term_data = function () {
+get_term_data = function (ids = c()) {
   data = read_csv(file.path(path_data, file_term_data), col_types = cols(
     new_student=col_character(),
     enrollment_open_date=col_character(),
@@ -113,6 +114,7 @@ get_term_data = function () {
     major_code_3=col_character(),
     major_code_4=col_character()
   ))
+  if (length(ids) > 0) { return(data[data$mellon_id %in% ids,])}
   return(data)
 }
 

@@ -1,0 +1,35 @@
+---
+title: "Summer terms"
+author: "Dominik Glandorf"
+date: '2022-08-19'
+output: pdf_document
+---
+
+```{r setup, include=FALSE}
+if(!require(gridExtra)) install.packages('gridExtra')
+source('read_data.R')
+```
+
+```{r prepare data}
+terms = get_term_data()
+students = get_student_sub()
+terms_sub = merge(terms, students[,c('mellon_id','admitdate')], by="mellon_id")
+```
+
+# Where do we have summer terms?
+```{r}
+table(terms_sub[,c('term_part_code','term_part_desc')])
+```
+We are interested in term part code 51, which in general does not occur that much.
+```{r}
+1-(sum(terms_sub$term_part_code %in% c("03", "14", "92")) / length(terms_sub$term_part_code))
+```
+In around 1% of the terms it is other than Fall, Winter or Spring.
+
+```{r}
+ggplot(terms_sub, aes(fill=admitdate, x=term_part_code)) + 
+    geom_bar(position="stack", stat="count")
+```
+Summer terms were only tracked from 2015 or 2016 on.
+
+Conclusion: do not include summer terms for comparability.

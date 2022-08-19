@@ -1,0 +1,36 @@
+---
+title: "Majors, courses and credits"
+author: "Dominik Glandorf"
+date: '2022-08-19'
+output: pdf_document
+---
+
+```{r setup, include=FALSE}
+if(!require(gridExtra)) install.packages('gridExtra')
+source('read_data.R')
+```
+
+```{r prepare data}
+students = get_student_sub()
+bg = get_student_background_data(ids = students$mellon_id)
+terms = get_term_data(ids = students$mellon_id)
+```
+
+# What majors do we have?
+```{r}
+table(bg_sub$grad_major_1)
+```
+```{r}
+colSums(is.na(bg_sub[,c("grad_major_1","grad_major_2","grad_major_3")]))
+```
+```{r}
+terms$major_code_1
+table(terms[,c('major_name_1','major_code_1')])
+```
+
+```{r}
+# TODO: credits attempted, credits completed
+# department code, units in eigenem dept vs fremden dept
+#aggregate(credits mellon_id, terms)
+```
+
