@@ -118,8 +118,9 @@ get_term_data = function (ids = c()) {
   return(data)
 }
 
-get_course_data = function () {
-  data = read_csv(file.path(path_data, file_course_data))
+get_course_data = function (ids = c()) {
+  data = read_csv(file.path(path_data, file_course_data), show_col_types = FALSE)
+  if (length(ids) > 0) { return(data[data$mellon_id %in% ids,])}
   return(data)
 }
 
