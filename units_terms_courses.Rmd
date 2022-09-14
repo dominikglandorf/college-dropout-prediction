@@ -1,0 +1,193 @@
+---
+title: "Units, based on terms and courses"
+author: "Dominik Glandorf"
+date: '2022-08-19'
+output: pdf_document
+---
+
+```{r setup, include=FALSE}
+if(!require(gridExtra)) install.packages('gridExtra')
+source('read_data.R')
+```
+
+```{r prepare data}
+students = get_student_sub()
+bg = get_student_background_data(ids = students$mellon_id)
+# get terms
+terms = get_term_data(ids = students$mellon_id)
+terms = merge(terms, students[,c('mellon_id','admitdate','dropout')], by="mellon_id")
+# enumerate terms order by their date
+terms_ordered = terms[order(terms$term_code),c('mellon_id','term_code')]
+terms_ordered$term_num = ave(terms_ordered$mellon_id, terms_ordered$mellon_id, FUN=seq_along)
+terms = merge(terms, terms_ordered, by=c("mellon_id","term_code"))
+# get courses
+courses = get_course_data(ids = students$mellon_id)
+```
+
+# Availability of units information
+```{r}
+units_summary_terms = is.na(terms[,names(terms)[86:121]])
+colSums(units_summary_terms)[order(colSums(units_summary_terms))]
+```
+```{r}
+units_summary_courses = is.na(courses[,names(courses)[44:47]])
+colSums(units_summary_courses)[order(colSums(units_summary_courses))]
+```
+
+## Units completed total
+### In term data
+About how much percent of terms per user do we have units completed?
+```{r}
+mean(!is.na(terms$current_units_completed_total))
+```
+This information exists for every term of all students in term data.
+```{r}
+hist(terms$current_units_completed_total)
+```
+Hypothesis: users that have one term with very low units completed have a higher dropout chance
+
+Some plots about current units completed:
+```{r}
+avg_credits_admission = aggregate(terms$current_units_completed_total, by=list("admitdate"=terms$admitdate), FUN=mean)
+avg_credits_major = do.call(data.frame, aggregate(current_units_completed_total ~ major_name_1, terms, FUN = function(x) c(mean = mean(x), n = length(x))))
+avg_credits_term = do.call(data.frame, aggregate(current_units_completed_total ~ term_num, terms, FUN = function(x) c(mean = mean(x), n = length(x))))
+avg_credits_major_term = do.call(data.frame, aggregate(current_units_completed_total ~ major_name_1 + term_num, terms, FUN = function(x) c(mean = mean(x), n = length(x))))
+```
+```{r}
+ggplot(avg_credits_admission, aes(x=admitdate, y=x)) +
+  geom_bar(stat="identity") +
+  theme_minimal() +
+  labs(title = "Mean of current units completed total",
+       x = "Admission",
+       y = "Credit")
+```
+Current units does not seem to considerable vary between cohorts.
+
+```{r}
+ggplot(avg_credits_term, aes(x=term_num, y=current_units_completed_total.mean, fill=current_units_completed_total.n > 10)) +
+  geom_bar(stat="identity") +
+  theme_minimal() +
+  labs(title = "Mean of current units completed total by term number",
+       x = "Term number",
+       y = "Credit",
+       fill = "More than 10 terms")
+```
+Units in the first and 12th term are lower. If people study longer, units keep decreasing.
+```{r, fig.width=14}
+fill=c(rep(c("1","2"), 53))
+print(avg_credits_major$major_name_1[avg_credits_major$current_units_completed_total.n<10])
+ggplot(avg_credits_major, aes(x=major_name_1, y=current_units_completed_total.mean, fill=fill)) +
+  geom_bar(stat="identity") +
+  theme_minimal() +
+  labs(title = "Mean of current units completed total per major",
+       x = "Major",
+       y = "Credits", fill="")+
+  scale_x_discrete(guide = guide_axis(angle = 90)) +
+  scale_fill_manual(values = c("1"="#353436", "2"="#1b98e0"))+
+  theme(legend.position = "none")
+```
+```{r, fig.height=20, fig.width=12}
+ggplot(avg_credits_major_term, aes(x=term_num, y=current_units_completed_total.mean, fill=(current_units_completed_total.n > 10))) +
+  geom_bar(stat="identity") +
+  theme_minimal() +
+  labs(title = "Mean of current units completed total per term",
+       x = "Term",
+       y = "Credits", fill="")+
+  scale_x_discrete(guide = guide_axis(angle = 90)) +
+  theme(legend.position = "none") +
+  facet_wrap(vars(major_name_1), ncol = 8)
+```
+
+
+### In courses data
+```{r}
+names(courses)
+```
+Let's see how much missing data we have here.
+```{r}
+mean(is.na(courses$units_completed))
+```
+This can be related to listing a lot of courses twice:
+```{r}
+courses[courses$mellon_id==162784,c('course_code','course_dept_code_and_num','meeting_schedule','units_completed')]
+```
+Why are some courses listed twice? It looks like there are different time slots for the same course.
+
+Let's count units from courses.
+```{r}
+units_from_courses=aggregate(cbind(units_attempted, units_completed)~term_code+mellon_id, courses,FUN=sum)
+```
+And compare to term data.
+```{r}
+terms_merged=left_join(x=terms, y=units_from_courses, by=c("mellon_id","term_code"))
+```
+Do we have the information still for all the terms?
+```{r}
+mean(!is.na(terms_merged$units_completed))
+```
+Which terms are missing?
+```{r}
+aggregate(!is.na(units_completed)~term_code,terms_merged,FUN=mean)
+```
+It looks like units_completed is mostly missing in courses data from 2019 on.
+How well do both data sources match apart from availability?
+```{r}
+mean(terms_merged$units_completed==terms_merged$current_units_completed_total, na.rm=T)
+```
+In 48.9% of the cases where we have both sources, they match exactly.
+```{r}
+mean(terms_merged$units_completed-terms_merged$current_units_completed_total, na.rm=T)
+```
+Mean difference is not very big in terms of the absolute values. Let's check distribution.
+```{r}
+hist(terms_merged$units_completed-terms_merged$current_units_completed_total, breaks=50)
+```
+It looks like often 0, 4 or 8 units difference is there.
+```{r}
+aggregate(units_completed-current_units_completed_total~admitdate, terms_merged, FUN=mean, na.action = na.omit)
+```
+Slight differences between cohorts.
+
+Some example students:
+```{r}
+courses[courses$mellon_id==166410,c('term_desc','course_dept_code_and_num','units_attempted','units_completed')]
+```
+Another student:
+```{r}
+courses[courses$mellon_id==166128,c('term_desc','course_dept_code_and_num','units_attempted','units_completed')]
+```
+
+## Units attempted total
+### In term data
+```{r}
+ggplot(terms, aes(x=admitdate, fill=!is.na(current_units_attempted_total))) +
+  geom_bar() +
+  theme_minimal() +
+  labs(title = "Current units attempted total available in term data",
+       x = "Admission",
+       y = "", fill="Available")
+```
+```{r}
+length(unique(terms[!is.na(terms$current_units_attempted_total),'mellon_id']))
+```
+For 11612 distinct students we have information about current_units_attempted_total in term data
+
+### In courses data
+Let's see availability from courses data.
+```{r}
+mean(!is.na(terms_merged$units_attempted))
+```
+Which terms are missing?
+```{r}
+aggregate(!is.na(units_attempted)~term_code,terms_merged,FUN=mean)
+```
+It looks like units_attempted is mostly missing in courses data from 2019 on.
+How well do both data sources match apart from availability?
+```{r}
+mean(terms_merged$units_attempted==terms_merged$current_units_attempted_total, na.rm=T)
+```
+In 99.4% of the cases where we have both sources, they match exactly.
+```{r}
+mean(terms_merged$units_attempted-terms_merged$current_units_attempted_total, na.rm=T)
+```
+Taking units attempted from courses data could be a good idea, given that we find this information from 2019 on.

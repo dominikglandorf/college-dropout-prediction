@@ -104,7 +104,7 @@ get_student_background_data = function (ids = c()) {
   return(data)
 }
 
-get_term_data = function (ids = c()) {
+get_term_data = function (ids = c(), exclude_term_parts=summer_part_codes) {
   data = read_csv(file.path(path_data, file_term_data), col_types = cols(
     new_student=col_character(),
     enrollment_open_date=col_character(),
@@ -114,12 +114,14 @@ get_term_data = function (ids = c()) {
     major_code_3=col_character(),
     major_code_4=col_character()
   ))
+  data = data[!(data$term_part_code %in% exclude_term_parts),]
   if (length(ids) > 0) { return(data[data$mellon_id %in% ids,])}
   return(data)
 }
 
-get_course_data = function (ids = c()) {
+get_course_data = function (ids = c(), exclude_term_parts=summer_part_codes) {
   data = read_csv(file.path(path_data, file_course_data), show_col_types = FALSE)
+  data = data[!(substr(data$term_code,5,6)  %in% exclude_term_parts),]
   if (length(ids) > 0) { return(data[data$mellon_id %in% ids,])}
   return(data)
 }
