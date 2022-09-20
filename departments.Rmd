@@ -1,0 +1,60 @@
+---
+title: "Department adherence"
+author: "Dominik Glandorf"
+date: "2022-09-20"
+output: pdf_document
+---
+
+# Courses and departments
+```{r setup, include=FALSE}
+if(!require(gridExtra)) install.packages('gridExtra')
+source('read_data.R')
+```
+
+```{r prepare data}
+students = get_student_sub()
+bg = get_student_background_data(ids = students$mellon_id)
+terms = get_term_data(ids = students$mellon_id)
+courses = get_course_data(ids = students$mellon_id)
+```
+
+# Get school per term
+```{r}
+table(terms$major_school_name_abbrev_1)
+```
+# Get school of courses (lots of missing data, see below)
+```{r}
+table(courses$school_name_abbrev)
+```
+# Get department of courses
+```{r}
+table(courses$dept_name_abbrev)
+```
+```{r}
+table(courses[,c('dept_name_abbrev', 'school_name_abbrev')])
+```
+# Missing data
+```{r}
+mean(is.na(terms$major_school_code_1))
+```
+```{r}
+mean(is.na(courses$school_name_abbrev))
+```
+
+```{r}
+mean(is.na(courses$dept_name_abbrev))
+```
+
+
+```{r}
+sum(terms$major_school_name_abbrev_1 != terms$major_school_name_abbrev_2, na.rm=T) / sum(!is.na(terms$major_school_name_abbrev_2))
+```
+In 42% percent the second major school is not equal the first.
+```{r}
+mean(terms$major_name_1 == "UNDECLARED")
+```
+In 7% of terms major is undeclared.
+```{r}
+mean(terms$major_name_1 == "UNAFFILIATED")
+```
+In 3% of terms major is unaffiliated.

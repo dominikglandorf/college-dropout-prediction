@@ -150,7 +150,7 @@ Slight differences between cohorts.
 
 Some example students:
 ```{r}
-courses[courses$mellon_id==166410,c('term_desc','course_dept_code_and_num','units_attempted','units_completed')]
+courses[courses$mellon_id==166410,]
 ```
 Another student:
 ```{r}

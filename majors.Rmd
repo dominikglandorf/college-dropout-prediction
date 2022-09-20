@@ -1,0 +1,36 @@
+---
+title: "Majors"
+author: "Dominik Glandorf"
+date: "2022-09-20"
+output: pdf_document
+---
+
+# Majors
+```{r setup, include=FALSE}
+if(!require(gridExtra)) install.packages('gridExtra')
+source('read_data.R')
+```
+
+```{r prepare data}
+students = get_student_sub()
+bg = get_student_background_data(ids = students$mellon_id)
+terms = get_term_data(ids = students$mellon_id)
+```
+
+```{r}
+dist_majors = aggregate(cbind(major_name_1, major_name_2, major_name_3, major_name_4)~mellon_id, terms,FUN=function(x) {
+ y = x[!x %in% c("UNDECLARED","UNAFFILIATED")]
+ return(length(unique(y))>1)}, na.action = NULL)
+```
+```{r}
+mean(rowSums(dist_majors[,2:5]) > 0)
+```
+```{r}
+dist_majors$changed = rowSums(dist_majors[,2:5]) > 0
+students = merge(students, dist_majors[,c(1,6)], by="mellon_id")
+```
+
+```{r}
+cor(students$changed, students$dropout, use="complete.obs")
+```
+
