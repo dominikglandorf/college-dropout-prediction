@@ -135,3 +135,7 @@ get_student_sub = function() {
   data = read_csv(file.path(path_data, 'student_vars_subset.csv'), show_col_types = FALSE)
   return(data)
 }
+
+get_term_features = function() {
+  data = read_csv(file.path(path_data, 'term_features_subset.csv'), show_col_types = FALSE)
+}

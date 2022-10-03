@@ -36,26 +36,13 @@ transfer_data = data.frame(
 student_vars = merge(student_vars, transfer_data, by="mellon_id")
 
 # pre-university scores
-#scaled_total_scores = data.frame(act=student_background_data$act_total_score/36,
-#                           sat=student_background_data$sat_total_score/2400,
-#                           uc=student_background_data$uc_total_score/300)
-#num_total_scores = rowSums(!is.na(scaled_total_scores))
-#
-#scaled_math_scores = data.frame(act=student_background_data$act_math_score/36,
-#                                sat=student_background_data$sat_math_score / 800,
-#                                uc=student_background_data$uc_math_score / 100)
-#num_math_scores = rowSums(!is.na(scaled_math_scores))
-#
-#scaled_writing_scores = data.frame(act=student_background_data$act_write_score/36,
-#                                   sat=student_background_data$sat_writing_score / 800,
-#                                   uc=num_total_scores$uc_writing_score / 100)
-#num_writing_scores = rowSums(!is.na(scaled_writing_scores))
-#
-#scores = data.frame(mellon_id=student_background_data$mellon_id,
-#                    total_score = rowSums(scaled_total_scores, na.rm=T) / num_total_scores,
-#                    math_score = rowSums(scaled_math_scores, na.rm=T) / num_math_scores,
-#                    writing_score = rowSums(scaled_writing_scores, na.rm=T) / num_writing_scores)
-#student_vars = merge(student_vars, scores, by="mellon_id")
+scores = bg_sub[,c("mellon_id","uc_total_score","uc_read_score","uc_writing_score")]
+scores$uc_math_score = apply(bg_sub[,c("sat_math_score","uc_math_score","admitdate")], 1, FUN=function(x) {
+  if(!is.na(x[2])) return(as.integer(x[2])) # prioritize UC score
+  if(is.na(x[3])) return(NA) # if admitdate is unknown, return NA
+  return(get_uc_from_sat(as.integer(x[1]), as.integer(substr(x[3],2,3)) < 12))
+})
+student_vars = merge(student_vars, scores, by="mellon_id")
 
 ## target/label: dropout ##
 # count non-NA in the four major_graduated columns per students
@@ -74,14 +61,12 @@ student_vars = merge(student_vars, graduate_data[,c('mellon_id', 'graduated')], 
 # create dropout variable
 student_vars$dropout = NA
 student_vars$dropout[student_vars$graduated] = F
-student_vars$dropout_alt = student_vars$dropout
+
 # create filter for students not enrolled in last two years
-#two_years_padding = student_vars$last_code < max(student_vars$last_code-200)
 four_terms_padding = student_vars$last_code < max(student_vars$last_code-100)
 # decide for students in filter:
 # CONDITION: no graduation -> DROPOUT = TRUE
 # CONDITION: graduation -> DROPOUT = FALSE
-# student_vars$dropout[two_years_padding] = !student_vars$graduated[two_years_padding]
 student_vars$dropout[four_terms_padding] = !student_vars$graduated[four_terms_padding]
 
 # add admitdate

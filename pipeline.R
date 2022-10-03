@@ -5,3 +5,6 @@ source('calculate_student_vars.R')
 
 # selects cohorts admitted after start of data recording, starting in a fall term as a freshman at least 5 years ago
 source('subset.R')
+
+# derives variables from term data
+source('calculate_term_features.R')

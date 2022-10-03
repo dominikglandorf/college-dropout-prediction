@@ -56,5 +56,6 @@ mean(terms$major_name_1 == "UNDECLARED")
 In 7% of terms major is undeclared.
 ```{r}
 mean(terms$major_name_1 == "UNAFFILIATED")
+courses[courses$mellon_id == "184895",]
 ```
 In 3% of terms major is unaffiliated.
