@@ -423,7 +423,7 @@ ggplot(data = term_features, aes(x = as.integer(units_completed))) +
   geom_bar(data=subset(term_features,dropout == F),aes(y = (..count..)/sum(..count..)),fill = "darkgreen", alpha = 0.4) +
   theme_minimal() +
   theme(legend.position = "none") +
-  labs(title = "Distribution of age at enrolment",
+  labs(title = "Distribution of units completed",
        x = "Units completed",
        y = "Frequency") +
   xlim(0, 24) +
@@ -469,6 +469,18 @@ ggplot(data = term_features_2, aes(x = as.integer(cum_avg_credits))) +
   xlim(0, 24) +
   theme(text = element_text(size = 16))
 
+term_features_3 = subset(term_features, term_num==3)
+ggplot(data = term_features_3, aes(x = as.integer(cum_avg_credits))) +
+  geom_bar(data=subset(term_features_2,dropout == T),aes(y = (..count..)/sum(..count..)),fill = "red", alpha = 0.4) +
+  geom_bar(data=subset(term_features_2,dropout == F),aes(y = (..count..)/sum(..count..)),fill = "darkgreen", alpha = 0.4) +
+  theme_minimal() +
+  theme(legend.position = "none") +
+  labs(title = "Dropout rates by avg units completed till 3rd term",
+       x = "Units completed",
+       y = "Frequency") +
+  xlim(0, 24) +
+  theme(text = element_text(size = 16))
+
 # units completed relative to term
 mean(is.na(term_features$units_completed.rel_term_num)) # same as before
 
@@ -492,7 +504,6 @@ ggplot(data = dropout_rates_units_completed_rel_term_num, aes(x=as.integer.units
        x = "Units completed",
        y = "Dropout rate")
 
-term_features_1 = subset(term_features, term_num==1)
 ggplot(data = term_features_1, aes(x = as.integer(cum_avg_credits.rel_term_num))) +
   geom_bar(data=subset(term_features_1,dropout == T),aes(y = (..count..)/sum(..count..)),fill = "red", alpha = 0.4) +
   geom_bar(data=subset(term_features_1,dropout == F),aes(y = (..count..)/sum(..count..)),fill = "darkgreen", alpha = 0.4) +
@@ -503,9 +514,7 @@ ggplot(data = term_features_1, aes(x = as.integer(cum_avg_credits.rel_term_num))
        y = "Frequency") +
   theme(text = element_text(size = 16))
 
-mean(is.na(term_features$cum_avg_credits))
-term_features_2 = subset(term_features, term_num==2)
-ggplot(data = term_features_2, aes(x = as.integer(cum_avg_credits))) +
+ggplot(data = term_features_2, aes(x = as.integer(cum_avg_credits.rel_term_num))) +
   geom_bar(data=subset(term_features_2,dropout == T),aes(y = (..count..)/sum(..count..)),fill = "red", alpha = 0.4) +
   geom_bar(data=subset(term_features_2,dropout == F),aes(y = (..count..)/sum(..count..)),fill = "darkgreen", alpha = 0.4) +
   theme_minimal() +
@@ -513,6 +522,58 @@ ggplot(data = term_features_2, aes(x = as.integer(cum_avg_credits))) +
   labs(title = "Dropout rates by avg units completed till 2nd term",
        x = "Units completed",
        y = "Frequency") +
-  xlim(0, 24) +
   theme(text = element_text(size = 16))
 
+# relative to major
+mean(is.na(term_features$units_completed.rel_major)) # same as before
+
+ggplot(data = term_features, aes(x = as.integer(units_completed.rel_major))) +
+  geom_bar(data=subset(term_features,dropout == T),aes(y = (..count..)/sum(..count..)),fill = "red", alpha = 0.4) +
+  geom_bar(data=subset(term_features,dropout == F),aes(y = (..count..)/sum(..count..)),fill = "darkgreen", alpha = 0.4) +
+  theme_minimal() +
+  theme(legend.position = "none") +
+  labs(title = "Distribution of current units rel to major",
+       x = "Units completed",
+       y = "Frequency") +
+  xlim(-10,10) +
+  theme(text = element_text(size = 16))
+
+dropout_rates_units_completed_rel_major = do.call(data.frame, aggregate(dropout ~ as.integer(units_completed.rel_major), term_features, FUN = function(x) c(mean = mean(x), n = length(x))))
+ggplot(data = dropout_rates_units_completed_rel_major, aes(x=as.integer.units_completed.rel_major., y=dropout.mean, fill=dropout.n > 46)) +
+  geom_bar(stat="identity") +
+  theme_minimal() +
+  theme(text = element_text(size = 16)) +
+  theme(legend.position = "none") +
+  labs(title = "Dropout rates by units completed rel to major",
+       x = "Units completed",
+       y = "Dropout rate")
+
+ggplot(data = term_features_1, aes(x = as.integer(cum_avg_credits.rel_major))) +
+  geom_bar(data=subset(term_features_1,dropout == T),aes(y = (..count..)/sum(..count..)),fill = "red", alpha = 0.4) +
+  geom_bar(data=subset(term_features_1,dropout == F),aes(y = (..count..)/sum(..count..)),fill = "darkgreen", alpha = 0.4) +
+  theme_minimal() +
+  theme(legend.position = "none") +
+  labs(title = "Dist of relative cum avg credits rel to major",
+       x = "Units completed",
+       y = "Frequency") +
+  theme(text = element_text(size = 16))
+
+ggplot(data = term_features_2, aes(x = as.integer(cum_avg_credits.rel_major))) +
+  geom_bar(data=subset(term_features_2,dropout == T),aes(y = (..count..)/sum(..count..)),fill = "red", alpha = 0.4) +
+  geom_bar(data=subset(term_features_2,dropout == F),aes(y = (..count..)/sum(..count..)),fill = "darkgreen", alpha = 0.4) +
+  theme_minimal() +
+  theme(legend.position = "none") +
+  labs(title = "Dropout rates by avg units completed till 2nd term rel to major",
+       x = "Units completed",
+       y = "Frequency") +
+  theme(text = element_text(size = 16))
+
+ggplot(data = term_features_3, aes(x = as.integer(cum_avg_credits.rel_major))) +
+  geom_bar(data=subset(term_features_2,dropout == T),aes(y = (..count..)/sum(..count..)),fill = "red", alpha = 0.4) +
+  geom_bar(data=subset(term_features_2,dropout == F),aes(y = (..count..)/sum(..count..)),fill = "darkgreen", alpha = 0.4) +
+  theme_minimal() +
+  theme(legend.position = "none") +
+  labs(title = "Dropout rates by avg units completed till 3rd term rel to major",
+       x = "Units completed",
+       y = "Frequency") +
+  theme(text = element_text(size = 16))
