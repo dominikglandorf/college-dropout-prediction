@@ -577,3 +577,186 @@ ggplot(data = term_features_3, aes(x = as.integer(cum_avg_credits.rel_major))) +
        x = "Units completed",
        y = "Frequency") +
   theme(text = element_text(size = 16))
+
+# relative to major x term number
+mean(is.na(term_features$units_completed.rel_major_termnum)) # same as before
+
+ggplot(data = term_features, aes(x = as.integer(units_completed.rel_major_termnum))) +
+  geom_bar(data=subset(term_features,dropout == T),aes(y = (..count..)/sum(..count..)),fill = "red", alpha = 0.4) +
+  geom_bar(data=subset(term_features,dropout == F),aes(y = (..count..)/sum(..count..)),fill = "darkgreen", alpha = 0.4) +
+  theme_minimal() +
+  theme(legend.position = "none") +
+  labs(title = "Distribution of current units rel to major and term number",
+       x = "Units completed",
+       y = "Frequency") +
+  xlim(-10,10) +
+  theme(text = element_text(size = 16))
+
+dropout_rates_units_completed_rel_major_termnum = do.call(data.frame, aggregate(dropout ~ as.integer(units_completed.rel_major_termnum), term_features, FUN = function(x) c(mean = mean(x), n = length(x))))
+
+ggplot(data = dropout_rates_units_completed_rel_major_termnum, aes(x=as.integer.units_completed.rel_major_termnum., y=dropout.mean, fill=dropout.n > 46)) +
+  geom_bar(stat="identity") +
+  theme_minimal() +
+  theme(text = element_text(size = 16)) +
+  theme(legend.position = "none") +
+  labs(title = "Dropout rates by units completed rel to major and term number",
+       x = "Units completed",
+       y = "Dropout rate")
+
+ggplot(data = term_features_1, aes(x = as.integer(cum_avg_credits.rel_major_termnum))) +
+  geom_bar(data=subset(term_features_1,dropout == T),aes(y = (..count..)/sum(..count..)),fill = "red", alpha = 0.4) +
+  geom_bar(data=subset(term_features_1,dropout == F),aes(y = (..count..)/sum(..count..)),fill = "darkgreen", alpha = 0.4) +
+  theme_minimal() +
+  theme(legend.position = "none") +
+  labs(title = "Dist of relative cum avg credits rel to major and term number",
+       x = "Units completed",
+       y = "Frequency") +
+  theme(text = element_text(size = 16))
+
+ggplot(data = term_features_2, aes(x = as.integer(cum_avg_credits.rel_major_termnum))) +
+  geom_bar(data=subset(term_features_2,dropout == T),aes(y = (..count..)/sum(..count..)),fill = "red", alpha = 0.4) +
+  geom_bar(data=subset(term_features_2,dropout == F),aes(y = (..count..)/sum(..count..)),fill = "darkgreen", alpha = 0.4) +
+  theme_minimal() +
+  theme(legend.position = "none") +
+  labs(title = "Dropout rates by avg units completed till 2nd term rel to major and term number",
+       x = "Units completed",
+       y = "Frequency") +
+  theme(text = element_text(size = 16))
+
+ggplot(data = term_features_3, aes(x = as.integer(cum_avg_credits.rel_major_termnum))) +
+  geom_bar(data=subset(term_features_2,dropout == T),aes(y = (..count..)/sum(..count..)),fill = "red", alpha = 0.4) +
+  geom_bar(data=subset(term_features_2,dropout == F),aes(y = (..count..)/sum(..count..)),fill = "darkgreen", alpha = 0.4) +
+  theme_minimal() +
+  theme(legend.position = "none") +
+  labs(title = "Dropout rates by avg units completed till 3rd term rel to major and term number",
+       x = "Units completed",
+       y = "Frequency") +
+  theme(text = element_text(size = 16))
+
+# major
+stud_major =  do.call(data.frame, aggregate(major_name_1 ~ mellon_id, terms, FUN=function(x) c(first=x[1], second=x[2], third=x[3])))
+stud_major = merge(stud_major, student_sub[,c("mellon_id", "dropout")], by="mellon_id")
+
+avg_dropout_major = do.call(data.frame, aggregate(dropout ~ major_name_1.first, stud_major, FUN = function(x) c(mean = mean(x), n = length(x))))
+avg_dropout_major$major_name_1.first = factor(avg_dropout_major$major_name_1.first,levels = avg_dropout_major$major_name_1.first[order(-avg_dropout_major$dropout.n)])
+ggplot(avg_dropout_major, aes(x=major_name_1.first, y=dropout.mean, fill=dropout.n>46)) +
+  geom_bar(stat="identity") +
+  theme_minimal() +
+  labs(title = "Mean of dropout per first term major",
+       x = "Major",
+       y = "Dropout rate", fill="")+
+  scale_x_discrete(guide = guide_axis(angle = 90)) +
+  theme(legend.position = "none",text = element_text(size = 8))
+
+avg_dropout_major = do.call(data.frame, aggregate(dropout ~ major_name_1.second, stud_major, FUN = function(x) c(mean = mean(x), n = length(x))))
+avg_dropout_major$major_name_1.second = factor(avg_dropout_major$major_name_1.second,levels = avg_dropout_major$major_name_1.second[order(-avg_dropout_major$dropout.n)])
+ggplot(avg_dropout_major, aes(x=major_name_1.second, y=dropout.mean, fill=dropout.n>46)) +
+  geom_bar(stat="identity") +
+  theme_minimal() +
+  labs(title = "Mean of dropout per second term major",
+       x = "Major",
+       y = "Dropout rate", fill="")+
+  scale_x_discrete(guide = guide_axis(angle = 90)) +
+  theme(legend.position = "none",text = element_text(size = 8))
+
+avg_dropout_major = do.call(data.frame, aggregate(dropout ~ major_name_1.third, stud_major, FUN = function(x) c(mean = mean(x), n = length(x))))
+avg_dropout_major$major_name_1.third = factor(avg_dropout_major$major_name_1.third,levels = avg_dropout_major$major_name_1.third[order(-avg_dropout_major$dropout.n)])
+ggplot(avg_dropout_major, aes(x=major_name_1.third, y=dropout.mean, fill=dropout.n>46)) +
+  geom_bar(stat="identity") +
+  theme_minimal() +
+  labs(title = "Mean of dropout per third term major",
+       x = "Major",
+       y = "Dropout rate", fill="")+
+  scale_x_discrete(guide = guide_axis(angle = 90)) +
+  theme(legend.position = "none",text = element_text(size = 8))
+
+# school
+stud_school = do.call(data.frame, aggregate(major_school_name_1 ~ mellon_id, terms, FUN=function(x) c(first=x[1], second=x[2], third=x[3])))
+stud_school = merge(stud_school, student_sub[,c("mellon_id", "dropout")], by="mellon_id")
+
+avg_dropout_school = do.call(data.frame, aggregate(dropout ~ major_school_name_1.first, stud_school, FUN = function(x) c(mean = mean(x), n = length(x))))
+avg_dropout_school$major_school_name_1.first = factor(avg_dropout_school$major_school_name_1.first,levels = avg_dropout_school$major_school_name_1.first[order(-avg_dropout_school$dropout.n)])
+ggplot(avg_dropout_school, aes(x=major_school_name_1.first, y=dropout.mean)) +
+  geom_bar(stat="identity") +
+  theme_minimal() +
+  labs(title = "Mean of dropout per first term school",
+       x = "Major",
+       y = "Dropout rate", fill="")+
+  scale_x_discrete(guide = guide_axis(angle = 90)) +
+  theme(legend.position = "none",text = element_text(size = 14))
+
+avg_dropout_school = do.call(data.frame, aggregate(dropout ~ major_school_name_1.second, stud_school, FUN = function(x) c(mean = mean(x), n = length(x))))
+avg_dropout_school$major_school_name_1.second = factor(avg_dropout_school$major_school_name_1.second,levels = avg_dropout_school$major_school_name_1.second[order(-avg_dropout_school$dropout.n)])
+ggplot(avg_dropout_school, aes(x=major_school_name_1.second, y=dropout.mean)) +
+  geom_bar(stat="identity") +
+  theme_minimal() +
+  labs(title = "Mean of dropout per second term school",
+       x = "Major",
+       y = "Dropout rate", fill="")+
+  scale_x_discrete(guide = guide_axis(angle = 90)) +
+  theme(legend.position = "none",text = element_text(size = 14))
+
+avg_dropout_school = do.call(data.frame, aggregate(dropout ~ major_school_name_1.third, stud_school, FUN = function(x) c(mean = mean(x), n = length(x))))
+avg_dropout_school$major_school_name_1.third = factor(avg_dropout_school$major_school_name_1.third,levels = avg_dropout_school$major_school_name_1.third[order(-avg_dropout_school$dropout.n)])
+ggplot(avg_dropout_school, aes(x=major_school_name_1.third, y=dropout.mean)) +
+  geom_bar(stat="identity") +
+  theme_minimal() +
+  labs(title = "Mean of dropout per third term school",
+       x = "Major",
+       y = "Dropout rate", fill="")+
+  scale_x_discrete(guide = guide_axis(angle = 90)) +
+  theme(legend.position = "none",text = element_text(size = 14))
+
+# number of majors
+
+stud_num_majors = merge(stud_num_majors, student_sub[,c("mellon_id", "dropout")], by="mellon_id")
+
+ggplot(data = stud_num_majors, aes(x = num_majors)) +
+  geom_bar(data=subset(stud_num_majors,dropout == T),aes(y = (..count..)/sum(..count..)),fill = "red", alpha = 0.4) +
+  geom_bar(data=subset(stud_num_majors,dropout == F),aes(y = (..count..)/sum(..count..)),fill = "darkgreen", alpha = 0.4) +
+  theme_minimal() +
+  theme(legend.position = "none") +
+  labs(title = "Distribution of number of majors",
+       x = "Majors",
+       y = "Frequency") +
+  theme(text = element_text(size = 16))
+
+dropout_rates_num_major = do.call(data.frame, aggregate(dropout ~ num_majors, stud_num_majors, FUN = function(x) c(mean = mean(x), n = length(x))))
+ggplot(data = dropout_rates_num_major, aes(x=num_majors, y=dropout.mean, fill=dropout.n > 46)) +
+  geom_bar(stat="identity") +
+  theme_minimal() +
+  theme(text = element_text(size = 16)) +
+  theme(legend.position = "none") +
+  labs(title = "Dropout rates by number of majors",
+       x = "Number of majors",
+       y = "Dropout rate")
+
+ggplot(data = term_features_1, aes(x = num_majors)) +
+  geom_bar(data=subset(term_features_1,dropout == T),aes(y = (..count..)/sum(..count..)),fill = "red", alpha = 0.4) +
+  geom_bar(data=subset(term_features_1,dropout == F),aes(y = (..count..)/sum(..count..)),fill = "darkgreen", alpha = 0.4) +
+  theme_minimal() +
+  theme(legend.position = "none") +
+  labs(title = "Distribution of number of majors",
+       x = "Number of majors",
+       y = "Frequency") +
+  theme(text = element_text(size = 16))
+
+ggplot(data = term_features_2, aes(x = num_majors)) +
+  geom_bar(data=subset(term_features_1,dropout == T),aes(y = (..count..)/sum(..count..)),fill = "red", alpha = 0.4) +
+  geom_bar(data=subset(term_features_1,dropout == F),aes(y = (..count..)/sum(..count..)),fill = "darkgreen", alpha = 0.4) +
+  theme_minimal() +
+  theme(legend.position = "none") +
+  labs(title = "Distribution of number of majors",
+       x = "Number of majors",
+       y = "Frequency") +
+  theme(text = element_text(size = 16))
+
+ggplot(data = term_features_3, aes(x = num_majors)) +
+  geom_bar(data=subset(term_features_1,dropout == T),aes(y = (..count..)/sum(..count..)),fill = "red", alpha = 0.4) +
+  geom_bar(data=subset(term_features_1,dropout == F),aes(y = (..count..)/sum(..count..)),fill = "darkgreen", alpha = 0.4) +
+  theme_minimal() +
+  theme(legend.position = "none") +
+  labs(title = "Distribution of number of majors",
+       x = "Number of majors",
+       y = "Frequency") +
+  theme(text = element_text(size = 16))

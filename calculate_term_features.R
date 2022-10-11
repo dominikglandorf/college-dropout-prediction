@@ -43,6 +43,7 @@ names(avg_units_per_term_num) = c("term_num", "units_completed.term", "cum_avg_c
 term_features_avg = merge(term_features_avg,
                           avg_units_per_term_num,
                           by="term_num")
+
 avg_units_per_major = aggregate(cbind(units_completed,cum_avg_credits)~major_name_1,
                                 term_features_avg,
                                 FUN=mean)
@@ -50,19 +51,49 @@ names(avg_units_per_major) = c("major_name_1", "units_completed.major", "cum_avg
 term_features_avg = merge(term_features_avg,
                           avg_units_per_major,
                           by="major_name_1")
+
+avg_units_per_major_term_num = aggregate(cbind(units_completed,cum_avg_credits)~major_name_1+term_num,
+                                term_features_avg,
+                                FUN=mean)
+names(avg_units_per_major_term_num) = c("major_name_1", "term_num", "units_completed.major_termnum", "cum_avg_credits.major_termnum")
+term_features_avg = merge(term_features_avg,
+                          avg_units_per_major_term_num,
+                          by=c("major_name_1","term_num"))
+
 term_features_avg$units_completed.rel_term_num = term_features_avg$units_completed -  term_features_avg$units_completed.term
 term_features_avg$cum_avg_credits.rel_term_num = term_features_avg$cum_avg_credits -  term_features_avg$cum_avg_credits.term
 
 term_features_avg$units_completed.rel_major = term_features_avg$units_completed -  term_features_avg$units_completed.major
 term_features_avg$cum_avg_credits.rel_major = term_features_avg$cum_avg_credits -  term_features_avg$cum_avg_credits.major
 
+term_features_avg$units_completed.rel_major_termnum = term_features_avg$units_completed -  term_features_avg$units_completed.major_termnum
+term_features_avg$cum_avg_credits.rel_major_termnum = term_features_avg$cum_avg_credits -  term_features_avg$cum_avg_credits.major_termnum
+
 term_features = merge(term_features,
                       term_features_avg[,c("mellon_id","term_code",
                                            "units_completed.rel_term_num",
                                            "cum_avg_credits.rel_term_num",
                                            "units_completed.rel_major",
-                                           "cum_avg_credits.rel_major")],
+                                           "cum_avg_credits.rel_major",
+                                           "units_completed.rel_major_termnum",
+                                           "cum_avg_credits.rel_major_termnum")],
                       by=c("mellon_id","term_code"))
+
+# major_1, school_1, number of majors
+terms_na_majors = terms[,c("major_name_1","major_name_2","major_name_3","major_name_4")]
+terms_na_majors[terms_na_majors=="UNDECLARED"] = NA
+terms_na_majors[terms_na_majors=="UNAFFILIATED"] = NA
+
+term_majors = data.frame(mellon_id=terms$mellon_id,
+                         term_code=terms$term_code,
+                         major_1=terms$major_name_1,
+                         school_1=terms$major_school_name_1,
+                         num_majors=rowSums(!is.na(terms_na_majors)))
+
+term_features = merge(term_features,
+                      term_majors,
+                      by=c("mellon_id","term_code"))
+
 
 # too experimental because of missing data
 #courses_schools = merge(courses,
