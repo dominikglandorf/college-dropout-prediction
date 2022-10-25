@@ -11,6 +11,7 @@ sample(students$mellon_id, 10)
 
 s_id = "2992237"
 get_majors = function(term) paste(na.omit(c(term['major_name_1'], term['major_name_2'], term['major_name_3'], term['major_name_4'])), collapse=", ")
+get_schools = function(term) paste(na.omit(unique(c(term['major_school_name_abbrev_1'], term['major_school_name_abbrev_2'], term['major_school_name_abbrev_3'], term['major_school_name_abbrev_4']))), collapse=", ")
 get_courses = function(term, s_courses) {
   s_t_courses = s_courses[s_courses$term_code==term['term_code'],]
   return(paste(unique(s_t_courses$course_dept_code_and_num), collapse=",  "))
@@ -32,6 +33,7 @@ inspect_student = function(s_id) {
   tor = data.frame(year=substr(s_terms$term_code,1,4),
                    term=s_terms$term_part_desc,
                    majors=apply(s_terms, 1, FUN=get_majors),
+                   schools=apply(s_terms, 1, FUN=get_schools),
                    courses=apply(s_terms, 1, FUN=get_courses, s_courses=s_courses),
                    u_att=apply(s_terms, 1, FUN=get_ua, s_courses=s_courses),
                    u_com=apply(s_terms, 1, FUN=get_uc, s_courses=s_courses))

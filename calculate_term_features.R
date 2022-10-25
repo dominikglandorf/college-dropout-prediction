@@ -95,12 +95,5 @@ term_features = merge(term_features,
                       by=c("mellon_id","term_code"))
 
 
-# too experimental because of missing data
-#courses_schools = merge(courses,
-#                        terms[,c("mellon_id","term_code","major_school_name_abbrev_1")],
-#                        by=c("mellon_id","term_code"),
-#                        all.x=T)
-#courses_schools$in_school = courses_schools$school_name_abbrev == courses_schools$major_school_name_abbrev_1
-
 # save to file
 write_csv(term_features, file.path(path_data, 'term_features_subset.csv'))
