@@ -36,8 +36,8 @@ transfer_data = data.frame(
 student_vars = merge(student_vars, transfer_data, by="mellon_id")
 
 # pre-university scores
-scores = bg_sub[,c("mellon_id","uc_total_score","uc_read_score","uc_writing_score")]
-scores$uc_math_score = apply(bg_sub[,c("sat_math_score","uc_math_score","admitdate")], 1, FUN=function(x) {
+scores = student_background_data[,c("mellon_id","uc_total_score","uc_read_score","uc_writing_score")]
+scores$uc_math_score = apply(student_background_data[,c("sat_math_score","uc_math_score","admitdate")], 1, FUN=function(x) {
   if(!is.na(x[2])) return(as.integer(x[2])) # prioritize UC score
   if(is.na(x[3])) return(NA) # if admitdate is unknown, return NA
   return(get_uc_from_sat(as.integer(x[1]), as.integer(substr(x[3],2,3)) < 12))
@@ -69,8 +69,30 @@ four_terms_padding = student_vars$last_code < max(student_vars$last_code-100)
 # CONDITION: graduation -> DROPOUT = FALSE
 student_vars$dropout[four_terms_padding] = !student_vars$graduated[four_terms_padding]
 
-# add admitdate
-student_vars = merge(student_vars, student_background_data[,c("mellon_id","admitdate")], by="mellon_id") 
+
+# copy variables from background_data
+student_vars = merge(student_vars,
+                     student_background_data[,c("mellon_id",
+                                                "admitdate",
+                                                "female",
+                                                "int_student",
+                                                "ethnicity",
+                                                "first_generation",
+                                                "low_income",
+                                                "father_edu_level_code",
+                                                "mother_edu_level_code",
+                                                "ell",
+                                                "single_parent",
+                                                "foster_care",
+                                                "raised_by_single_parent",
+                                                "household_size_app",
+                                                "distance_from_home",
+                                                "sport_at_admission",
+                                                "cal_res_at_app",
+                                                "hs_gpa",
+                                                "toefl_score",
+                                                "ielts_score" )],
+                     by="mellon_id")
 
 # save to file
 write_csv(student_vars, file.path(path_data, 'student_vars.csv'))
