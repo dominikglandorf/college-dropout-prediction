@@ -1,0 +1,137 @@
+---
+title: "Divison of Undergraduate Education"
+author: "Dominik Glandorf"
+date: "2022-11-11"
+output: pdf_document
+---
+
+```{r read data, include=F}
+Sys.setenv(RSTUDIO_PANDOC = "C:/Program Files/RStudio/bin/quarto/bin/tools")
+
+# set wd to source file directory
+source('read_data.R')
+
+students = get_student_sub()
+bg_sub = get_student_background_data(ids = students$mellon_id)
+terms = get_term_data(ids = students$mellon_id)
+courses = get_course_data(ids = students$mellon_id)
+term_features = get_term_features()
+```
+
+# Division of Undergraduate Education
+```{r, echo=F}
+missing_school = mean(is.na(terms$major_school_name_1))
+```
+Students are assigned to one or more schools for each term (missing for `r round(missing_school*100,1)`% of terms). These are the schools occurring in the data:
+```{r, echo=F}
+unique(terms$major_school_name_1)
+```
+```{r, echo=F}
+DUE = "Div of Undergraduate Education"
+is_term_school_DUE = (terms$major_school_name_1 == DUE)
+terms_DUE = mean(is_term_school_DUE, na.rm=T)
+
+student_ever_DUE = aggregate(major_school_name_1 ~ mellon_id, terms, FUN=function(x) DUE %in% x)
+mean_ever_DUE = mean(student_ever_DUE$major_school_name_1)
+student_ever_DUE_2 = aggregate(cbind(major_school_name_1, major_school_name_2) ~ mellon_id, terms, FUN=function(x) DUE %in% x)
+mean(student_ever_DUE_2$major_school_name_2) # never occurs as second school
+
+student_always_DUE = aggregate(major_school_name_1 ~ mellon_id, terms, FUN=function(x) DUE %in% unique(x) & length(unique(x)) == 1)
+mean_always_DUE = mean(student_always_DUE$major_school_name_1)
+
+student_first_DUE = aggregate(major_school_name_1 ~ mellon_id, terms, FUN=function(x) DUE == x[1])
+mean_first_DUE = mean(student_first_DUE$major_school_name_1)
+```
+`r round(mean_ever_DUE*100,1)`% of students are part of it at least once, overall in `r round(terms_DUE*100,2)`% of terms. However, `r round(mean_always_DUE*100,2)`% of students have been part of DUE in all of their terms whereas `r round(mean_first_DUE*100,2)`% have been in their first term.
+
+```{r, fig.height=3, fig.width=8, echo=F}
+ggplot(term_features, aes(fill=(school_1 == DUE), x=term_num)) + 
+    geom_bar(position="stack", stat="count") +
+    labs(title = "Distribution of DUE over terms",
+       x = "Term number",
+       y = "Frequency", fill="part of DUE")
+```
+The share of DUE students decreases over time. Few students (`r round((mean_ever_DUE-mean_first_DUE)*100,1)`%) join DUE after their first term.
+
+```{r, echo=F, fig.height=3, fig.width=8}
+student_ever_DUE = merge(student_ever_DUE, students[,c("mellon_id", "dropout", "admitdate")], by="mellon_id")
+student_first_DUE = merge(student_first_DUE, students[,c("mellon_id", "dropout", "admitdate")], by="mellon_id")
+student_always_DUE = merge(student_always_DUE, students[,c("mellon_id", "dropout", "admitdate")], by="mellon_id")
+
+ggplot(student_ever_DUE, aes(x=admitdate, fill=major_school_name_1))+
+  geom_bar(stat="count") +
+    labs(title = "Distribution of DUE over admission",
+       x = "Admission",
+       y = "Frequency", fill="Ever part of DUE")
+```
+The school is much often assigned for students admitted in later years.
+
+# Dropout
+```{r, include=F}
+dropout_ever_DUE = mean(student_ever_DUE$dropout[student_ever_DUE$major_school_name_1==TRUE], na.rm=T)
+dropout_never_DUE = mean(student_ever_DUE$dropout[student_ever_DUE$major_school_name_1==FALSE], na.rm=T)
+
+dropout_first_DUE = mean(student_first_DUE$dropout[student_first_DUE$major_school_name_1==TRUE], na.rm=T)
+dropout_not_first_DUE = mean(student_first_DUE$dropout[student_first_DUE$major_school_name_1==FALSE], na.rm=T)
+
+dropout_always_DUE = mean(student_always_DUE$dropout[student_always_DUE$major_school_name_1==TRUE], na.rm=T)
+dropout_not_always_DUE = mean(student_always_DUE$dropout[student_always_DUE$major_school_name_1==FALSE], na.rm=T)
+```
+
+`r round(dropout_ever_DUE*100,1)`% of students that have ever been part of DUE drop out, compared to `r round(dropout_never_DUE*100,2)`% among those who have never been.
+
+`r round(dropout_first_DUE*100,1)`% of students that have been part of DUE in first term drop out, compared to `r round(dropout_not_first_DUE*100,2)`% among those who have not been.
+
+`r round(dropout_always_DUE*100,1)`% of students that have always been part of DUE drop out, compared to `r round(dropout_not_always_DUE*100,2)`% among those who have not always been.
+
+
+```{r, include=F}
+# Example transcripts
+source("inspect_student.R")
+DUE_students = sample(student_ever_DUE$mellon_id[student_ever_DUE$major_school_name_1==TRUE],5)
+for (s_id in DUE_students) {
+  inspect_student(s_id)
+}
+```
+
+# How are DUE students different from others?
+## Do they study a shorter time at UCI?
+```{r}
+num_terms = aggregate(term_num ~ mellon_id, term_features, FUN=max)
+student_ever_DUE = merge(student_ever_DUE, num_terms, by="mellon_id")
+is_DUE = student_ever_DUE$major_school_name_1==TRUE
+dropout = student_ever_DUE$dropout==TRUE
+
+terms_DUE_grads = mean(student_ever_DUE$term_num[is_DUE&!dropout], na.rm=T)
+terms_non_DUE_grads = mean(student_ever_DUE$term_num[!is_DUE&!dropout], na.rm=T)
+
+terms_DUE_DO = mean(student_ever_DUE$term_num[is_DUE&dropout], na.rm=T)
+terms_non_DUE_DO = mean(student_ever_DUE$term_num[!is_DUE&dropout], na.rm=T)
+```
+Graduates both ever been at DUE or not usually study `r round(terms_DUE_grads,1)` or  `r round(terms_non_DUE_grads,1)` terms. Dropouts ever been at DUE only study `r round(terms_DUE_DO,1)` compared to `r round(terms_non_DUE_DO,1)`.
+
+## Is it the ones that did not declare their major or were unaffiliated in the first term?
+```{r, include=F}
+term_features_1 = subset(term_features, term_num==1)
+is_DUE = term_features_1$school_1==DUE
+unaff = mean(term_features_1$major_1=="UNAFFILIATED", na.rm=T)
+unaff_DUE = mean(term_features_1$major_1[is_DUE]=="UNAFFILIATED", na.rm=T)
+unaff_non_DUE = mean(term_features_1$major_1[!is_DUE]=="UNAFFILIATED", na.rm=T)
+undec_DUE = mean(term_features_1$major_1[is_DUE]=="UNDECLARED", na.rm=T)
+undec_non_DUE = mean(term_features_1$major_1[!is_DUE]=="UNDECLARED", na.rm=T)
+```
+Almost no students are unaffiliated in the first term (`r round(unaff*100,2)`%), neither DUE nor non-DUE students.
+
+Among the DUE students `r round(undec_DUE*100,1)`% did not declare a major in the first term. However, among the remainder this is the case for `r round(undec_non_DUE*100,1)`%. 
+
+## Is it international students?
+```{r, include=F}
+student_ever_DUE = merge(student_ever_DUE, bg_sub[,c('mellon_id','int_student')], by="mellon_id")
+is_DUE = student_ever_DUE$major_school_name_1==TRUE
+dropout = student_ever_DUE$dropout==TRUE
+int_student = student_ever_DUE$int_student==TRUE
+
+int_DUE = mean(student_ever_DUE$int_student[is_DUE], na.rm=T)
+int_non_DUE = mean(student_ever_DUE$int_student[!is_DUE], na.rm=T)
+```
+The ratio of international students only differs slightly between ever DUE and never DUE students (`r round(int_DUE*100,1)`% vs `r round(int_non_DUE*100,1)`%).

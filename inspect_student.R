@@ -1,15 +1,11 @@
 source('read_data.R')
 
-students = get_student_sub()
-bg = get_student_background_data(ids = students$mellon_id)
-# get terms
-terms = get_term_data(ids = students$mellon_id)
-# get courses
-courses = get_course_data(ids = students$mellon_id)
+#students = get_student_sub()
+#bg = get_student_background_data(ids = students$mellon_id)
+#terms = get_term_data(ids = students$mellon_id)
+#courses = get_course_data(ids = students$mellon_id)
 
-sample(students$mellon_id, 10)
 
-s_id = "2992237"
 get_majors = function(term) paste(na.omit(c(term['major_name_1'], term['major_name_2'], term['major_name_3'], term['major_name_4'])), collapse=", ")
 get_schools = function(term) paste(na.omit(unique(c(term['major_school_name_abbrev_1'], term['major_school_name_abbrev_2'], term['major_school_name_abbrev_3'], term['major_school_name_abbrev_4']))), collapse=", ")
 get_courses = function(term, s_courses) {
@@ -43,8 +39,11 @@ inspect_student = function(s_id) {
   cat(if(student$dropout) "dropped out" else paste0("graduated in ", paste(grad_majors, collapse=", ")))
   cat("\n\n")
 }
-inspect_student(s_id)
 
-for (s_id in sample(students$mellon_id, 10)) {
-  inspect_student(s_id)
-}
+#sample(students$mellon_id, 10)
+#s_id = "2992237"
+#inspect_student(s_id)
+
+#for (s_id in sample(students$mellon_id, 10)) {
+#  inspect_student(s_id)
+#}
