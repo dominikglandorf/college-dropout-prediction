@@ -84,7 +84,6 @@ student_vars = merge(student_vars,
                                                 "ell",
                                                 "single_parent",
                                                 "foster_care",
-                                                "raised_by_single_parent",
                                                 "household_size_app",
                                                 "distance_from_home",
                                                 "sport_at_admission",
@@ -93,6 +92,11 @@ student_vars = merge(student_vars,
                                                 "toefl_score",
                                                 "ielts_score" )],
                      by="mellon_id")
+student_vars$female = student_vars$female == "yes"
+student_vars$low_income = student_vars$low_income == "yes"
+
+# AP transformation
+# print(c(unique(student_background_data[,'ap_code_1'])))
 
 # save to file
 write_csv(student_vars, file.path(path_data, 'student_vars.csv'))
