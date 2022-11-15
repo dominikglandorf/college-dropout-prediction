@@ -95,5 +95,16 @@ term_features = merge(term_features,
                       by=c("mellon_id","term_code"))
 
 
+to_copy = c("citizenship","city_residence","state_residence","zip_code","year_study","esl_program","sport","registration_status","honors","gpa_cumulative", "gpa_term","acadyr")
+
+
+# check before include:
+# probation_status, active_student, full_time, netpayer_fee_assessed, major_minor, maj_tag     
+#names(terms)
+#unique(terms$maj_tag1)
+#ggplot(data = terms, aes(x = acadyr)) +
+#  geom_bar()
+
+round(colMeans(!is.na(terms)), 2)
 # save to file
 write_csv(term_features, file.path(path_data, 'term_features_subset.csv'))
