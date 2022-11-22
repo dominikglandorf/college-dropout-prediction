@@ -1,0 +1,360 @@
+,"Requested variables (1 = yes, 0 = no)",Variable Name,Change,Variable Definition,Historical Data Available,Questions,Source File/Table,Source Column,Data Type,Sample Data,Unique Value,Missing,Notes
+1,1,student_term_sid (pk),,"randomly generated sequence number that acts as the unique 
+identifier of the records",,,,,,,,Missing,
+0,1,mellon_id,,Anonymized student ID,,,Xref_Deidentify_Student,Mellon_ID,integer,162776,48993 obs.,0,
+,0,group_a,,indicates if the student is part of mellon group A,,,XREF_DEIDENTIFY_STUDENT,Group_A,binary,0,"0: 97.25%
+1: 2.74% (6060)",0,
+,0,mellon_enr_dt_a,,indicates the date when the student enrolled in Group A,,,XREF_DEIDENTIFY_STUDENT,Mellon_Enr_Dt_A,time,09/03/2019 0:00:00,many unique number,97.25%,
+,0,group_b,,indicates if the student is part of mellon group B,,,XREF_DEIDENTIFY_STUDENT,Group_B,,,,Missing,
+,0,mellon_enr_dt_b,,indicates the date when the student enrolled in Group B,,,XREF_DEIDENTIFY_STUDENT,Mellon_Enr_Dt_B,time,09/16/2019 10:51:00,many unique number,99.23%,
+0,1,term_code,,"Term code of the current term (Banner term code). This is the code used in different administrative databases. Term_desc is the translation of the values in this column. 
+03: Winter quarter
+14: Spring quarter
+51: Summer
+92: Fall quarter",,XL:the definition of the value,SDW.D_Time_Academic_Term,Term_Code,integer,202003,"202003: 16.12%
+201992: 16.59%
+202014: 15.27%
+202092: 9.7%
+202051: 5.62%
+201903: 15.74% 
+201914: 15.11%
+201951: 5.82%
+NA",0.91%,
+0,1,term_desc,,Long name of the current term and year (eg: Spring Semester 2019),,,SDW.D_Time_Academic_Term,Term_Name_and_Year,string,Winter Quarter 2020,"Fall Semester 2020：0.16%
+Fall Quarter 2020：9.61%
+Summer 2020：5.57%
+Spring Semester 2020：0.25%
+Spring Quarter 2020：15.13%
+Winter Quarter 2020: 15.97%
+Fall Semester 2019：0.25%
+Fall Quarter 2019： 16.43%
+Summer 2019：5.76%
+Spring Semester 2019：0.23%
+Spring Quarter 2019：14.97%
+Winter Quarter 2019：15.6%",,
+0,1,term_part_code,,"A subdivision of an Academic Term. Not all terms have separate Term Parts (in which case the Term Part is 1), but some do. Example: For Academic Term ending in 51 (Summer), 92 (Fall) , 03 (Winter) , 14 (Spring)",,"XW: Not sure if this is the definition for term_part_code. The data in this column in the student term spreadsheet is like 3, 29, 14, 51.
+
+This is the last two characters of Term_Code - DM 20201015",SDW.D_Time_Academic_Term,Legacy_Term_Code,integer,3,"03: 31.62%
+92: 26.08%
+14: 30.03%
+51: 11.2%
+25: 0.09%
+1L: 0.02%
+8F: 0.42%
+0S: 0.49%
+NA",0.13%,"XW: Not sure if this data type is integer, but based on it's definition, I think it is integer."
+0,1,term_part_desc,,"The description of the Term Part. Values are : Fall Quarter, Winter Quarter, Spring Quarter, Summer Quarter",,,SDW.D_Time_Academic_Term_Part,Term_Part_Desc,string,Winter Quarter,"Winter Quarter: 31.62%
+Fall Quarter: 26.08%
+Spring Quarter: 30.03%
+Summer Quarter (Med School) and Summer Academic Term (OIR): 11.2%
+Summer-1: 0.09%
+Summer Law Session: 0.02%
+Fall Semester: 0.42%
+Spring Semester: 0.49%
+NA",0.13%,XL: double check the definition document. 
+,0,enrollment_open_date,,The date on which enrollment opens for the term.,,,SDW.D_Time_Academic_Term_Part,Registration_Start_Date,integer,05/20/2019,"05/20/2019: 31.27%
+11/23/2020: 55.28%
+02/24/2020: 8.88%
+03/01/2019: 4.55%
+NA",99.41%,XL: high missing rate
+,0,enrollment_close_date,,The date on which enrollment closes for the term.,,,SDW.D_Time_Academic_Term_Part,Registration_End_Date,integer,09/16/2019,"09/16/2019: 31.27%
+12/14/2020: 55.28%
+03/11/2020: 8.88%
+08/06/2019: 4.55%
+NA",99.41%,XL: high missing rate
+,0,instruction_start_date,,The date on which instruction begins.,,,SDW.D_Time_Academic_Term_Part,Instruction_Start_Date,integer,09/26/2019,"09/26/2019: 31.27%
+01/06/2020: 55.28%
+03/30/2020: 8.88%
+05/03/2019: 4.55%
+NA",99.4%,XL: high missing rate
+,0,instruction_end_date,,The last date of instruction.,,,SDW.D_Time_Academic_Term_Part,Instruction_End_Date,integer,12/06/2019,"12/06/2019: 31.27%
+03/13/2020: 55.28%
+06/05/2020: 8.88%
+08/06/2019: 4.55%
+NA",99.41%,XL: high missing rate
+0,1,citizenship,new column to be added,"Student's citizenship status. Values are U.S. Citizen, Resident alien, International Student.",,,,,,,,,
+1,1,household_size,new column to be added,,,,,,,,,,
+,0,city_residence,new column to be added,Student's current city of residence,,,DUE.SIR,PermCity,,"PLEASANTON 
+BAKERSFIELD 
+GARDEN GROVE",,,
+,0,state_residence,new column to be added,Student's current state of residence,,,DUE.SIR,PermState,,"CA
+MD
+FL",,,
+,0,country_residence,new column to be added,Student's current country of residence,,"if they're attending UCI, wouldn’t this always be US?
+",,,,,,missing,
+,0,zip_code,new column to be added,Student's current ZIP/postal code,,"add ""-"" if zip is 9 digits, only if it is a US address",DUE.SIR,PermZip,,"94587 
+928073630 
+",,,
+1,1,housing_status,see if we can find this column,,,,,,,,,,"add from ""Student_Adhoc_20200318"""
+1,1,housing_status_desc,see if we can find this column,,,,,,,,,,"add from ""Student_Adhoc_20200318"""
+1,1,housing_complex_name,see if we can find this column,,,,,,,,,,"add from ""Student_Adhoc_20200318"""
+1,1,currently_enrolled,new column to be added,indicates if the student is currently enrolled at UCI,,,,,,,,,
+1,1,cumulative_term_enroll,,"Recoded: total terms student has enrolled at UCI, excluding summer",,,,,,,,,
+0,1,levelcd,new column to be added,"identify freshman/junior. Values are as follows:
+1	Freshman
+2	Sophomore
+3	Junior
+4	Senior
+5	Masters
+6	Doctoral 1
+7	Doctoral 2
+8	Doctoral 2a
+L	Post Bacc
+P	Teacher Ed Post Bacc or Intern Resident
+R	
+S	Special
+",,,DUE.SIR,levelcd,integer,2,"2: 72.34%
+3: 25.98%
+4: 1.53%
+6: 0.13%
+NA","19,52%","Value: 1, 2, 3, 4, L;"
+,0,pascd,,,,,DUE.SIR,,,,,,
+0,1,active_student,,Indicates whether the student is active in the current term. Values are 1 and 0,,"What's the difference between it and ""currently_enrolled""?",SDW.D_Student_Attr_Term,Active_Student_Ind,binary,1,"0: 0.88%
+1: 99.11",0,What does 0 mean? 
+0,1,new_student,,Indicates whether the student is considered new in the current term. Values are 1 and 0,,"Definition of value: 
+""C"" (82%); ""N""; ""P""; ""R""; ""S""; ""V""; ""X""; ""&""",SDW.D_Student_Attr_Term,Reg_status_Code,,C,"C: 8.222858e-01
+N: 5.281791e-02
+P: 1.056449e-01
+S: 7.755874e-03
+R: 9.097626e-03
+V: 2.320869e-03
+&: 7.252716e-05
+X: 4.532948e-06",0,"XW: Not sure the data type for this one. Based on the definition, it should be binary, but in the student term data spreadsheet, the data is like C, N, P, etc."
+0,1,full_time,,Indicates whether the student is considered Full Time in the current term. Values are 1 and 0,,"XL: students in the historical terms are all 0, it shoud reflect students' status at that time instead of now. ",SDW.D_Student_Attr_Term,Full_Time_Status_Ind,binary,1,"1: 83.98%
+0: 16.01%",0,
+,0,ferpa_blocked,,Indicates whether the student has requested a FERPA block. Values are 1 and 0,,,Stg_Hulk.SS_INFO,SS_FERPA_BLOCK,,,NA: numeric(0),1 (100%),
+,0,class_standing,,"Description of the student's class standing, as represented in Banner",,It's the same as year_study,SDW.D_Class_Standing,Class_Standing_Code,integer,3,,0.018%,can use year_study instead
+0,1,year_study,XL: double check how it different from class_standing,"Year of study. Values are Freshman, Sophomore, Junior, Senior and Graduate",,,SDW.D_Class_Standing,Class_Standing_Desc,factor,Junior,"Credential: 9.065895e-06
+Doctoral-1: 5.488493e-02
+Doctoral-2: 2.279619e-02
+Doctoral-2A: 1.350818e-03
+Freshman: 9.235881e-02
+Junior: 2.334105e-01
+Limited: 2.370732e-03
+Masters: 6.854270e-02
+Senior: 3.638099e-01
+Sophomore: 1.604663e-01",0,
+1,1,second_baccalaureate,,Indicates whether the student is pursuing a second Baccalaureate degree. Values are 1 and 0,,,SDW.D_Student_Attr_Career,Second_Baccalaureate_Ind,binary,1,"1: 14.45%
+0: 85.54%
+NA",99.02%,
+1,1,dual_degree,,Indicates whether the student has been admitted into a Dual-Degree graduate program (eg: MD/PH.D.). Values are 1 and 0. Always 0 for undergraduate students.,,,SDW.D_Student_Attr_Career,Dual_Degree_Code,binary,0,"0: 99.86%
+1: 0.13%",0,
+1,1,dual_degree_active,,"If the student is a Dual Degree student (see dual_degree), indicates whether this segment is active in the current term. Values are 1 and 0. Always 1 for undergraduates and for graduates who are not Dual Degree students.",,"XW: In dual_degree, the definition says this is graduate program, and always 0 for undergraduate student. Would it be 0 for undergraduates and for graduates who are not Dual Degree students?",SDW.D_Student_Attr_Career,Dual_Degree_Code,binary,0,"0: 99.86%
+1: 0.13",0,
+0,1,honors,add to this table from student_background table,indicates if the student is part of the honors program currently,,,SDW.D_Student_Attr_Term,Deans_Honor_Ind,integer,6,"0: 9.999840e-01 
+6: 1.603875e-05
+NA ","43,88%",
+1,1,honors_program,,The name of the Honors program in which the student participates.,,,,,integer,0,"0: 100%
+NA",99.3%,
+1,1,deans_list,,Indicates whether the student is on the Dean's List for the most recent term. Values are 1 (Dean's List) and 0 (not Dean's List),,,,,,,NA: numeric(0),1(100%),
+1,1,concurrent_law,,"Indicates whether the student is a concurrently-enrolled Law student.
+Values are 1 and 0",,,,,binary,0,"NA
+0: 100%",99.16%,
+1,1,ucdc,,"Indicates whether the student is a current enrollee in the UC-DC program.
+Values are 1 and 0",,,SDW.D_Student_Attr_Term,UCDC_Ind,binary,0,"0: 99.95%
+1: 0.04%",0,
+1,1,absentia,,Indicates whether the student is enrolled in absentia. Values are 1 and 0,,,SDW.D_Student_Attr_Term,In_Absentia_Ind,binary,0,"0: 99.92%
+1: 0.07%",0,
+1,1,rotc,,Indicates whether the student is a current enrollee in the ROTC program. Values are 1 and 0,,,SDW.D_Student_Attr_Career,ROTC_Ind,binary,0,0: 100%,0,
+1,1,reduced_ed_fee,,Indicates whether the student has qualified for a reduced educational fee. Values are 1 and 0,,,SDW.D_Student_Attr_Term,Reduced_Edu_Fee_Ind,binary,0,"0: 98.46%
+1.53%",0,
+1,1,education_abroad,,Indicates whether the student has ever participated in education program abroad by the current term. Values are 1 and 0,,,,,,,NA: numeric(0),100%,
+1,1,education_opportunity,,Indicates whether the student has ever enrolled in Education Opportunity Program by the current term. Values are 1 and 0,,,,,,,NA: numeric(0),100%,
+0,1,esl_program,,Indicates whether the student has ever enrolled in English as a Second Language Program by the current term. Values are 1 and 0,,,DUE.SIS_Cumulative,ESLStudent,binary,0,"0: 99.84%
+1: 0.15%",0,
+0,1,sport,,Name of the student-athlete's sport.,,"D_Sport keys not present in fact
+have to wait for SDW to add this.",SDW.D_Sport,Sport_Desc,,,NA: numeric(0),100%,
+1,1,sport_gender,,Gender of the student-athlete's sport. Value are M and F.,,"D_Sport keys not present in fact.
+have to wait for SDW to add this.",SDW.D_Sport,Sport_Gender_Code,,,NA: numeric(0),100%,
+1,1,entry_level_writing,,Description indicating whether the student has met his/her Entry Level Writing requirement,,,SDW.D_University_Requirement,Entry_Level_Writing_Desc,string,Requirement satisfied,"Course passed: 19.61%
+n/a: 0.42%
+Requirement not satisfied: 6.36%
+Requirement satisfied: 59.87%
+Test passed: 1.65%
+Unknown: 12.06%
+NA",3.89%,
+1,1,american_history_desc,,Description indicating whether the student has met his/her American History requirement,,,SDW.D_University_Requirement,American_History_Desc,string,Requirement satisfied,"Course passed: 2.52%
+n/a: 0.42%
+Requirement not satisfied: 9.45%
+Requirement satisfied: 75.52%
+Unknown: 12.06%
+NA",3.89%,
+1,1,american_intitutions_desc,,Description indicating whether the student has met his/her American Institutions requirement,,,SDW.D_University_Requirement,American_Inst_Desc,string,Requirement satisfied,"Course passed: 6.41%
+n/a: 0.43%
+Requirement not satisfied: 5.91%
+Requirement satisfied: 75.16%
+Unknown: 12.06%
+NA",3.89%,
+0,1,probation_status,,Probation status description.,,Key not present in fact. Will have to wait for SDW to add this.,SDW.D_Academic_Standing,Legacy_Academic_Standing_Desc,,,NA: numeric(0),100%,
+0,1,registration_status,,"The student's registration status in the current term. Values are Continuing, New, Returning, Visitor -- UC, Cancelled, Unknown.",Yes,,SDW.D_Student_Attr_Term,Reg_Status_Desc,string,Continuing,,33%,"why for some students, some terms are missing (all come from 2018) but some are non-missing. e.g. 163776, 183932; 
+Unknown are embedded in students with other status, can we recode them?"
+1,1,veteran_status,,"Description if the student's military veteran status, as defined by the Registrar's Office.",,,SDW.D_Student,Veteran_Ind,binary,0,"0: 90.23%
+1: 9.76%",0,
+1,1,pell_eligible_flag,"add new column; 
+change to lower case",indicates if the student is eligible for Pell grant at this term,,,,,,,,,
+0,1,major_count,,The number of majors for the student,,,SDW.D_School_Maj,Maj_Name,integer,1,"1: 94%
+2: 6%
+3: almost zero
+4: almost zero",0,
+0,1,netpayer_fee_assessed,,The fees assessed to the student as a non-resident netpayer,,what about CA residents? Null?,SDW.F_012_Student_Enr,NetPayer_Orig_Fee_Assessed_Amt,integer,"5207,04",many unique numbers,0,
+1,1,current_units_attempted_grade,,"The number of units the student is attempting in the current term, counting only courses taken for a letter grade",,,SDW.F_012_Student_Enr,Current_Units_Attm_Graded,integer,"12,00",,0,
+0,1,current_units_attempted_pnp,,"The number of units the student is attempting in the current term, counting only courses taken on a pass/no-pass basis",,,SDW.F_012_Student_Enr,Current_Units_Attm_PNP,integer,"0,00",many unique numbers,0,
+1,1,current_units_attempted_lowerdiv,,"The number of units the student is attempting in the current term, counting only lower division courses",,,SDW.F_012_Student_Enr,Current_Units_Attm_LD,integer,"0,00",many unique numbers,0.68%,
+1,1,current_units_attempted_upperdiv,,"The number of units the student is attempting in the current term, counting only upper division courses",,,SDW.F_012_Student_Enr,Current_Units_Attm_UD,integer,"12,00",many unique numbers,0,
+1,1,current_units_attempted_graduate,,"The number of units the student is attempting in the current term, counting only graduate courses",,,SDW.F_012_Student_Enr,Current_Units_Attm_Grad,integer,"0,00",many unique numbers,0,
+1,1,current_units_attempted_online,,"The number of units the student is attempting in the current term, counting online courses only",,,SDW.F_012_Student_Enr,Current_Units_Attm_Online,integer,"0,00",many unique numbers,0,
+1,1,current_units_attempted_oncampus,,"The number of units the student is attempting in the current term, counting both courses taken for a letter grade and pass/no-pass. Does not count any units the student is attempting off-campus.",,,SDW.F_012_Student_Enr,Current_Units_Attm,integer,"12,00",many unique numbers,0,
+1,1,current_units_completed_graded,,"The number of units the student completed in the current term, counting only courses taken for a letter grade",,,SDW.F_012_Student_Enr,Current_Units_Comp_Graded,integer,"12,00",many unique numbers,0,
+1,1,current_units_completed_pnp,,"The number of units the student completed in the current term, counting only courses taken on a pass/no-pass basis",,,SDW.F_012_Student_Enr,Current_Units_Comp_PNP,integer,"0,00",many unique numbers,0,
+1,1,current_units_completed_lowerdiv,,"The number of units the student completed in the current term, counting only lower division courses",,,SDW.F_012_Student_Enr,Current_Units_Comp_LD,integer,"0,00",many unique numbers,0,
+1,1,current_units_completed_upperdiv,,"The number of units the student completed in the current term, counting only upper division courses",,,SDW.F_012_Student_Enr,Current_Units_Comp_UD,integer,"12,00",many unique numbers,0,
+1,1,current_units_completed_graduate,,"The number of units the student completed in the current term, counting only graduate courses",,,SDW.F_012_Student_Enr,Current_Units_Comp_Grad,integer,,NA: numeric(0),100%,
+1,1,current_units_completed_online,,"The number of units the student completed in the current term, counting online courses only",,,SDW.F_012_Student_Enr,Current_Units_Comp_Online,integer,"0,00",many unique numbers,0,
+1,1,current_units_completed_oncampus,,"The number of units the student completed in the current term, counting both courses taken for a letter grade and pass/no-pass. Does not count any units the student completed off-campus.",,,SDW.F_012_Student_Enr,Current_Units_Comp,integer,"12,00",many unique numbers,0,
+0,1,current_units_completed_transfer,,"The number of transferable units the student is credited with from other institutiuons, in the current term only",,,SDW.F_012_Student_Enr,Current_Units_Comp_Xfr,integer,"0,00",0: 100%,0,
+0,1,current_units_completed_total,,"The number of units completed in the current term, whether at UCI or another institution. Note that this value is only available following the end of the term",,,SDW.F_012_Student_Enr,Current_Units_Comp_Total,integer,"12,00",many unique numbers,0,
+1,1,cumulative_units_attempted_grade,,"The number of units the student has attempted across all terms, counting only courses taken for a letter grade",,,SDW.F_012_Student_Enr,Cum_Units_Attm_Graded,integer,"24,00",many unique numbers,1.59%,
+0,1,cumulative_units_attempted_pnp,,"The number of units the student has attempted across all terms, counting only courses taken on a pass/no-pass basis",,,SDW.F_012_Student_Enr,Cum_Units_Attm_PNP,integer,2,many unique numbers,0,
+1,1,cumulative_units_attempted_lower,,"The number of units the student has attempted across all terms, counting only lower division courses",,,?,?,,,NA: numeric(0),100%,
+1,1,cumulative_units_attempted_upper,,"The number of units the student has attempted across all terms, counting only upper division courses",,,?,?,,,NA: numeric(0),100%,
+1,1,cumulative_units_attempted_graduate,,"The number of units the student has attempted across all terms, counting only graduate courses",,,?,?,,,NA: numeric(0),100%,
+1,1,cumulative_units_attempted_online,,"The number of units the student has attempted across all terms, counting online courses only",,,?,?,,,NA: numeric(0),100%,
+1,1,cumulative_units_attempted_oncampus,,The number of units the student has attempted across all terms,,"XW: This definition does not contain all info like other definitions. It does not have the content like ""counting oncampus courses only"".",SDW.F_012_Student_Enr,Cum_Units_Attm,,,NA: numeric(0),100%,
+1,1,cumulative_units_attempted_total,,"The number of units the student has attempted across all terms, whether at UCI or another institution",,,?,?,,,NA: numeric(0),100%,
+1,1,cumulative_units_completed_graded,,"The number of units the student has completed across all terms, counting only courses taken for a letter grade",,,SDW.F_012_Student_Enr,Cum_Units_Comp_Graded,integer,"24,00",many unique numbers,1.59%,
+0,1,cumulative_units_completed_pnp,,"The number of units the student has completed across all terms, counting only courses taken on a pass/no-pass basis",,,SDW.F_012_Student_Enr,Cum_Units_Comp_PNP,integer,"2.8;
+512",many unique numbers,0,
+1,1,cumulative_units_completed_lowerdiv,,"The number of units the student has completed across all terms, counting only lower division courses",,,?,?,,,NA: numeric(0),100%,
+1,1,cumulative_units_completed_upperdiv,,"The number of units the student has completed across all terms, counting only upper division courses",,,?,?,,,NA: numeric(0),100%,
+1,1,cumulative_units_completed_graduate,,"The number of units the student has completed across all terms, counting only graduate courses",,,?,?,,,NA: numeric(0),100%,
+1,1,cumulative_units_completed_online,,"The number of units the student has completed across all terms, counting online courses only",,,SDW.F_012_Student_Enr,Cum_Units_Comp_Online,integer,"0,00",many unique numbers,1.41%,
+1,1,cumulative_units_completed_oncampus,,"The number of units the student has completed across all terms, counting both courses taken for a letter grade and pass/no-pass. Does not count any units the student completed off-campus.",,,SDW.F_012_Student_Enr,Cum_Units_Comp,integer,"24,00",many unique numbers,1.59%,
+0,1,cumulative_units_completed_transfer,,"The number of transferable units the student is credited with from other institutiuons, whether earned prior to or after matriculation to the campus, across all terms",,,SDW.F_012_Student_Enr,Cum_Units_Comp_Xfr,integer,"90,00",many unique numbers,0,"can be deleted if it's the same with ""curr_units_completed_transfer"""
+0,1,cumulative_units_completed_total,,"The total number of units the student has completed across all terms, couting both courses taken for a letter grade and on a pass/no-pass basis, and counting courses taken at UCI or another institution.",,,SDW.F_012_Student_Enr,Cum_Units_Comp_Total,integer,"114,00",many unique numbers,0,
+0,1,total_terms_enrolled_excluding_summer,,"The number of terms in which the student has enrolled, not including summer terms",,,SDW.F_012_Student_Enr,Total_Terms_Enrld_Excl_Smr,integer,"3,00",many unique numbers,0,
+1,1,total_terms_enrolled_including_summer,,"The number of terms in which the student has enrolled, including summer terms",,,SDW.F_012_Student_Enr,Total_Terms_Enrld_Incl_Smr,integer,"3,00",many unique numbers,0,
+0,1,gpa_term,,The student's grade point average for all courses attempted in the current term only.,,,SDW.F_012_Student_Enr,GPA_Term,integer,"3,33",many unique numbers,0,
+0,1,gpa_cumulative,,The student's cumulative grade point average.,,,SDW.F_012_Student_Enr,GPA_Cum,integer,"3,35",many unique numbers,0,
+0,1,major_code_1,,"The three digit code identifying the major, as defined in Banner. This code represents the current view of the major, even for historical data.",,,SDW.D_School_Maj,Maj_Code,integer,220,many unique numbers,0,
+0,1,major_name_1,,"The current long name associated with this major code, as it appears on the Registrar's course and major database. Example: ""Biochemistry and Molecular Biology""",,,SDW.D_School_Maj,Maj_Name,string,"Criminology, Law and Society",many unique numbers,0,
+0,1,major_name_abbrev_1,,"The current abbreviation associated with this major code. Example, ""BIOCHEM""",,,SDW.D_School_Maj,Maj_Name_Abbrev,string,CRM/LAW,many unique numbers,0,
+1,1,major_school_code_1,,"School code (aka College Code) for the school offering the major, as it appears in Banner. Prior to the Banner go-live, School Code and Legacy School code are the same.",,,SDW.D_School_Maj,School_Code,integer,97,many unique numbers,0,
+1,1,major_school_name_1,,"Standard (up to 50 characters) school name for the school offering this major. Example, ""School of Engineering""",,,SDW.D_School_Maj,School_Name,string,School of Social Ecology,many unique numbers,0,
+1,1,major_school_name_abbrev_1,,"Abbreviated school name for the school offering this major. Example, ""Engr.""",,,SDW.D_School_Maj,School_Name_Abbrev,string,Soc Ecol,many unique numbers,0,
+,0,major_subcampus_1,,"The locational subcampus of this Major, using UCI definition. General Campus or Health Sciences.",,,SDW.D_School_Maj,Subcampus,string,General campus,"General campus: 97.07%
+Health science: 1.94%
+Missing data: 0.67%
+Unknown: 0.3%",0,
+,0,major_funding_1,,Indicates whether this major is state funded or self-supporting.,,,,,,,NA: numeric(0),100%,
+0,1,major_cip_code_1,,"The CIP (Classification of Instructional Programs) code for this major, as defined by the National Center for Education Statistics (NCES) and available at https://nces.ed.gov/ipeds/cipcode",,,,,,,,missing,
+0,1,major_cip_code_historical_1,,"The most recent historical CIP (Classification of Instructional Programs) code for this major, as defined by the National Center for Education Statistics (NCES) and available at https://nces.ed.gov/ipeds/cipcode",,,,,,,,missing,
+0,1,major_cip_name_1,,"The descriptive name of the CIP (Classification of Instructional Programs) code for this major, as defined by the National Center for Education Statistics (NCES) and available at https://nces.ed.gov/ipeds/cipcode",,,,,,,,missing,
+0,1,major_cip_series_code_1,,"The CIP series for this major. It includes the first two digits of the CIP code,",,,,,,,,missing,
+0,1,major_cip_series_name_1,,The description of the CIP Series,,,,,,,,missing,
+0,1,major_cip_category_code_1,,The CIP category for this major.,,,,,,,,missing,
+0,1,major_cip_category_name_1,,The description of the CIP category,,,,,,,,missing,
+0,1,major_stem_1,,"Indicates whether this is a STEM (Science, Technology, Engineering, Math) major. Values are 0 and 1",,,SDW.D_School_Maj,Stem_Ind,binary,0,"0: 57.45%
+1: 42.54%",0,
+0,1,major_degree_granting_1,,Indicates whether degrees are granted in this major. Values are 0 and 1,,,SDW.D_School_Maj,Degree_Granting_Maj_Ind,binary,1,"0: 6.35%
+1: 93.64%",0,
+1,1,major_graduated_1,,Indicates whether the student has graduated with this major in the current term. Values are 0 and 1,,,,,,,NA: numeric(0),100%,
+1,1,major_code_2,,"The three digit code identifying the major, as defined in Banner. This code represents the current view of the major, even for historical data.",,,SDW.D_School_Maj,Maj_Code,integer,632,many unique numbers,98.73%,
+1,1,major_name_2,,"The current long name associated with this major code, as it appears on the Registrar's course and major database. Example: ""Biochemistry and Molecular Biology""",,,SDW.D_School_Maj,Maj_Name,string,Psychology and Social Behavior,many unique numbers,98.73%,
+1,1,major_name_abbrev_2,,"The current abbreviation associated with this major code. Example, ""BIOCHEM""",,,SDW.D_School_Maj,Maj_Name_Abbrev,string,PSY BEH,many unique numbers,98.73%,
+0,1,major_school_code_2,,"School code (aka College Code) for the school offering the major, as it appears in Banner. Prior to the Banner go-live, School Code and Legacy School code are the same.",,,SDW.D_School_Maj,School_Code,integer,97,many unique numbers,98.73%,
+1,1,major_school_name_2,,"Standard (up to 50 characters) school name for the school offering this major. Example, ""School of Engineering""",,,SDW.D_School_Maj,School_Name,string,School of Social Ecology,many unique numbers,98.73%,
+1,1,major_school_name_abbrev_2,,"Abbreviated school name for the school offering this major. Example, ""Engr.""",,,SDW.D_School_Maj,School_Name_Abbrev,string,Soc Ecol,many unique numbers,98.73%,
+,0,major_subcampus_2,,"The locational subcampus of this Major, using UCI definition. General Campus or Health Sciences.",,,SDW.D_School_Maj,Subcampus,string,General campus,"General campus: 98.42%
+Health science: 1.17%
+Missing data: 0.39%
+NA",98.73%,
+,0,major_funding_2,,Indicates whether this major is state funded or self-supporting.,,,,,,,NA: numeric(0),100%,
+1,1,major_cip_code_2,,"The CIP (Classification of Instructional Programs) code for this major, as defined by the National Center for Education Statistics (NCES) and available at https://nces.ed.gov/ipeds/cipcode",,,,,,,,missing,
+1,1,major_cip_code_historical_2,,"The most recent historical CIP (Classification of Instructional Programs) code for this major, as defined by the National Center for Education Statistics (NCES) and available at https://nces.ed.gov/ipeds/cipcode",,,,,,,,missing,
+1,1,major_cip_name_2,,"The descriptive name of the CIP (Classification of Instructional Programs) code for this major, as defined by the National Center for Education Statistics (NCES) and available at https://nces.ed.gov/ipeds/cipcode",,,,,,,,missing,
+1,1,major_cip_series_code_2,,"The CIP series for this major. It includes the first two digits of the CIP code,",,,,,,,,missing,
+1,1,major_cip_series_name_2,,The description of the CIP Series,,,,,,,,missing,
+1,1,major_cip_category_code_2,,The CIP category for this major.,,,,,,,,missing,
+1,1,major_cip_category_name_2,,The description of the CIP category,,,,,,,,missing,
+0,1,major_stem_2,,"Indicates whether this is a STEM (Science, Technology, Engineering, Math) major. Values are 0 and 1",,,SDW.D_School_Maj,Stem_Ind,binary,0,"0: 81.1%
+1: 18.89%
+NA",98.73%,
+1,1,major_degree_granting_2,,Indicates whether degrees are granted in this major. Values are 0 and 1,,,SDW.D_School_Maj,Degree_Granting_Maj_Ind,binary,1,"0: 0.64%
+1: 99.35%
+NA",98.73%,
+1,1,major_graduated_2,,Indicates whether the student has graduated with this major in the current term. Values are 0 and 1,,,,,,,NA: numeric(0),100%,
+1,1,major_code_3,,"The three digit code identifying the major, as defined in Banner. This code represents the current view of the major, even for historical data.",,,SDW.D_School_Maj,Maj_Code,integer,540,"000: 20%
+540: 40%
+699: 20%
+851: 20%
+NA",99.99%,
+1,1,major_name_3,,"The current long name associated with this major code, as it appears on the Registrar's course and major database. Example: ""Biochemistry and Molecular Biology""",,,SDW.D_School_Maj,Maj_Name,string,Mathematics,"Mathematics: 40%
+Political Science: 20%
+Social Ecology: 20%
+Undeclared: 20%
+NA",99.99%,
+1,1,major_name_abbrev_3,,"The current abbreviation associated with this major code. Example, ""BIOCHEM""",,,SDW.D_School_Maj,Maj_Name_Abbrev,string,MATH,"MATH: 40%
+POL SCI: 20%
+SOCECOL: 20%
+SSSU-UD: 20%
+NA",99.99%,
+0,1,major_school_code_3,,"School code (aka College Code) for the school offering the major, as it appears in Banner. Prior to the Banner go-live, School Code and Legacy School code are the same.",,,SDW.D_School_Maj,School_Code,integer,9,"09: 20%
+62: 40%
+65: 20%
+97: 20%",99.99%,
+1,1,major_school_name_3,,"Standard (up to 50 characters) school name for the school offering this major. Example, ""School of Engineering""",,,SDW.D_School_Maj,School_Name,string,School of Physical Sciences,"School of Physical Sciences: 40%
+School of Social Ecology: 20%
+School of Social Sciences: 20%
+Summwe Session: 20%
+NA",99.99%,
+1,1,major_school_name_abbrev_3,,"Abbreviated school name for the school offering this major. Example, ""Engr.""",,,SDW.D_School_Maj,School_Name_Abbrev,string,Phys Sci,"Phys Sci: 40%
+Soc Ecol: 20%
+Soc Sci: 20%
+Summer Session: 20%
+NA",99.99%,
+,0,major_subcampus_3,,"The locational subcampus of this Major, using UCI definition. General Campus or Health Sciences.",,,SDW.D_School_Maj,Subcampus,string,General campus,"General campus: 80%
+Missing data: 20%
+NA",99.99%,
+,0,major_funding_3,,Indicates whether this major is state funded or self-supporting.,,,,,,,NA: numeric(0),100%,
+1,1,major_stem_3,,"Indicates whether this is a STEM (Science, Technology, Engineering, Math) major. Values are 0 and 1",,,SDW.D_School_Maj,Stem_Ind,binary,0,"0: 60%
+1: 40%
+NA",99.99%,
+1,1,major_degree_granting_3,,Indicates whether degrees are granted in this major. Values are 0 and 1,,,SDW.D_School_Maj,Degree_Granting_Maj_Ind,binary,0,"0: 20%
+1: 80%
+NA",99.99%,
+1,1,major_graduated_3,,Indicates whether the student has graduated with this major in the current term. Values are 0 and 1,,,,,,,NA: numeric(0),100%,
+1,1,major_code_4,,"The three digit code identifying the major, as defined in Banner. This code represents the current view of the major, even for historical data.",,XL: CIP CODE MISSING,SDW.D_School_Maj,Maj_Code,integer,540,"&: 50%
+540: 50%
+NA",99.99%,
+1,1,major_name_4,,"The current long name associated with this major code, as it appears on the Registrar's course and major database. Example: ""Biochemistry and Molecular Biology""",,,SDW.D_School_Maj,Maj_Name,string,Mathematics,"Mathematics: 50%
+Unknown: 50%
+NA",99.99%,
+1,1,major_name_abbrev_4,,"The current abbreviation associated with this major code. Example, ""BIOCHEM""",,,SDW.D_School_Maj,Maj_Name_Abbrev,string,MATH,"MATH: 50%
+Unknown: 50%
+NA",99.99%,
+1,1,major_school_code_4,,"School code (aka College Code) for the school offering the major, as it appears in Banner. Prior to the Banner go-live, School Code and Legacy School code are the same.",,,SDW.D_School_Maj,School_Code,integer,62,"&: 50%
+62: 50%
+NA",99.99%,
+1,1,major_school_name_4,,"Standard (up to 50 characters) school name for the school offering this major. Example, ""School of Engineering""",,,SDW.D_School_Maj,School_Name,string,School of Physical Sciences,"School of Physical Sciences: 50%
+Unknown: 50%
+NA",99.99%,
+1,1,major_school_name_abbrev_4,,"Abbreviated school name for the school offering this major. Example, ""Engr.""",,,SDW.D_School_Maj,School_Name_Abbrev,string,Phys Sci,"Phys Sci: 50%
+Unknown: 50%
+NA",99.99%,
+,0,major_subcampus_4,,"The locational subcampus of this Major, using UCI definition. General Campus or Health Sciences.",,,SDW.D_School_Maj,Subcampus,string,General campus,"General campus: 50%
+Unknown: 50%
+NA",99.99%,
+,0,major_funding_4,,Indicates whether this major is state funded or self-supporting.,,,,,,,NA: numeric(0),100%,
+1,1,major_stem_4,,"Indicates whether this is a STEM (Science, Technology, Engineering, Math) major. Values are 0 and 1",,,SDW.D_School_Maj,Stem_Ind,bianry,1,"1: 100%
+NA",99.99%,
+1,1,major_degree_granting_4,,Indicates whether degrees are granted in this major. Values are 0 and 1,,,SDW.D_School_Maj,Degree_Granting_Maj_Ind,binary,1,"1: 100%
+NA",99.99%,
+1,1,major_graduated_4,,Indicates whether the student has graduated with this major in the current term. Values are 0 and 1,,,,,,,NA: numeric(0),100%,
+0,1,major_minor,new added (only in historical data),,,,MAJORINFO.DW_MINOR,"REGDB.MINORS_LOOKUP
+join on MINORS_CODE=DW_MINOR",,,,,
+,0,current_ind,change to lower case,Indicates if the record is current. Values are 1 for current 0 for expired,,"XW: 1. Not sure if it is capital i, or lowercase L in ""Ind"".  2. I don't see 143-158 variables in this doc shown in ""student_term"" spreadsheet.",,,,,,,missing
+,0,eff_start_dt,change to lower case,the date the record is effective as of,,,,,,,,,missing
+,0,eff_end_dt,change to lower case,"the date the record stopped being effective as of. values will be 999999 for current records
+or the date",,,,,,,,,missing
+,0,MAPPING_NM,,This is an audit column - will not appear in the file,,,,,,,,,missing
+,0,LAST_UPDATED_DT,,This is an audit column - will not appear in the file,,,,,,,,,missing

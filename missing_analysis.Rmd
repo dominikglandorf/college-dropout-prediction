@@ -1,0 +1,252 @@
+---
+title: "Missing Analysis"
+author: "Dominik Glandorf"
+date: "2022-11-22"
+output: pdf_document
+---
+
+# Background variables
+```{r, include=F}
+student_vars <- read.csv("~/EWS/Variable_request_EWS_Student.csv")
+requested_vars = student_vars$Variable.name
+source('read_data.R')
+students = get_student_sub()
+bg = get_student_background_data(students$mellon_id)
+available_vars = names(bg)
+expected_available = requested_vars[requested_vars %in% available_vars]
+missing_in_data = requested_vars[!requested_vars %in% available_vars]
+unexpected_in_data = available_vars[!available_vars %in% requested_vars]
+types = sapply(bg, class)
+```
+
+The spreadsheet knows `r length(requested_vars)` variables. The corresponding file contains `r length(available_vars)` columns. The expected variables `r paste(missing_in_data, collapse=",")` are not in the dataset. Therefore exist variables `r paste(unexpected_in_data, collapse=",")` 
+
+## Requested and available variables
+```{r, echo=F, comment=NA}
+predictors=c()
+blacklist="mellon|student_sid|group|desc|cohort" # should not be used as a predictor
+is_derived_from="sat|act|ap_|birth" # is used in feature engineering
+for (var in expected_available) {
+  print(paste0('Variable: ', var, ", type: ", types[var]), quote=F)
+  
+  unique_values = unique(bg[,var])
+  num_unique = nrow(unique_values)
+  first_values = unique_values[1:min(num_unique, 5),var]
+  
+  print(paste0('Values (', num_unique, ' unique): ', paste0(pull(first_values,var),collapse=", "), if(num_unique > 5) ', ...' else ''),quote=FALSE)
+  
+  missing = mean(is.na(bg[,var]))
+  print(paste0("Missing: ", round(missing*100, 1), "%"), quote=F)
+  
+  # print statusses
+  if (grepl( blacklist , var)) {
+    print("should not be used as a predictor",quote=F)
+  } else if (grepl( is_derived_from , var)) {
+    print("is used in feature engineering and hence not included",quote=F)
+  } else {
+    # filter for variables that contain enough data, are continuous or a factor
+    if(missing < 0.5 &
+       (types[var] %in% c("numeric,integer") | num_unique <= 10)) {
+      predictors = c(predictors, var)
+    }
+  }
+  print("_____________________",quote=F)
+  
+  
+}
+```
+These are the predictors that remain when filtering for less than 50% missing, our blacklist and variables that need to be somehow transformed first: 
+```{r, echo=F, comment=NA}
+predictors
+```
+
+
+## Variables that are unexpectedly in the dataset
+```{r, echo=F}
+usable = c()
+for (var in unexpected_in_data) {
+  print(paste0('Variable: ', var, ", type: ", types[var]), quote=F)
+  
+  unique_values = unique(bg[,var])
+  num_unique = nrow(unique_values)
+  first_values = unique_values[1:min(num_unique, 5),var]
+  
+  print(paste0('Values (', num_unique, ' unique): ', paste0(pull(first_values,var),collapse=", "), if(num_unique > 5) ', ...' else ''),quote=FALSE)
+  
+  missing = mean(is.na(bg[,var]))
+  print(paste0("Missing: ", round(missing*100, 1), "%"), quote=F)
+  print("",quote=F)
+  
+  # filter for variables that contain enough data, are continuous or a factor
+  if(missing < 0.5 &
+     !grepl( blacklist , var) &
+     (types[var] %in% c("numeric,integer") | num_unique <= 10)) {
+    usable = c(usable, var)
+  }
+  print("_____________________",quote=F)
+}
+```
+We could think about using `r paste(usable,collapse=",")`.
+
+
+# Student by term
+```{r, include=F}
+term_vars <- read.csv("~/EWS/Variable_request_EWS_StudentTerm.csv")
+requested_vars = term_vars$Variable.Name
+
+terms = get_term_data(students$mellon_id)
+available_vars = names(terms)
+expected_available = requested_vars[requested_vars %in% available_vars]
+missing_in_data = requested_vars[!requested_vars %in% available_vars]
+unexpected_in_data = available_vars[!available_vars %in% requested_vars]
+types = sapply(terms, class)
+```
+
+The spreadsheet knows `r length(requested_vars)` variables. The corresponding file contains `r length(available_vars)` columns. The expected variables `r paste(missing_in_data, collapse=",")` are not in the dataset. Therefore exist variables `r paste(unexpected_in_data, collapse=",")` 
+
+## Requested and available variables
+```{r, echo=F, comment=NA}
+predictors=c()
+blacklist="mellon_id|group_" # should not be used as a predictor
+is_derived_from="___" # is used in feature engineering
+for (var in expected_available) {
+  print(paste0('Variable: ', var, ", type: ", types[var]), quote=F)
+  
+  unique_values = unique(terms[,var])
+  num_unique = nrow(unique_values)
+  first_values = unique_values[1:min(num_unique, 5),var]
+  
+  print(paste0('Values (', num_unique, ' unique): ', paste0(pull(first_values,var),collapse=", "), if(num_unique > 5) ', ...' else ''),quote=FALSE)
+  
+  missing = mean(is.na(terms[,var]))
+  print(paste0("Missing: ", round(missing*100, 1), "%"), quote=F)
+  
+  # print statusses
+  if (grepl( blacklist , var)) {
+    print("should not be used as a predictor",quote=F)
+  } else if (grepl( is_derived_from , var)) {
+    print("is used in feature engineering and hence not included",quote=F)
+  } else {
+    # filter for variables that contain enough data, are continuous or a factor
+    if(missing < 0.5 &
+       (types[var] %in% c("numeric,integer") | num_unique <= 10)) {
+      predictors = c(predictors, var)
+    }
+  }
+  print("_____________________",quote=F)
+}
+```
+These are the predictors that remain when filtering for less than 50% missing, our blacklist and variables that need to be somehow transformed first: 
+```{r, echo=F, comment=NA}
+predictors
+```
+
+
+## Variables that are unexpectedly in the dataset
+```{r, echo=F}
+usable = c()
+for (var in unexpected_in_data) {
+  print(paste0('Variable: ', var, ", type: ", types[var]), quote=F)
+  
+  unique_values = unique(terms[,var])
+  num_unique = nrow(unique_values)
+  first_values = unique_values[1:min(num_unique, 5),var]
+  
+  print(paste0('Values (', num_unique, ' unique): ', paste0(pull(first_values,var),collapse=", "), if(num_unique > 5) ', ...' else ''),quote=FALSE)
+  
+  missing = mean(is.na(terms[,var]))
+  print(paste0("Missing: ", round(missing*100, 1), "%"), quote=F)
+  print("",quote=F)
+  
+  # filter for variables that contain enough data, are continuous or a factor
+  if(missing < 0.5 &
+     !grepl( blacklist , var) &
+     (types[var] %in% c("numeric,integer") | num_unique <= 10)) {
+    usable = c(usable, var)
+  }
+  print("_____________________",quote=F)
+}
+```
+We could think about using `r paste(usable,collapse=",")`.
+
+
+# Student by term by course
+```{r, include=F}
+course_vars <- read.csv("~/EWS/Variable_request_EWS_StudentTermCourse.csv")
+requested_vars = course_vars$Variable.name
+
+courses = get_course_data(students$mellon_id)
+available_vars = names(courses)
+expected_available = requested_vars[requested_vars %in% available_vars]
+missing_in_data = requested_vars[!requested_vars %in% available_vars]
+unexpected_in_data = available_vars[!available_vars %in% requested_vars]
+types = sapply(terms, class)
+```
+
+The spreadsheet knows `r length(requested_vars)` variables. The corresponding file contains `r length(available_vars)` columns. The expected variables `r paste(missing_in_data, collapse=",")` are not in the dataset. Therefore exist variables `r paste(unexpected_in_data, collapse=",")` 
+
+## Requested and available variables
+```{r, echo=F, comment=NA}
+predictors=c()
+blacklist="mellon_id|group_" # should not be used as a predictor
+is_derived_from="___" # is used in feature engineering
+for (var in expected_available) {
+  print(paste0('Variable: ', var, ", type: ", types[var]), quote=F)
+  
+  unique_values = unique(courses[,var])
+  num_unique = nrow(unique_values)
+  first_values = unique_values[1:min(num_unique, 5),var]
+  
+  print(paste0('Values (', num_unique, ' unique): ', paste0(pull(first_values,var),collapse=", "), if(num_unique > 5) ', ...' else ''),quote=FALSE)
+  
+  missing = mean(is.na(courses[,var]))
+  print(paste0("Missing: ", round(missing*100, 1), "%"), quote=F)
+  
+  # print statusses
+  if (grepl( blacklist , var)) {
+    print("should not be used as a predictor",quote=F)
+  } else if (grepl( is_derived_from , var)) {
+    print("is used in feature engineering and hence not included",quote=F)
+  } else {
+    # filter for variables that contain enough data, are continuous or a factor
+    if(missing < 0.5 &
+       (types[var] %in% c("numeric,integer") | num_unique <= 10)) {
+      predictors = c(predictors, var)
+    }
+  }
+  print("_____________________",quote=F)
+}
+```
+These are the predictors that remain when filtering for less than 50% missing, our blacklist and variables that need to be somehow transformed first: 
+```{r, echo=F, comment=NA}
+predictors
+```
+
+
+## Variables that are unexpectedly in the dataset
+```{r, echo=F}
+usable = c()
+for (var in unexpected_in_data) {
+  print(paste0('Variable: ', var, ", type: ", types[var]), quote=F)
+  
+  unique_values = unique(courses[,var])
+  num_unique = nrow(unique_values)
+  first_values = unique_values[1:min(num_unique, 5),var]
+  
+  print(paste0('Values (', num_unique, ' unique): ', paste0(pull(first_values,var),collapse=", "), if(num_unique > 5) ', ...' else ''),quote=FALSE)
+  
+  missing = mean(is.na(courses[,var]))
+  print(paste0("Missing: ", round(missing*100, 1), "%"), quote=F)
+  print("",quote=F)
+  
+  # filter for variables that contain enough data, are continuous or a factor
+  if(missing < 0.5 &
+     !grepl( blacklist , var) &
+     (types[var] %in% c("numeric,integer") | num_unique <= 10)) {
+    usable = c(usable, var)
+  }
+  print("_____________________",quote=F)
+}
+```
+We could think about using `r paste(usable,collapse=",")`.
+

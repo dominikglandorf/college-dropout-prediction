@@ -1,0 +1,184 @@
+"Update  (1 = yes, 0 = no)","Requested variables (1 = yes, 0 = no)",Variable name,Change,Variable definition,Questions,Unique Value,Missing,Notes,Source File/Table,Source Column,Transformations,Data Type,Sample Data
+0,1,mellon_id,,Anonymized student ID,,46044,0,,XREF_DEIDENTIFY_STUDENT,Mellon_ID,,"bigint
+integer",162766
+,0,group_a,,indicates if the student is part of Group_A,,"0: 97.2%
+1: 2.79% (1209 unique student)",0,,,,,binary,1
+,0,mellon_enr_dt_a,,the date student consented to be part of Group A,,many unique values,"97,20%",,,,,time,09/19/2019 00:00:00
+,0,group_b,,indicates if the student is part of Group_B,,"0: 99.18%
+1: 0.81% (337 unique student)",0,,,,,binary,1
+,0,mellon_enr_dt_b,,the date student consented to be part of Group B,,many unique values,"99,18%",,,,,time,09/24/2019 00:00:00
+0,1,term_code,,"Term code of the current term (Banner term code);
+03: Winter quarter
+14: Spring quarter
+51: Summer
+92: Fall quarter",,"201903: 19.39%
+201914: 17.96%
+201992: 21.56%
+202003: 21.57%
+202014: 19.5%
+202051: approximate 0",0,,SDW.D_Time_Academic_Term,Term_Code,,"varchar(6)
+integer",201992
+0,1,term_desc,,Name of the current term,,missing,missing,,,,,string,Fall 2019
+0,1,course_code,,The five digit code representing the course section,,19494 courses,0,,ODS_SIS.ODS_SOC_INFO,SC_COURSE_CODE,,"numeric(5,0)
+integer",17291
+1,1,course_code_concat,,"For cross-listed courses in Banner, this is the course codes for all cross-listings, aggregated together from lowest (numerically) to highest. If course_code_concat for two (or more) courses are the same, the two (or more) courses are cross-listed. If a course is not cross-listed, then this contains the single course_code.",have to wait for SDW.F_010_Student_Enr_Daily to add CRS_Section_SID,NA: numeric(0),1(100%),,SDW.D_CRS_Section,CRN_Concat,,"varchar(30)
+integer",6218567135
+1,1,course_title,,Descriptive title of the course (eg: Calculus),,many unique values,58%,XL: it is all missing before term 201903,ODS_SIS.ODS_SOC_INFO,SC_COURSE_TITLE,,"varchar(19)
+string",CANCER EPI/ONCOLOGY
+0,1,course_dept_code_and_num,,"The full ""name"" of the course. EG: ""MATH 10a""",,4685 unique values,0,,ODS_SIS.ODS_SOC_INFO,"SC_DEPT_NAME, SC_COURSE_NO","concatenate SC_DEPT_NAME, SC_COURSE_NO","varchar(15)
+string",EPIDEM 299
+0,1,course_section_num,,"The course number for the course section. This is often the same as Course_Number, but does not have to be.",,617 unique values,0,,ODS_SIS.ODS_SOC_INFO,SC_SECTION_NO,,"varchar(5)
+factor","299, K, A, 80"
+1,1,course_section_title,,"Descriptive title of the course section. This is often the same as Course Title, but does not have to be.",have to wait for SDW.F_010_Student_Enr_Daily to add CRS_Section_SID,NA: numeric(0),1(100%),,SDW.D_CRS_Section,Crs_Section_Title,,varchar(3),254
+0,1,school_code,,"School code (aka College Code) for the school offering the course, as it appears in Banner. Prior to the Banner go-live, School Code and Legacy School code are the same.",have to wait for SDW.F_010_Student_Enr_Daily to add CRS_Section_SID,NA: numeric(0),1(100%),,SDW.D_CRS_Section,,join on SOC_INFO.SC_COURSE_CODE=DUE.ECF.SchoolCode,varchar(3),96
+0,1,school_name_abbrev,,"Abbreviated school name of the school offering the course. Example, ""Engr.""","Just to confirm, this is the school that offers the course, not the school that houses the student's major - -this column is not available in SDW but it is in DUE. Although the data in due is only partial. I can map it from DUE for now. And once SDW has this available i can change the mapping and have more complete data - DM 2/13",NA: numeric(0),1(100%),,SDW.D_CRS_Section,,join on ECF.SchoolCode=School.SchoolID,varchar(25),Humanities
+0,1,dept_code,,"Numeric code representing the department offering the course, as it appears in the KFS organizational hierarchy",have to wait for SDW.F_010_Student_Enr_Daily to add CRS_Enr_Section_SID,NA: numeric(0),1(100%),,SDW.D_Crs_Enr_Section,dept_code,,varchar(10),05488
+0,1,dept_name_abbrev,,Abbreviated department name for the department offering the course. In Banner this is distinct from the subject of the course. In the legacy system it is always the same as the subject of the course.,have to wait for SDW.F_010_Student_Enr_Daily to add CRS_Enr_Section_SID,NA: numeric(0),1(100%),,SDW.D_Crs_Enr_Section,dept_name,,varchar(25),EARTHSS
+0,1,course_level,,"Indicates whether the course is a graduate level or undergraduate level course, with further detail for undergraduate courses specifying whether the course is lower division or upper division. Values are Graduate, Lower Division, Upper Division",have to wait for SDW.F_010_Student_Enr_Daily to add CRS_Enr_Section_SID,NA: numeric(0),,"XL: in general missing a lot, totally missing after 201903",SDW.D_Crs_Enr_Section,Crs_Level,,varchar(30),Undergraduate
+1,1,course_type,,Inidicates what type of course it is: Act: Activity; Col: Colloquium; Dis: Discussion; Fld: Field Work; Lab: Laboratory; Lec: Lecture; Qiz: Quiz; Res: Research; Sem: Seminar; Stu: Studio; Tut: Tutorial,,,,,ODS_SIS.ODS_SOC_INFO,SC_CLASS_TYPE,,"varchar(8)
+string",DIS
+,0,meeting_schedule,,the time and day this course meets,"new column requested - 12/9 RY. This column comes from a freehand typed
+column in SOC_INFO. the column requires extensive cleaning, it still may not be perfect- DM 2/4",many unique values,"1,88E-05",,ODS_SIS.ODS_SOC_INFO,SC_INSTRUCTORS_TEXT,,"varchar(100)
+time",Tu  Th         8:00- 9:20p
+,0,meeting_location,,the location where this course meets,"new column requested - 12/9 RY This column comes from a freehand typed
+column in SOC_INFO. the column requires extensive cleaning, it still may not be perfect- DM 2/4",many unique values,"5,36%",,ODS_SIS.ODS_SOC_INFO,SC_INSTRUCTORS_TEXT,,"varchar(100)
+factor",ICS2 162
+1,1,enroll_restrictions,,Course enrollment restrictions;,I need to know what this field looks like and decide if we need to parse it. Are there multiple columns for restrictions? - added sample data to the right. Yes we do need to parse it.,"A: 7.244218e-01
+B: 4.847212e-02
+C: 1.787356e-02
+D: 1.943953e-02
+E: 1.517409e-06
+G: 1.820891e-03
+H: 2.883078e-05
+I: 3.389892e-03
+J: 1.780073e-02
+K: 7.767921e-02
+L: 4.453596e-02
+M: 4.779839e-03
+N: 1.735916e-03
+O: 4.253298e-03
+S: 3.036336e-03
+X: 3.073057e-02","34,77%",,ODS_SIS.ODS_SOC_INFO,SC_RESTRICTION1,,"char(1)
+string",A
+1,1,enroll_restrictions_desc,,description of enrollment restrictions,,"Graduate only: 7.767921e-02 
+Prerequisite required:  7.244218e-01 
+Pass/Not Pass option only:  1.943953e-02 
+Lower-division only:  1.820891e-03
+Major only: 4.453596e-02 
+Upper-division only:  1.780073e-02 
+Authorization code required:  4.847212e-02
+Non-school major only: 4.253298e-03 
+Fee required: 1.787356e-02 
+Separate authorization codes required to add, drop, or change enrollment: 3.073057e-02 
+Satisfactory/Unsatisfactory only:   3.036336e-03  
+School major only:  1.735916e-03 
+Seniors only: 3.389892e-03 
+Non-major only:  4.779839e-03 
+Juniors only: 2.883078e-05 
+Freshmen only: 1.517409e-06 
+NA","34,77%",,,,"DECODE(SC_RESTRICTION1,
+'A', 'Prerequisite required',
+'B', 'Authorization code required',
+'C', 'Fee required',
+'D','Pass/Not Pass option only',
+'E','Freshmen only',
+'F','Sophomores only',
+'G','Lower-division only',
+'H','Juniors only',
+'I','Seniors only',
+'J','Upper-division only',
+'K','Graduate only',
+'L','Major only',
+'M','Non-major only',
+'N','School major only',
+'O','Non-school major only',
+'R','Biomedical Pass/Fail course (School of Medicine only)',
+'S','Satisfactory/Unsatisfactory only',
+'X','Separate authorization codes required to add, drop, or change enrollment',NULL)
+",string,Lower-division only
+,0,class_weeks,,Total number of weeks class is held in the term,,NA: numeric(0),1(100%),,,,,,
+,0,instructor_id,"change column name to instructor_id, create xref, anonymize instructors",Instructor name,This comes from a freehand typed column in SOC. I will have to create a cross reference table for isntructors to deidentify their names per Arum.,NA: numeric(0),1(100%),,ODS_SIS.ODS_SOC_INFO,SC_INSTRUCTORS_TEXT,,varchar(100),"Mathew, A. 1"
+,0,instructor_title,,Role of instructor,do not currently have this data available. Once I have access to the regstrar's db I can see if this can be pulled from somewhere.,NA: numeric(0),1(100%),,,,,,NULL
+0,1,honors_course,,Indicates whether this is an honors course. Values are 0 and 1,dont have the sid,NA: numeric(0),1(100%),,SDW.D_Crs_Section,Honors_Ind,,tinyint,null
+,0,transferring_inst,,Indicates the postsecondary institution from which course credit was transferred.,dont have the sid,NA: numeric(0),1(100%),,SDW.D_Crs_Section,Xfring_Inst,,varchar(80),null
+0,1,online_course,,Indicates whether this is an online course. Values are 0 and 1,dont have the sid,NA: numeric(0),1(100%),,SDW.D_Crs_Section,online_ind,,char(1),
+0,1,min_units,,"The minimum number of units that can be earned for this course. If the course is not variable-units, Min_Units and Max_Units are the same. If course course is variable units, Min_Units is less than Max_Units.",,"0:3.482869e-01
+1:4.805183e-02
+2:4.358585e-02
+3:1.604070e-02
+4:5.214247e-01
+5:1.057997e-02
+6:5.278604e-03
+7:8.264831e-04
+8:3.784006e-03
+9:9.403101e-05
+10:1.336230e-04
+11:9.106161e-05
+12:2.207254e-04
+16:1.601497e-03",0,,ODS_SIS.ODS_SOC_INFO,SC_MIN_UNITS,,"int
+integer",2.0
+0,1,max_units,,"The maximum number of units that can be earned for this course. If the course is not variable-units, Min_Units and Max_Units are the same. If course course is variable units, Max_Units is greater than Min_Units.",,"2:5.553661e-02
+3:2.384638e-02
+4:2.882027e-01
+5:1.549359e-01
+6:1.282825e-02
+8:8.704321e-02
+12:2.408248e-01
+16:1.135392e-01
+24:1.049345e-02
+30:3.410373e-04
+32:6.269839e-03
+45:1.049345e-03
+48:2.623364e-05
+50:5.063092e-03 ","96,22%",,ODS_SIS.ODS_SOC_INFO,SC_MAX_UNITS,,"int
+integer",4.0
+,0,max_seats,,Maximum enrollments available,,many unique values,0,,ODS_SIS.ODS_SOC_INFO,SC_MAX_SEATS,,"int
+integer",138
+,0,students_waitlisted,,Number of students on waitlist,,0 - 60,0,,ODS_SIS.ODS_SOC_INFO,SC_WAIT_LIST_SEATS,,"int
+integer",0
+,0,seats_requested,Wes: when does the data get pulled?,Number of students intended enrollments,,0 - 2061,0,,ODS_SIS.ODS_SOC_INFO,SC_SEATS_REQUESTED,,"int
+integer",4
+,0,in_progress,,Indidates whether the course is currently in progress. Values are 0 and 1,,"0: 0.15%
+1: 99.84%",0,,ODS_SIS.ODS_SOC_INFO,SC_ACTIVE_RECORD_SW,,"numeric(1,0)
+binary",1
+1,1,enrollment_status,,"Description of the entrollment status for the current 
+course, as it appears in Banner. Values are Not Enrolled, Enrolled, Waitlist, Withdrawn",dont have the sid,NA: numeric(0),1(100%),,SDW.D_Crs_Enr_Status,Legacy_Crs_Enr_Status_Desc,,varchar(80),Not Enrolled
+,0,course_syllabus,,Content of the syllabus for this course.,cant map this till we have redshift,NA: numeric(0),1(100%),,Canvas.Course_DIM,syllabus_body,,,
+,0,section_start_at,,Section start date,cant map this till we have redshift,NA: numeric(0),1(100%),,Canvas.Course_Section_DIM,start_at,,datetime,
+,0,section_end_at,,Section end date,cant map this till we have redshift,NA: numeric(0),1(100%),,Canvas.Course_Section_DIM,conclude_at,,datetime,
+1,1,credit_code,,"A two-character code represesenting the type of credit received on completion of the course. 
+Example: I=Incomplete; PN=Pass/No-Pass; SU=Satisfactory/Unsatisfactory; WC=Workload Credit",,"L6:9.561975e-05
+NAT:9.130295e-01
+PN:8.001634e-02
+WC:6.858544e-03
+NA","88,61%",,Mellon.Stg_F19_Grades,CreditCode,,factor,WC
+1,1,repeat_code,,"A two-character code representing if and how this course has been repeated. 
+G0=Repeat of F or NP; G1=Repeat of C- through D-; G2=Satisfaction of incomplete grade; G5=Repeat of C or better; GP=Repeat of Pass/No-Pass; GW=Repeat of Workload Credit course.",,"G0:7.527882e-03
+G1:9.666287e-03
+G2:4.346352e-05
+G5:1.303906e-04
+GP:9.561975e-05
+GW:3.477082e-05
+NAT:9.816932e-01
+PG:8.084215e-04 
+NA","88,61%",,Mellon.Stg_F19_Grades,RepeatCode,,factor,G2
+1,1,workload_credit_only,,"Indicates whether this course is workload credit only.
+ Values are 0 and 1",table currently being built by SDW team. Wait for it to be built in SDW,NA: numeric(0),1(100%),,stg_bk.F_022_Student_Crs_Enr,WC_Ind,,char(1),0
+1,1,include_gpa,,"Indidates whether grade points for this course should be included in the student's GPA. Values are 0 and 1. A course might not be included in GPA calculations because it was not taken for a letter grade (see Gradable_Ind), it was repeated, or it is workload credit only.",table currently being built by SDW team. Wait for it to be built in SDW,NA: numeric(0),1(100%),,stg_bk.F_022_Student_Crs_Enr,GPA_Included_Ind,,"char(1)
+binary",1
+1,1,include_units_attempted,,Indicates whether the units attempted for this course should be included in the student's GPA.  1 = Units attempted for this course are included in GPA calculations; 0 = Units attempted are not included.,equivalent column in SDW not available yet in SDW_Metadata,NA: numeric(0),1(100%),,TB_Fct_SDW020_Student_Course_Enrollment_Daily,Include_Units_Attempted_Ind,,char(1),1
+1,1,include_units_completed,,"Indicates whether the units received for this course should be included in the student's unit totals. Units might not be included if a course is a repeat, for example. 1 = Units received are included in unit totals; 0 = Units received are not included.",equivalent column in SDW not available yet in SDW_Metadata,NA: numeric(0),1(100%),,TB_Fct_SDW020_Student_Course_Enrollment_Daily,Include_Units_Received_Ind,,char(1),1
+0,1,units_attempted,,The number of units the student is attempting by taking this course.,,many unique values,"88,61%",,Mellon.Stg_F19_Grades,Units,,"decimal(10,2)
+integer",3.0
+0,1,units_completed,,The number of units the student actually received for this course.,,many unique values,"88,61%",,Mellon.Stg_F19_Grades,Units,"IF Grade IN ('A+', 'A-', 'A', 'B-', 
+'B+', 'B', 'C', 'C-', 'C+', 'D', 'D-',
+ 'D+') then Units else 0","decimal(10,2)
+integer",2.0
+1,1,midterm_grade,,The student's midterm grade for this course.,table currently being built by SDW team. Wait for it to be built in SDW,NA: numeric(0),1(100%),,stg_bk.F_020_Student_Crs_Enr_Dly,Midterm_Grade,,"decimal(10,2)",
+1,1,final_score_canvas,,"The final score the student received in Canvas, if applicable",cant map this till we have redshift,NA: numeric(0),1(100%),,Canvas.assignment_group_score_fact,final_score,,"decimal(10,2)",
+0,1,final_grade,,The final letter grade the student received for this course.,,many unique values,"33,00%",,Mellon.Stg_F19_Grades,Grade,,"varchar (5)
+string",A-
+,0,final_grade_date,,The date on which the official final grade for this course was assigned.,,many unique values,"88,61%",,Mellon.Stg_F19_Grades,UpdateDate,,"datetime
+time",2020-01-08
+,0,final_grade_official,,"Indidates whether the final grade is official, as 
+determined by the Registrar's Office. Values are 0 and 1",table currently being built by SDW team. Wait for it to be built in SDW,NA: numeric(0),1(100%),,stg_bk.TB_Fct_SDW020_Student_Course_Enrollment_Daily,Final_Grade_Official_ind,,char(1),12/15/2019

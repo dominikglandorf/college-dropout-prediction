@@ -1,0 +1,250 @@
+"Update  (1 = yes, 0 = no)","Requested variables (1 = yes, 0 = no)",Variable name,Variable definition,Data Type,Unique Value,Missing,Sample Data,Historical Data Available,Notes,Questions,Change,Source File/Table,Source Column,Transformations
+0,1,mellon_id,Anonymized student ID; unique identifier of student; used for merging other data,integer,Many,0,411823,Yes,checked,,,XREF_DEIDENTIFY_STUDENT,Mellon_ID,
+1,1,student_sid,This column is the unique identifier of a record. ,integer,Many,0,44034,Yes,checked,,,,Generated Sequence,
+,0,group_a,indicates if the student is part of mellon group A,binary,2,0,1,"No, start from Fall 2019",checked; including two waves of mellon students,,,XREF_DEIDENTIFY_STUDENT,Group_A,
+,0,mellon_enr_dt_a,indicates the date when the student enrolled in Group A,string,many unique values,"98,00%",09/16/2019,"No, start from Fall 2020",checked; including two waves of mellon students,,,XREF_DEIDENTIFY_STUDENT,Mellon_Enr_Dt_A,
+,0,group_b,indicates the date when the student enrolled in Group B,binary,2,0,1,"No, start from Fall 2019",checked; including two waves of mellon students,,,XREF_DEIDENTIFY_STUDENT,Group_B,
+,0,mellon_enr_dt_b,indicates the date when the student enrolled in Group B,time,many unique values,"99,00%",09/16/2019,"No, start from Fall 2020",checked; including two waves of mellon students,,,XREF_DEIDENTIFY_STUDENT,Mellon_Enr_Dt_B,
+1,1,mellon_yr,DERIVED VARIABLE：indicating the cohort year of Mellon sample,integer,2,"99,00%",2019,"No, start from Fall 2021",checked; including two waves of mellon students,,,,,
+0,1,birth_year,Year of birth,integer,75,0,1995,Yes,"checked, recoded",,,DUE.SIS_Cumulative,Birthdate - get_date_part 'YYYY',
+0,1,birth_month,Month of birth,integer,12,0,6,Yes,"checked, recoded",,,DUE.SIS_Cumulative,Birthdate - get_date_part 'MM',
+0,1,gender,Indicates student's gender: F = female  M = male  U = Unknown/not stated  X = Non-binary ,string,4,"0,002",F,Yes,,,,DUE.SIS_Cumulative,Sex,
+0,1,female,DERIVED VARIABLE：Indicates whether the student is female. Values are 1 and 0,binary,2,1%,1,Yes,"derived from ""gender"", code F as 1 and M as 0",,,,,
+1,1,int_student,Indicates whether the student is international student. Values are 1 and 0,binary,2,65%,1,Yes,"might be problematic, currently checking; could be derived from citizenship?",,,"DUE.SIS_Cumulative
+DUE.LookupEthnicCodes","Description
+EthnicCode - decode using LookupEthnicCodes",If ethnicity='International Student' then 1 else 0.
+0,1,ethnicity,"Values are American Indian/Alaskan Native, Asian/Asian American, Black, Hispanic, Pacific Islander, Two or more ethnicities, White non-Hispanic, Unknown / declined to state",string,9,0,Hispanic,Yes,"checked, recoded, code ""Unknown"" as ""Unknown / declined to state""",,,"DUE.SIS_Cumulative
+DUE.LookupEthnicCodes","Description
+EthnicCode - decode using LookupEthnicCodes",
+,0,ethnicity_detail,More detailed information for student's ethnicity,string,23,"0,12",Japanese/Japanese-American,Yes,,,,,,
+0,1,asian,DERIVED VARIABLE：Indicates whether the student is Asian student. Values are 1 and 0,binary,2,10%,1,Yes,"derived from ""ethnicity_detail"", detail can be refered to the data clearning code",,,,,
+0,1,hispanic,DERIVED VARIABLE：Indicates whether the student is Hispanic student. Values are 1 and 0,binary,2,10%,1,Yes,"derived from ""ethnicity_detail"", detail can be refered to the data clearning code",,,,,
+0,1,black,DERIVED VARIABLE：Indicates whether the student is Black student. Values are 1 and 0,binary,2,10%,1,Yes,"derived from ""ethnicity_detail"", detail can be refered to the data clearning code",,,,,
+0,1,white,DERIVED VARIABLE：Indicates whether the student is White student. Values are 1 and 0,binary,2,10%,1,Yes,"derived from ""ethnicity_detail"", detail can be refered to the data clearning code",,,,,
+0,1,urm,"RECODED VARIABLE: Indicates if a student is part of the underrepresented minority group (African American/Black, Hispanic/Latino, American Indian or Native American, Native Hawaiian or Pacific Islander). Values are 1 and 0",binary,2,13%,1,Yes,,,,SDW.D_Lookup_Ethnicity_IPEDS,Ethnicity_IPEDS_URM_Ind,
+0,1,citizenship_app,"Student's citizenship status. Values are US Citizen, Not US Citizen, US Citizen in Transit, Permanent Resident, Unknown ",string,5,0,Permanent Resident,Yes,checked,,,,,
+0,1,first_generation,Code indicating whether student is considered to be first generation college student. Values are 1 and 0,binary,2,45%,1,high missing before 2019,,Double check the definition,,SDW.D_Student_UG_App_Info,First_Generation_Ind,
+0,1,low_income,Code indicating whether student is considered to be low-income. Values are 1 and 0,binary,2,45%,1,Yes,"might beproblematic, not sure if 0 represent non low-income or not states",,,SDW.D_Student_UG_App_Info,Low_Income_Ind,
+,0,low_income_desc,Description of low_income_ind,string,3,1%,Not low income / Not stated,Yes,checked,can we differentiate Not low income / Not stated?,,SDW.D_Student_UG_App_Info,Low_Income_Desc,
+0,1,father_edu_level_code,"1 (No high school), 2 (Some high school), 3 (High school graduate), 4 (No college), 5 (Some college), 6 (2-year college grad), 7 (4-year college grad), 8 (Postgraduate study)",integer,8,"50,00%",3,Yes,checked,,,"DUE.Financial_Aid_Cumulative (Hist)
+
+SDW.D_Student_UG_App_Info (Curr)","DUE - educfather
+
+SDW - Father_Edu_Level_Code",
+,0,father_edu_level_desc,"Values are No high school , Some high school, High school graduate, Some college, 2 year college grad, 4 year college grad, Postgraduate study",string,8,"50,00%",2 year college grad,Yes,checked,,,"DUE - Decode educfather (hist)
+
+SDW.D_Student_UG_App_Info (Curr)","DUE - DECODE(LTRIM(RTRIM(EducFather)), 
+'1', 'No high school',
+'2', 'Some high school',
+'3', 'High school graduate',
+'4', 'No college',
+'5', 'Some college',
+'6', '2 year college grad',
+'7', '4 year college grad',
+'8', 'Postgraduate study', 'Unknown')   (HIST)
+
+SDW - Father_Edu_Level_Desc",
+0,1,mother_edu_level_code,"Values are 1(No high school) , 2(Some high school), 3(High school graduate), 4(Some college), 5(2 year college grad), 6(4 year college grad), 7(Postgraduate study)",integer,7,"49,00%",1,Yes,checked,,,"DUE.Financial_Aid_Cumulative (Hist)
+
+SDW.D_Student_UG_App_Info (Curr)","DUE - educmother
+
+SDW - Mother_Edu_Level_Code",
+,,mother_edu_level_desc,"Values are No high school , Some high school, High school graduate, Some college, 2 year college grad, 4 year college grad, Postgraduate study",string,7,"49,00%",4 year college grad,Yes,checked,,find the mapping,"DUE - Decode educmother (hist)
+
+SDW.D_Student_UG_App_Info (Curr)","DUE - DECODE(LTRIM(RTRIM(EducMother)), 
+'1', 'No high school',
+'2', 'Some high school',
+'3', 'High school graduate',
+'4', 'No college',
+'5', 'Some college',
+'6', '2 year college grad',
+'7', '4 year college grad',
+'8', 'Postgraduate study', 'Unknown')   (HIST)
+
+SDW - Mother_Edu_Level_Desc",
+1,1,first_language,"Category of the student's first language. Values are English only, English/Non-English, Non-English",string,3,"72,00%",English only,high missing rate before students who enrolled before Fall 2017,checked,,,,,
+1,1,ell,"RECODED VARIABLE: Student is English language learner. Values are 1 and 0; ell = 0 if first_language = ""English only"" or first_language = ""English/non-English""; ell = 1 if first_language =""Non-English""",binary,2,"72,00%",1,high missing rate before students who enrolled before Fall 2018,,,check to see if this can be mapped,,,
+1,1,foster_care,"Indicates whether the student receives foster care. 
+Values are 1 and 0",binary,2,"71,00%","0
+1",Yes.,,,,DUE.SIR_Cumulative,FosterCareCd,
+0,1,single_parent,"Indicates whether the student is a single parent.
+Values are 1 and 0",binary,2,"46,00%","0
+1",Yes.,,,,DUE.SIR_Cumulative,SingleParentFlg -- need to check on this,
+1,1,raised_by_single_parent,Indicates whether the student was raised by single parent. Values are 1 and 0,binary,,"missing
+100%",,No,,,,DUE.SIR,KSgleParentFlg? -- need to check on this,
+0,1,household_size_app,"Household size 
+(number of people living together)",integer,16,74%,3,Yes,,,,DUE.Financial_Aid_Cumulative,HouseHoldSize,
+0,1,city_residence_app,"Student's current city of residence: Not US Citizen, Permanent Resident, US Citizen, US Citizen in Transit",string,many unique values,<1%,"PLEASANTON 
+BAKERSFIELD 
+GARDEN GROVE",Yes,,,,DUE.SIR,PermCity,
+,0,state_residence_app,Student's current state of residence,string,many unique values,"15,00%","CA
+MD
+FL",Yes,,,,DUE.SIR,PermState,
+,0,country_residence_app,Student's current country of residence,string,many unique values,66%,Canada,Yes,,"if they're attending UCI, wouldn’t this always be US?
+",,,,
+,0,zip_code_app,Student's current ZIP/postal code,string,many unique values,"0,07","94587 
+928073630 
+",Yes,,"add ""-"" if zip is 9 digits, only if it is a US address",,DUE.SIR,PermZip,
+0,1,distance_from_home,Student's distance from home to campus,integer,many unique values,8%,1200,Yes,"add from ""Student_Adhoc_20200318"";
+almost all the mellon_a students have this variable non-missing.",,,,,
+0,1,geo_category,"Student's geographical area (county/state): Foreign Student
+Non-OC Southern CA
+Orange County
+Other CA
+Out of State US",string,,0%,Foreign Student,Yes,"add from ""Student_Adhoc_20200318""; derive from permanent state and county",,,,,
+,0,application_term_code,Term code of the term for which the student is applying for admission (Banner term code),double,,65%,201192,Yes,,,,,,
+,0,application_term_desc,Long name of the term and year for which the student is applying (eg: Spring Semester 2019),string,many,65%,2011 Fall Quarter,Yes,"XL: not accurate, need to be recoded, recommend to use application_term_code",,,,,
+1,1,application_status,"how the student first entered UCI
+Values are 2nd Bacc,Freshmen,Junior,Limited,Senior,Sophomore,Transfer
+",string,7,72%,Transfer,Yes,"Problematic: Students missing this var dropped out at some point, so the definition is not accurate.",,map this column,,,
+1,1,admitdate,indicates the term the student was admitted at UCI,string,many unique values,"2,40%",F04,Yes,"XL: It seems that if the admitdate is empty, the student doesn't have course level data.",,,DUE.SIS_Cumulative,AdmitDate,
+0,1,sport_at_admission,"Name of the sport the student will play, as supplied at the time of admission.",string,11,46%,SP,Yes,,"this column only has the code of the sport. 
+Need conversion values",,SIR_Cumulative,SpoCd1,
+,0,cal_res_at_app,"The student's California residency at the time of application. Values are California Resident, Bona-Fide Resident, Non-California Resident",string,3,"46,00%",California Resident,Yes,,"DECODE (N - Non-California Resident
+R - California Resident
+B - Bona-Fide Resident)",,SIR_Cumulative,ResCd,
+0,1,entry_units_completed_transfer,"The number of transferable units the student is credited with upon matriculation to the campus
+(not counting transfer units the student may have earned subequent to matriculation)",double,many unique values,46%,105,Yes,,,,DUE.SIR,Units,pick the value from the oldest record
+,0,hs_name,Name of high school,string,many unique values,46%,ARROYO HS,Yes. Start F10.,,have to find the diff between two columns,,DUE.SIR,LstSchName or HSName,
+0,1,hs_gpa,High school GPA,double,many unique values,71%,"3,41",Yes,,convert to numeric,,,,
+0,1,sat_math_score,Best SAT Math score,double,many unique values,47%,720,Yes,,convert to numeric,,DUE.SIR,BstSAT1MathSr,max(SATScore) group by student_Id
+1,1,sat_verb_score,Best SAT Verb score,double,many unique values,"79,00%",710,Yes. Start F11,,convert to numeric,,DUE.SIR,BstSat1ReadSr,max(SATScore) group by student_Id
+0,1,sat_writing_score,Best SAT Writing score,double,many unique values,"63,00%",770,Yes. Start W06,,convert to numeric,,DUE.SIR,BstSAT1WriteSr,max(SATScore) group by student_Id
+0,1,sat_total_score,Best SAT Total score,double,many unique values,"63,00%",1310,Yes. Start F06.,,convert to numeric,,DUE.SIR,"BstSAT1MathSr,BstSat1ReadSr, BstSAT1WriteSr",BstSAT1TotalSr
+1,1,toefl_score,Best TOEFL Total score,double,"0: 9.936735e-01
+4.5: 3.706953e-05
+5: 1.606346e-04
+5.5: 4.695474e-04
+6: 7.166776e-04
+6.5: 1.507494e-03
+7: 1.927616e-03
+7.5: 9.514513e-04
+8: 5.189734e-04
+8.5: 3.706953e-05","94,00%",27,Yes. Start F11,,convert to numeric,,DUE.SIR,ToeflSr,max(TOEFLScore) group by student_Id
+1,1,ielts_score,Best IELTS Overall score,double,11,100%,"8,5",Yes. Start F11,,convert to numeric,,,,max(IELTSScore) group by student_Id
+1,1,transfer_gpa,"missing
+Transfer GPA if the student is a transfer",logical (binary),na: numeric(0),"missing
+100%",,no,,convert to numeric,,,,"IIF(Application_Status=Transfer,GPA,NULL)"
+1,1,act_english_score,Best ACT English Score,double,many unique values,82%,24,Yes. Start F11,,convert to numeric,,DUE.SIR,ActEnglSr,max(ACTScore) group by student_Id
+1,1,act_math_score,Best ACT Math Score,double,many unique values,83%,20,Yes. Start F11,,convert to numeric,,DUE.SIR,ActMathSr,max(ACTScore) group by student_Id
+1,1,act_reading_score,Best ACT Reading Score,double,many unique values,83%,19,Yes. Start F11,,convert to numeric,,DUE.SIR,ActReadSr,max(ACTScore) group by student_Id
+1,1,act_scireason_score,Best ACT Science Reasoning Score,double,many unique values,83%,25,Yes. Start F11,,convert to numeric,,DUE.SIR,ACTSciReasonSr,max(ACTScore) group by student_Id
+1,1,act_write_score,Best ACT Writing Score,double,0: 100%,83,20,Yes. Start F11,,convert to numeric,,DUE.SIR,ACTWriteSr,max(ACTScore) group by student_Id
+1,1,act_writesub_score,Best ACT Writing Sub-Score,double,2,"100,00%",0,No.,,convert to numeric,,DUE.SIR,ACTWriteSubSr,max(ACTScore) group by student_Id
+1,1,act_total_score,Best ACT Total Score,double,many unique values,"100,00%",21,Yes. Start F11,,convert to numeric,,DUE.SIR,ACTSr,max(ACTScore) group by student_Id
+0,1,best_subject_code_1,Best Subject 1 CODE,string,many unique values,"missing;
+27.16%",CH,Yes,"XW: The unique values are not look like code.
+They might be related to the admission scores (ACT/SAT/UC scores) according to Christian.",convert to numeric,,DUE.SIR,BstSubj1UsedCd,
+0,1,best_subject_score_1,Best Subject 1 Score,integer,many unique values,81%,740,Yes,XW: Check if the unqie values are fit to best_subject_score_1,convert to numeric,,DUE.SIR,BstSubj1Sr,
+0,1,best_subject_code_2,Best Subject 2 CODE,string,many unique values,46%,WH,Yes,XW: The unique values are not look like code.,convert to numeric,,DUE.SIR,BstSubj1UsedCd,
+0,1,best_subject_score_2,Best Subject 2 Score,integer,"Na
+0: 100%",46%,740,Yes,,convert to numeric,,DUE.SIR,BstSubj1Sr,
+1,1,best_subject_code_3,Best Subject 3 CODE,string,"0: 9.999135e-01
+470: 1.235651e-05
+480: 1.235651e-05
+550: 2.471302e-05
+580: 1.235651e-05
+800: 2.471302e-05
+NA",46%,470,Yes,XW: The unique values are not look like code.,convert to numeric,,DUE.SIR,BstSubj1UsedCd,
+1,1,best_subject_score_3,Best Subject 3 Score,integer,many unique values,100%,43,Yes,"XW: The unique values' range is very big, check if they are right for this variable.",convert to numeric,,DUE.SIR,BstSubj1Sr,
+0,1,uc_read_score,Best UC reading score,double,many unique values,46%,71,Yes,,convert to numeric,,DUE.SIR,BstUCReadSr,
+0,1,uc_math_score,Best UC math score,double,many unique values,46%,94,Yes,,convert to numeric,,DUE.SIR,BstUCMathSr,
+0,1,uc_writing_score,Best UC writing score,double,many unique values,46%,110,Yes,,convert to numeric,,DUE.SIR,BstUCWriteSr,
+0,1,uc_total_score,Best UC total score,double,many unique values,46,241,Yes,,convert to numeric,,DUE.SIR,BstUCTotalSr,
+1,1,comp_app_rev_score,Comprehensive HS App Review Score,logical (binary),na: numeric(0),"missing;
+100%",NA,No,,What's this?,,,,
+1,1,sup_app_rev_score,Supplementary HS App Review Score,logical (binary),many unique values,"missing;
+100%",NA,No,,What's this?,,,,
+1,1,ap_code_1,AP Exam 1 CODE,string,many unique values,79%,53,Yes. Start F11,,,,DUE.SIR,APExam1Cd,
+1,1,ap_score_1,"AP Exam 1 Score, range from 1-5",integer,7,82%,2,Yes. Start F11,,,,DUE.SIR,ApExam1Sr,
+1,1,ap_year_1,AP Exam 1 YEAR Taken,integer,many unique values,79%,2014,Yes. Start F11,,,,DUE.SIR,ApExam1TsYr,
+,0,ap_essay_flag_1,AP Exam 1 Essay Flag,string,10,100%,7,Yes. Start F11,,,,DUE.SIR,ApExam1EssayBkFlg,
+0,1,ap_code_2,AP Exam 2 CODE,string,many unique values,66%,53,Yes. Start F07,,,,DUE.SIR,APExam1Cd,
+0,1,ap_score_2,"AP Exam 2 Score, range from 1-5",double,6,70%,2,Yes. One at F00,,,,DUE.SIR,ApExam1Sr,
+0,1,ap_year_2,AP Exam 2 YEAR Taken,integer,many unique values,70%,2014,Yes. Start F05,,,,DUE.SIR,ApExam1TsYr,
+,0,ap_essay_flag_2,AP Exam 2 Essay Flag,integer,11,89%,7,Yes. Start F06,,,,DUE.SIR,ApExam1EssayBkFlg,
+0,1,ap_code_3,AP Exam 3 CODE,string,many unique values,69%,53,Yes. Start F06,,,,DUE.SIR,APExam1Cd,
+0,1,ap_score_3,"AP Exam 3 Score, range from 1-5",integer,6,72%,2,Yes. Start F08,,,,DUE.SIR,ApExam1Sr,
+0,1,ap_year_3,AP Exam 3 YEAR Taken,string,many unique values,69%,2014,Yes. Start F05,,,,DUE.SIR,ApExam1TsYr,
+,0,ap_essay_flag_3,AP Exam 3 Essay Flag,integer,11,90%,8,Yes. Start F06,,,,DUE.SIR,ApExam1EssayBkFlg,
+0,1,ap_code_4,AP Exam 4 CODE,string,many unique values,73%,53,Yes. Start F05,,,,DUE.SIR,APExam1Cd,
+0,1,ap_score_4,"AP Exam 4 Score, range from 1-5",integer,6,75%,2,Yes. Start F05,,,,DUE.SIR,ApExam1Sr,
+0,1,ap_year_4,AP Exam 4 YEAR Taken,integer,many unique values,73%,2014,Yes. Start F05,,,,DUE.SIR,ApExam1TsYr,
+,0,ap_essay_flag_4,AP Exam 4 Essay Flag,double,11,46%,8,Yes. Start F00,,,,DUE.SIR,ApExam1EssayBkFlg,
+0,1,ap_code_5,AP Exam 5 CODE,string,many unique values,78%,53,Yes. Start F05,,,,DUE.SIR,APExam1Cd,
+0,1,ap_score_5,"AP Exam 5 Score, range from 1-5",integer,7,80%,2,Yes. Start F05,,,,DUE.SIR,ApExam1Sr,
+0,1,ap_year_5,AP Exam 5 YEAR Taken,integer,many unique values,78%,2014,Yes. Start F05,,,,DUE.SIR,ApExam1TsYr,
+,0,ap_essay_flag_5,AP Exam 5 Essay Flag,double,11,46%,7,Yes. Start F08,,,,DUE.SIR,ApExam1EssayBkFlg,
+1,1,ap_code_6,AP Exam 6 CODE,string,many unique values,82%,53,Yes. Start F06,,,,DUE.SIR,APExam1Cd,
+1,1,ap_score_6,"AP Exam 6 Score, range from 1-5",integer,6,84%,2,Yes. Start F05,,,,DUE.SIR,ApExam1Sr,
+1,1,ap_year_6,AP Exam 6 YEAR Taken,string,many unique values,82%,2014,Yes. Start F05,,,,DUE.SIR,ApExam1TsYr,
+,0,ap_essay_flag_6,AP Exam 6 Essay Flag,integer,11,94%,8,Yes. Start F06,,,,DUE.SIR,ApExam1EssayBkFlg,
+1,1,ap_code_7,AP Exam 7 CODE,string,many unique values,87%,53,Yes. Start F05,,,,DUE.SIR,APExam1Cd,
+1,1,ap_score_7,"AP Exam 7 Score, range from 1-5",integer,6,88%,2,Yes. Start F05,,,,DUE.SIR,ApExam1Sr,
+1,1,ap_year_7,AP Exam 7 YEAR Taken,integer,many unique values,87%,2014,Yes. Start F05,,,,DUE.SIR,ApExam1TsYr,
+,0,ap_essay_flag_7,AP Exam 7 Essay Flag,integer,11,96%,8,Yes. Start F06,,,,DUE.SIR,ApExam1EssayBkFlg,
+1,1,ap_code_8,AP Exam 8 CODE,string,many unique values,91%,53,Yes. Start F07,,,,DUE.SIR,APExam1Cd,
+1,1,ap_score_8,"AP Exam 8 Score, range from 1-5",integer,7,91%,2,Yes. Start F07,,,,DUE.SIR,ApExam1Sr,
+1,1,ap_year_8,AP Exam 8 YEAR Taken,integer,many unique values,91%,2014,Yes. Start F07,,,,DUE.SIR,ApExam1TsYr,
+,0,ap_essay_flag_8,AP Exam 8 Essay Flag,integer,11,97%,8,Yes. Start F07,,,,DUE.SIR,ApExam1EssayBkFlg,
+1,1,ap_code_9,AP Exam 9 CODE,string,many unique values,94%,53,Yes. Start F09,,,,DUE.SIR,APExam1Cd,
+1,1,ap_score_9,"AP Exam 9 Score, range from 1-5",integer,6,94%,2,Yes. Start F09,,,,DUE.SIR,ApExam1Sr,
+1,1,ap_year_9,AP Exam 9 YEAR Taken,integer,many unique values,94%,2014,Yes. Start F08,,,,DUE.SIR,ApExam1TsYr,
+,0,ap_essay_flag_9,AP Exam 9 Essay Flag,integer,11,98%,8,Yes. Start F09,,,,DUE.SIR,ApExam1EssayBkFlg,
+1,1,ap_code_10,AP Exam 10 CODE,string,many unique values,96%,53,Yes. Start F08,,,,DUE.SIR,APExam1Cd,
+1,1,ap_score_10,"AP Exam 10 Score, range from 1-5",integer,6,97%,2,Yes. Start F08,,,,DUE.SIR,ApExam1Sr,
+1,1,ap_year_10,AP Exam 10 YEAR Taken,integer,many unique values,96%,2014,Yes. Start F08,,,,DUE.SIR,ApExam1TsYr,
+,0,ap_essay_flag_10,AP Exam 10 Essay Flag,integer,11,99%,8,Yes. Start F08,,,,DUE.SIR,ApExam1EssayBkFlg,
+1,1,ap_code_11,AP Exam 11 CODE,string,many unique values,98%,53,Yes. Start F08,,,,DUE.SIR,APExam1Cd,
+1,1,ap_score_11,"AP Exam 11 Score, range from 1-5",integer,6,98%,2,Yes. Start F08,,,,DUE.SIR,ApExam1Sr,
+1,1,ap_year_11,AP Exam 11 YEAR Taken,integer,many unique values,98%,2014,Yes. Start F08,,,,DUE.SIR,ApExam1TsYr,
+,0,ap_essay_flag_11,AP Exam 11 Essay Flag,integer,10,100%,8,Yes. Start F08,,,,DUE.SIR,ApExam1EssayBkFlg,
+1,1,ap_code_12,AP Exam 12 CODE,string,many unique values,99%,53,Yes. Start F08,,,,DUE.SIR,APExam1Cd,
+1,1,ap_score_12,"AP Exam 12 Score, range from 1-5",integer,6,99%,2,Yes. Start F08,,,,DUE.SIR,ApExam1Sr,
+1,1,ap_year_12,AP Exam 12 YEAR Taken,integer,many unique values,99%,2014,Yes. Start F08,,,,DUE.SIR,ApExam1TsYr,
+,0,ap_essay_flag_12,AP Exam 12 Essay Flag,integer,10,99%,8,Yes. Start F08,,,,DUE.SIR,ApExam1EssayBkFlg,
+1,1,ap_code_13,AP Exam 13 CODE,string,many unique values,99%,53,Yes. Start F10.,,,,DUE.SIR,APExam1Cd,
+1,1,ap_score_13,"AP Exam 13 Score, range from 1-5",integer,6,99%,2,Yes. Start F08,,,,DUE.SIR,ApExam1Sr,
+1,1,ap_year_13,AP Exam 13 YEAR Taken,integer,many unique values,99%,2014,Yes. Start F08,,,,DUE.SIR,ApExam1TsYr,
+,0,ap_essay_flag_13,AP Exam 13 Essay Flag,double,8,100%,8,Yes. Start F10.,,,,DUE.SIR,ApExam1EssayBkFlg,
+1,1,ap_code_14,AP Exam 14 CODE,string,many unique values,100%,53,Yes. Start F11,,,,DUE.SIR,APExam1Cd,
+1,1,ap_score_14,"AP Exam 14 Score, range from 1-5",integer,6,100%,2,Yes. Start F11,,,,DUE.SIR,ApExam1Sr,
+1,1,ap_year_14,AP Exam 14 YEAR Taken,integer,many unique values,100%,2014,Yes. Start F11,,,,DUE.SIR,ApExam1TsYr,
+,0,ap_essay_flag_14,AP Exam 14 Essay Flag,integer,6,100%,5,Yes. Start F11,,,,DUE.SIR,ApExam1EssayBkFlg,
+1,1,ap_code_15,AP Exam 15 CODE,string,many unique values,100%,53,Yes. Start F11,,,,DUE.SIR,APExam1Cd,
+1,1,ap_score_15,"AP Exam 15 Score, range from 1-5",integer,6,100%,2,Yes. Start F11,,,,DUE.SIR,ApExam1Sr,
+1,1,ap_year_15,AP Exam 15 YEAR Taken,integer,many unique values,100%,2014,Yes. Start F11,,,,DUE.SIR,ApExam1TsYr,
+,0,ap_essay_flag_15,AP Exam 15 Essay Flag,integer,5,100%,7,Yes. Start F11,,,,DUE.SIR,ApExam1EssayBkFlg,
+1,1,ap_code_16,AP Exam 16 CODE,string,many unique values,100%,53,Yes. Start F11,,,,DUE.SIR,APExam1Cd,
+1,1,ap_score_16,"AP Exam 16 Score, range from 1-5",integer,6,100%,2,Yes. Start F11,,,,DUE.SIR,ApExam1Sr,
+1,1,ap_year_16,AP Exam 16 YEAR Taken,integer,many unique values,100%,2014,Yes. Start F11,,,,DUE.SIR,ApExam1TsYr,
+,0,ap_essay_flag_16,AP Exam 16 Essay Flag,integer,na: numeric(0),100%,5,Yes. Start F11,,,,DUE.SIR,ApExam1EssayBkFlg,
+1,1,ap_code_17,AP Exam 17 CODE,string,many unique values,100%,53,Yes. Start F13,,,,DUE.SIR,APExam1Cd,
+1,1,ap_score_17,"AP Exam 17 Score, range from 1-5",integer,6,100%,2,Yes. Start F13,,,,DUE.SIR,ApExam1Sr,
+1,1,ap_year_17,AP Exam 17 YEAR Taken,integer,many unique values,100%,2014,Yes. Start F13,,,,DUE.SIR,ApExam1TsYr,
+,0,ap_essay_flag_17,AP Exam 17 Essay Flag,integer,3,100%,5,Yes. Start F13,,,,DUE.SIR,ApExam1EssayBkFlg,
+1,1,ap_code_18,AP Exam 18 CODE,string,13,100%,53,Yes. Start F13,,,,DUE.SIR,APExam1Cd,
+1,1,ap_score_18,"AP Exam 18 Score, range from 1-5",integer,6,100%,2,Yes. Start F13,,,,DUE.SIR,ApExam1Sr,
+1,1,ap_year_18,AP Exam 18 YEAR Taken,integer,9,100%,2014,Yes. Start F13,,,,DUE.SIR,ApExam1TsYr,
+,0,ap_essay_flag_18,AP Exam 18 Essay Flag,integer,2,100%,0,Yes. Start F13,,,,DUE.SIR,ApExam1EssayBkFlg,
+1,1,ap_code_19,AP Exam 19 CODE,string,9,100%,53,Yes. Start F13,,,,DUE.SIR,APExam1Cd,
+1,1,ap_score_19,"AP Exam 19 Score, range from 1-5",integer,6,100%,2,Yes. Start F13,,,,DUE.SIR,ApExam1Sr,
+1,1,ap_year_19,AP Exam 19 YEAR Taken,integer,7,100%,2014,Yes. Start F13,,,,DUE.SIR,ApExam1TsYr,
+,0,ap_essay_flag_19,AP Exam 19 Essay Flag,integer,2,100%,0,Yes. Start F13,,,,DUE.SIR,ApExam1EssayBkFlg,
+1,1,ap_code_20,AP Exam 20 CODE,string,7,100%,53,Yes. Start F14,,,,DUE.SIR,APExam1Cd,
+1,1,ap_score_20,"AP Exam 20 Score, range from 1-5",integer,4,100%,4,Yes. Start F14,,,,DUE.SIR,ApExam1Sr,
+1,1,ap_year_20,AP Exam 20 YEAR Taken,integer,"0: 9.999259e-01
+2014: 1.235651e-05
+2015: 2.471302e-05
+2016: 1.235651e-05
+2017: 1.235651e-05
+2018: 1.235651e-05",100%,2014,Yes. Start F14,,,,DUE.SIR,ApExam1TsYr,
+,0,ap_essay_flag_20,AP Exam 20 Essay Flag,double,2,100%,0,Yes. Start F14,,,,DUE.SIR,ApExam1EssayBkFlg,
+,0,current_ind,"this column indicates if this record is the most recent or not/
+Values are 1 for current and 0 for not current",integer,1: 100%,0%,1,Yes. all value 1,,,,,,
+,0,eff_start_dt,the date when this record became the most current,time,many unique values,0%,01/30/2020 15:41:13,Yes.,,,,,,
+,0,eff_end_dt,the date when this record stopped becoming the most current,,na: numeric(0),100%,,No,,,,,,
+0,1,parent_educ,derived variable：highest educational level from parents,integer,,,,,,,,,,
+1,1,freshman,derived variable：,,,,,,,,,,,
+1,1,transfer,derived variable：,,,,,,,,,,,
+1,1,cohort,"derived variable：Cohort 2020 should include ""admitdate"" of Fall2020, Winter2021 and Spring2021",integer,,,,,,,,,,
