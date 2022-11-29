@@ -135,3 +135,85 @@ int_DUE = mean(student_ever_DUE$int_student[is_DUE], na.rm=T)
 int_non_DUE = mean(student_ever_DUE$int_student[!is_DUE], na.rm=T)
 ```
 The ratio of international students only differs slightly between ever DUE and never DUE students (`r round(int_DUE*100,1)`% vs `r round(int_non_DUE*100,1)`%).
+
+## Do they differ demographically?
+```{r}
+student_ever_DUE = merge(student_ever_DUE, bg_sub[,c('mellon_id','ethnicity','female')], by="mellon_id")
+
+ggplot(data = student_ever_DUE, aes(x = ethnicity)) +
+  geom_bar(data=subset(student_ever_DUE,major_school_name_1 == T),aes(y = (..count..)/sum(..count..)),fill = "red", alpha = 0.4,width=0.5,just=0.0) +
+  geom_bar(data=subset(student_ever_DUE,major_school_name_1 == F),aes(y = (..count..)/sum(..count..)),fill = "darkgreen", alpha = 0.4, width=0.5, just=1) +
+  theme_minimal() +
+  labs(title = "Distribution of ethnicity (DUE is red)",
+       x = "Ethnicity",
+       y = "Share") +
+  theme(text = element_text(size = 16)) +
+  scale_x_discrete(label=abbreviate)
+```
+```{r}
+ggplot(data = student_ever_DUE, aes(x = female)) +
+  geom_bar(data=subset(student_ever_DUE,major_school_name_1 == T),aes(y = (..count..)/sum(..count..)),fill = "red", alpha = 0.4,width=0.5,just=0.0) +
+  geom_bar(data=subset(student_ever_DUE,major_school_name_1 == F),aes(y = (..count..)/sum(..count..)),fill = "darkgreen", alpha = 0.4, width=0.5, just=1) +
+  theme_minimal() +
+  labs(title = "Distribution of gender (DUE is red)",
+       x = "Is female",
+       y = "Share") +
+  theme(text = element_text(size = 16)) +
+  scale_x_discrete(label=abbreviate)
+```
+
+## Do they perform differently in pre uni scores?
+
+```{r}
+student_ever_DUE = merge(student_ever_DUE, students[,c('mellon_id','hs_gpa','toefl_score','uc_total_score')], by="mellon_id")
+```
+
+### Highschool GPA
+```{r}
+ggplot(data = student_ever_DUE, aes(x = round(hs_gpa*5)/5)) +
+  geom_bar(data=subset(student_ever_DUE,major_school_name_1 == T),aes(y = (..count..)/sum(..count..)),fill = "red", alpha = 0.4) +
+  geom_bar(data=subset(student_ever_DUE,major_school_name_1 == F),aes(y = (..count..)/sum(..count..)),fill = "darkgreen", alpha = 0.4) +
+  theme_minimal() +
+  labs(title = "Distribution of highschool GPA (DUE is red)",
+       x = "GPA",
+       y = "Share") +
+  theme(text = element_text(size = 16))
+```
+### UC total score
+```{r}
+ggplot(data = student_ever_DUE, aes(x = round(uc_total_score/10)*10)) +
+  geom_bar(data=subset(student_ever_DUE,major_school_name_1 == T),aes(y = (..count..)/sum(..count..)),fill = "red", alpha = 0.4) +
+  geom_bar(data=subset(student_ever_DUE,major_school_name_1 == F),aes(y = (..count..)/sum(..count..)),fill = "darkgreen", alpha = 0.4) +
+  theme_minimal() +
+  labs(title = "Distribution of UC total score (DUE is red)",
+       x = "Total score",
+       y = "Share") +
+  theme(text = element_text(size = 16))
+```
+### TOEFL score
+```{r}
+ggplot(data = student_ever_DUE, aes(x = round(toefl_score/5)*5)) +
+  geom_bar(data=subset(student_ever_DUE,major_school_name_1 == T),aes(y = (..count..)/sum(..count..)),fill = "red", alpha = 0.4) +
+  geom_bar(data=subset(student_ever_DUE,major_school_name_1 == F),aes(y = (..count..)/sum(..count..)),fill = "darkgreen", alpha = 0.4) +
+  theme_minimal() +
+  labs(title = "Distribution of TOEFL score (DUE is red)",
+       x = "TOEFL score",
+       y = "Share") +
+  theme(text = element_text(size = 16))
+```
+## Do they perform differently in first term?
+```{r}
+student_gpas = aggregate(gpa_term ~ mellon_id, terms, FUN=mean)
+
+student_ever_DUE = merge(student_ever_DUE, student_gpas[,c('mellon_id','gpa_term')], by="mellon_id")
+
+ggplot(data = student_ever_DUE, aes(x = round(gpa_term*10)/10)) +
+  geom_bar(data=subset(student_ever_DUE,major_school_name_1 == T),aes(y = (..count..)/sum(..count..)),fill = "red", alpha = 0.4) +
+  geom_bar(data=subset(student_ever_DUE,major_school_name_1 == F),aes(y = (..count..)/sum(..count..)),fill = "darkgreen", alpha = 0.4) +
+  theme_minimal() +
+  labs(title = "Distribution of average GPA (DUE is red)",
+       x = "GPA",
+       y = "Share") +
+  theme(text = element_text(size = 16))
+```
+

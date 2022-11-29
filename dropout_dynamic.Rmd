@@ -1,0 +1,34 @@
+---
+title: "Dropout dynamics"
+author: "Dominik Glandorf"
+date: "2022-11-29"
+output: pdf_document
+---
+```{r}
+source('read_data.R')
+
+students = get_student_sub()
+```
+
+# When does dropout happen?
+```{r}
+ggplot(students, aes(fill=dropout, x=num_terms)) + 
+    geom_bar(position="stack", stat="count") +
+    labs(title = "Distribution of dropout",
+       x = "Term number",
+       y = "Frequency", fill="Dropout") +
+  ylim(0, 5000)
+```
+```{r}
+
+library(scales)
+stud = students[!is.na(students$dropout),]
+dropped_out = data.frame(term=c(0:18), number=sapply(c(0:18), FUN=function(i) nrow(stud[stud$dropout==T&stud$num_terms<=i,])))
+ggplot(dropped_out,aes(x=term, y=number/max(number)))+
+  geom_bar(stat="identity") +
+  scale_y_continuous(labels=percent) +
+  labs(title = "Cumulative histogram of dropouts",
+       x = "Term number",
+       y = "Share")
+```
+

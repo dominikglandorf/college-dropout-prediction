@@ -37,6 +37,21 @@ for (var in expected_available) {
   
   missing = mean(is.na(bg[,var]))
   print(paste0("Missing: ", round(missing*100, 1), "%"), quote=F)
+  if (missing > 0.01 && missing < 0.99) {
+     missing_cohorts = aggregate(is.na(bg[,var]), by=list(bg$admitdate), FUN=mean)
+ 
+    max = which.max(missing_cohorts[,var])
+    min = which.min(missing_cohorts[,var])
+    if (missing_cohorts[max,var]-missing_cohorts[min,var]>.5) {
+      print(missing_cohorts)
+    } else {
+      print(paste0("Most missing: ", missing_cohorts[max,"Group.1"], " ", round(missing_cohorts[max,var]*100, 1), "%", ", Least missing: ", missing_cohorts[min,"Group.1"], " ", round(missing_cohorts[min,var]*100, 1), "%"), quote=F)
+    }
+  }
+  
+  print(ggplot(bg, aes(x=.data[[var]])) +
+    geom_bar() +
+    labs(x=var, y="Frequency"))
   
   # print statusses
   if (grepl( blacklist , var)) {
@@ -50,7 +65,8 @@ for (var in expected_available) {
       predictors = c(predictors, var)
     }
   }
-  print("_____________________",quote=F)
+
+  print("___________________________",quote=F)
   
   
 }
@@ -249,4 +265,12 @@ for (var in unexpected_in_data) {
 }
 ```
 We could think about using `r paste(usable,collapse=",")`.
+
+```{r}
+aggregate(current_units_completed_total ~ active_student, terms, FUN=mean)
+table(terms$active_student)
+aggregate(current_units_completed_total ~ full_time, terms, FUN=mean)
+table(terms$full_time)
+
+```
 
