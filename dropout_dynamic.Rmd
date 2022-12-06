@@ -4,14 +4,14 @@ author: "Dominik Glandorf"
 date: "2022-11-29"
 output: pdf_document
 ---
-```{r}
+```{r, include=F}
 source('read_data.R')
 
 students = get_student_sub()
 ```
 
 # When does dropout happen?
-```{r}
+```{r, echo=F}
 ggplot(students, aes(fill=dropout, x=num_terms)) + 
     geom_bar(position="stack", stat="count") +
     labs(title = "Distribution of dropout",
@@ -19,7 +19,7 @@ ggplot(students, aes(fill=dropout, x=num_terms)) +
        y = "Frequency", fill="Dropout") +
   ylim(0, 5000)
 ```
-```{r}
+```{r, echo=F}
 
 library(scales)
 stud = students[!is.na(students$dropout),]

@@ -1,0 +1,28 @@
+---
+title: "Distance from home"
+author: "Dominik Glandorf"
+date: "2022-12-06"
+output: pdf_document
+---
+
+```{r, include=F}
+source('read_data.R')
+students = get_student_sub()
+bg = get_student_background_data(students$mellon_id)
+```
+
+```{r}
+loc_data = bg[,c('distance_from_home','city_residence_app','state_residence_app','country_residence_app','zip_code_app')]
+```
+
+```{r}
+head(loc_data[!is.na(loc_data$distance_from_home)&loc_data$country_residence_app=="USA",], 100)
+```
+It is most probably the straight line distance in miles.
+
+```{r}
+aggregate(is.na(distance_from_home) ~ country_residence_app, loc_data, FUN=mean)
+```
+
+Overall distance from home is missing in 28% of the cases.
+
