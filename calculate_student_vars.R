@@ -95,6 +95,7 @@ student_vars = merge(student_vars,
 student_vars$female = student_vars$female == "yes"
 student_vars$low_income = student_vars$low_income == "yes"
 
+
 # AP transformation
 # print(c(unique(student_background_data[,'ap_code_1'])))
 
