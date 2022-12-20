@@ -74,7 +74,7 @@ student_vars$dropout[four_terms_padding] = !student_vars$graduated[four_terms_pa
 student_vars = merge(student_vars,
                      student_background_data[,c("mellon_id",
                                                 "admitdate",
-                                                "female",
+                                                #"female",
                                                 "int_student",
                                                 "ethnicity",
                                                 "first_generation",
@@ -92,7 +92,7 @@ student_vars = merge(student_vars,
                                                 "toefl_score",
                                                 "ielts_score" )],
                      by="mellon_id")
-student_vars$female = student_vars$female == "yes"
+#student_vars$female = student_vars$female == "yes"
 student_vars$low_income = student_vars$low_income == "yes"
 
 
