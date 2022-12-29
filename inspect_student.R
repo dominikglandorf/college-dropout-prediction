@@ -40,10 +40,26 @@ inspect_student = function(s_id) {
   cat("\n\n")
 }
 
-#sample(students$mellon_id, 10)
+inspect_graduated = function(s_id) {
+  student = students[students$mellon_id==s_id,]
+  cat(paste0("Student ", s_id, " was admitted in ", student$admitdate, "\n"))
+  s_terms = terms[terms$mellon_id==s_id,]
+  tor = data.frame(year=substr(s_terms$term_code,1,4),
+                   term=s_terms$term_part_desc,
+                   majors=apply(s_terms, 1, FUN=get_majors),
+                   major_grad_1=s_terms$major_graduated_1,
+                   major_grad_2=s_terms$major_graduated_2,
+                   major_grad_3=s_terms$major_graduated_3,
+                   major_grad_4=s_terms$major_graduated_4)
+  print(tor, right=F)
+  cat("\n\n")
+}
+
+
+sample(students$mellon_id, 10)
 #s_id = "2992237"
 #inspect_student(s_id)
 
-#for (s_id in sample(students$mellon_id, 10)) {
-#  inspect_student(s_id)
-#}
+for (s_id in sample(students$mellon_id, 10)) {
+  inspect_graduated(s_id)
+}
