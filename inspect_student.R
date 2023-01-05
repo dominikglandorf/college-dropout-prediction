@@ -44,6 +44,7 @@ inspect_graduated = function(s_id) {
   student = students[students$mellon_id==s_id,]
   cat(paste0("Student ", s_id, " was admitted in ", student$admitdate, "\n"))
   s_terms = terms[terms$mellon_id==s_id,]
+  s_terms = s_terms[order(s_terms$term_code),]
   tor = data.frame(year=substr(s_terms$term_code,1,4),
                    term=s_terms$term_part_desc,
                    majors=apply(s_terms, 1, FUN=get_majors),

@@ -760,5 +760,3 @@ ggplot(data = term_features_3, aes(x = num_majors)) +
        x = "Number of majors",
        y = "Frequency") +
   theme(text = element_text(size = 16))
-
-

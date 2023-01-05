@@ -388,3 +388,57 @@ mean(is.na(students$toefl_score))
 unique(students$ielts_score)
 mean(is.na(students$ielts_score))
 # 99.7% missing data
+
+
+### AP exams
+my_agg = function(formula, data) do.call(data.frame, aggregate(formula, data, FUN=function(x) c(mean = mean(x), n = length(x))))
+dropped = subset(students,dropout == T)
+ndropped = subset(students,dropout == F)
+                                         
+theme_set(theme_minimal() +
+          theme(legend.position = "none",
+                text = element_text(size = 16)))
+
+# number of AP exams
+ggplot(data=students, aes(x = number_ap, y = after_stat(count)/sum(after_stat(count)))) +
+  geom_bar(data=subset(students,dropout == T),alpha=0.4,fill="red") +
+  geom_bar(data=subset(students,dropout == F),alpha=0.4,fill="darkgreen")
+
+ggplot(data =  my_agg(dropout ~ number_ap, students), aes(x=number_ap, y=dropout.mean, fill=dropout.n > 46)) +
+  geom_bar(stat="identity")
+
+# ratio of passed AP exams
+students$passed_ap_disc = round(students$passed_ap*10)/10
+mean(is.na(students$passed_ap_disc))
+
+ggplot(data=students, aes(x =passed_ap_disc, y = after_stat(count)/sum(after_stat(count)))) +
+  geom_bar(data=subset(students,dropout == T),alpha=0.4,fill="red") +
+  geom_bar(data=subset(students,dropout == F),alpha=0.4,fill="darkgreen")
+
+ggplot(data =  my_agg(dropout ~ passed_ap_disc, students), aes(x=passed_ap_disc, y=dropout.mean)) +
+  geom_bar(stat="identity", fill="#54BCC2")
+
+
+# best AP score
+mean(students$best_ap<0)
+
+ggplot(data=students, aes(x=best_ap, y=after_stat(count)/sum(after_stat(count)))) +
+  geom_bar(data=subset(students,dropout == T), alpha=0.4, fill="red") +
+  geom_bar(data=subset(students,dropout == F), alpha=0.4, fill="darkgreen")
+
+best_ap_dropout_rates=my_agg(dropout ~ best_ap, students)
+best_ap_dropout_rates[1,1]=0
+ggplot(data = best_ap_dropout_rates, aes(x=best_ap, y=dropout.mean)) +
+  geom_bar(stat="identity", fill="#54BCC2")
+
+# mean AP score
+students$avg_ap_disc = round(students$avg_ap*4)/4
+mean(is.na(students$avg_ap_disc))
+
+ggplot(data=students, aes(x=avg_ap_disc, y=after_stat(count)/sum(after_stat(count)))) +
+  geom_bar(data=subset(students,dropout == T), alpha=0.4, fill="red") +
+  geom_bar(data=subset(students,dropout == F), alpha=0.4, fill="darkgreen")
+
+avg_ap_dropout_rates=my_agg(dropout ~ avg_ap_disc, students)
+ggplot(data =avg_ap_dropout_rates, aes(x=avg_ap_disc, y=dropout.mean)) +
+  geom_bar(stat="identity",fill="#54BCC2")
