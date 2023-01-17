@@ -46,7 +46,8 @@ student_vars = merge(student_vars, scores, by="mellon_id")
 
 # ap classes
 number_ap = rowSums(!is.na(bg[,paste0('ap_score_',1:20,"")]))
-passed_ap = rowSums((bg[,paste0('ap_score_',1:20,"")])>2, na.rm=T) / number_ap
+passed_ap_abs = rowSums((bg[,paste0('ap_score_',1:20,"")])>2, na.rm=T)
+passed_ap_rel = passed_ap_abs / number_ap
 best_ap = apply(bg[,paste0('ap_score_',1:20,"")], 1, FUN=function(x) max(x, na.rm=T))
 avg_ap = apply(bg[,paste0('ap_score_',1:20,"")], 1, FUN=function(x) mean(x, na.rm=T))
 ap_data = data.frame(mellon_id = bg$mellon_id, number_ap=number_ap, passed_ap=passed_ap,

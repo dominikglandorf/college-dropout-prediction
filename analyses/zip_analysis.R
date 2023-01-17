@@ -117,3 +117,34 @@ plot(1:nrow(zip_dropout2),zip_dropout2[order(zip_dropout2$dropout.mean),c('afflu
 # lowest: 91306 Winnetka 1.7% dropout, interestingly not really above average in terms of demographics
 # another very low: 91770 2.6% dropout  Rosemead, mainly Asian, only 1.3% unmarried compared to 49% in state. median age 42 vs 37
 
+# maybe highschool is also indicative?
+mean(is.na(bg2$hs_name))
+bg2 %>%
+  group_by(hs_name) %>%
+  summarise(mdropout=mean(dropout,na.rm=T),
+            n=sum(!is.na(dropout)),
+  ) %>%
+  filter(n>46) %>%
+  arrange(mdropout)
+# same observation as with zip code
+
+bg2$zip3 = substring(bg2$zcta10,1,3)
+
+## aggregate all demographic variables to see if there is a pattern
+zip_dropout = bg2 %>%
+  group_by(zcta10) %>%
+  summarise(mdropout=mean(dropout,na.rm=T),
+            n=sum(!is.na(dropout)),
+            aa=mean(ethnicity=="Asian / Asian American", na.rm=T)) %>%
+  filter(n>46) %>%
+  arrange(-mdropout)%>%ggplot() + geom_point(aes(x=aa, y=mdropout))
+
+
+
+table(bg2$ethnicity)
+zip_dropout = do.call(data.frame, aggregate(dropout~zcta10, bg2, FUN = function(x) c(mean = mean(x), n = length(x))))
+
+sim = function() map_int(zip_dropout$n, \(x) rbinom(1, x, 0.12)) / zip_dropout$n
+plot(density(sim()))
+for ( i in 1:50) lines(density(sim()))
+lines(density(zip_dropout$mdropout), col="red")
