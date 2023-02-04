@@ -1,0 +1,100 @@
+---
+title: "Logistic Regression"
+author: "Dominik Glandorf"
+date: "2023-01-31"
+output: pdf_document
+---
+```{r, include=FALSE}
+library(pROC)
+```
+
+# Data preparation
+## Load data
+```{r, warning=FALSE, message=FALSE}
+setwd("~/EWS")
+source("read_data.R")
+students = get_student_sub()
+```
+## See available columns
+```{r}
+attr(students,"spec")
+```
+## Create dataframe for model
+```{r}
+predictors = c("age_at_enrolment",
+              "uc_total_score",
+              "uc_math_score",
+              "uc_read_score",
+              "uc_writing_score",
+              "number_ap",
+              "passed_ap",
+              "best_ap",
+              "avg_ap",
+              "int_student",
+              "ethnicity",
+              "first_generation",
+              "low_income",
+              "father_edu_level_code",
+              "mother_edu_level_code",
+              "ell",
+              "single_parent",
+              "foster_care",
+              "household_size_app",
+              "distance_from_home",
+              "sport_at_admission",
+              "cal_res_at_app",
+              "hs_gpa")
+dat = students %>% select(all_of(c(predictors, "dropout")))
+```
+Strategy for missing categorical values: Create a missing category. Also, merge/exclude categories that are rare.
+```{r}
+dat$low_income[is.na(dat$low_income)]=F
+dat$household_size_app[dat$household_size_app>6] = 6
+dat$father_edu_level_code[dat$father_edu_level_code==4]=NA
+saa = table(dat$sport_at_admission)
+dat$sport_at_admission[dat$sport_at_admission %in% names(saa[saa<nrow(dat)/1000])] = "other"
+categorical_cols <- c("int_student","ethnicity","first_generation","father_edu_level_code","mother_edu_level_code",  "low_income","ell","single_parent","foster_care","household_size_app","sport_at_admission","cal_res_at_app")
+dat[categorical_cols] <- lapply(dat[categorical_cols], as.character)
+dat[categorical_cols][is.na(dat[categorical_cols])] = "unknown"
+
+dat = dat[complete.cases(dat),]
+dat[categorical_cols] <- lapply(dat[categorical_cols], as.factor)
+
+#for (c in categorical_cols) {
+#  print(table(dat[,c]))
+#}
+```
+We now include `r nrow(dat) / nrow(students)` of the dataset.
+
+# Model estimation
+First, split into training and test data
+```{r}
+sample <- sample(c(TRUE, FALSE), nrow(dat), replace=TRUE, prob=c(0.7,0.3))
+train <- dat[sample, ]
+test <- dat[!sample, ]
+```
+
+```{r}
+log.reg.fit = glm(dropout ~ ., train, family = 'binomial')
+#summary(log.reg.fit)
+```
+## Effects
+```{r}
+odds_ratios = data.frame(OR=exp(log.reg.fit$coefficients),
+                          p=coef(summary(log.reg.fit))[,4])
+ggplot(odds_ratios, aes(x=row.names(odds_ratios),y=OR, fill=p<0.05))+
+  geom_bar(stat="identity") +
+  theme(axis.text.x = element_text(angle = 90, vjust = 0.25, hjust=1)) +
+  scale_y_continuous(trans='log')
+```
+# Model evaluation
+```{r, message=FALSE}
+dropout_prob = predict(log.reg.fit, test, type = "response") # response outputs the prob instead of log odds
+
+rocobj <- roc(test$dropout, dropout_prob)
+auc <- round(auc(test$dropout, dropout_prob),4)
+ggroc(rocobj) +
+  ggtitle(paste0('ROC Curve ', '(AUC = ', auc, ')')) + 
+  geom_abline(intercept = 1, slope = 1, color = "red", linetype = "dashed")
+```
+

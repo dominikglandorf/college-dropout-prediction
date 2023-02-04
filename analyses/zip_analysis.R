@@ -119,7 +119,7 @@ plot(1:nrow(zip_dropout2),zip_dropout2[order(zip_dropout2$dropout.mean),c('afflu
 
 # maybe highschool is also indicative?
 mean(is.na(bg2$hs_name))
-bg2 %>%
+hs_dropout = bg2 %>%
   group_by(hs_name) %>%
   summarise(mdropout=mean(dropout,na.rm=T),
             n=sum(!is.na(dropout)),
