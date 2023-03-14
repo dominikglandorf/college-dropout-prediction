@@ -14,6 +14,7 @@ library(pROC)
 setwd("~/EWS")
 source("read_data.R")
 students = get_student_sub()
+terms = get_term_features()
 ```
 ## See available columns
 ```{r}
@@ -27,8 +28,8 @@ predictors = c("age_at_enrolment",
               "uc_read_score",
               "uc_writing_score",
               "number_ap",
-              "passed_ap",
-              "best_ap",
+              "passed_ap_rel",
+              "best_ap", # check distribution
               "avg_ap",
               "int_student",
               "ethnicity",
@@ -53,10 +54,11 @@ dat$household_size_app[dat$household_size_app>6] = 6
 dat$father_edu_level_code[dat$father_edu_level_code==4]=NA
 saa = table(dat$sport_at_admission)
 dat$sport_at_admission[dat$sport_at_admission %in% names(saa[saa<nrow(dat)/1000])] = "other"
+
 categorical_cols <- c("int_student","ethnicity","first_generation","father_edu_level_code","mother_edu_level_code",  "low_income","ell","single_parent","foster_care","household_size_app","sport_at_admission","cal_res_at_app")
+
 dat[categorical_cols] <- lapply(dat[categorical_cols], as.character)
 dat[categorical_cols][is.na(dat[categorical_cols])] = "unknown"
-
 dat = dat[complete.cases(dat),]
 dat[categorical_cols] <- lapply(dat[categorical_cols], as.factor)
 
@@ -97,4 +99,14 @@ ggroc(rocobj) +
   ggtitle(paste0('ROC Curve ', '(AUC = ', auc, ')')) + 
   geom_abline(intercept = 1, slope = 1, color = "red", linetype = "dashed")
 ```
+### Including term level variables
+We have to decide until which term we include the variables and then only predict students that are not already dropped out.
+```{r}
+attr(terms, "spec")
+```
+
+```{r}
+students = merge(students, terms%>%filter(term_num==1)%>%select(mellon_id,major_1), by="mellon_id")
+```
+
 

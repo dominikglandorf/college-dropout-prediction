@@ -23,10 +23,12 @@ term_features = merge(term_features,
                       by=c("mellon_id","term_code"), all.x=TRUE) 
 
 # average number of units completed till term n
-library(data.table)
-term_table = data.table(term_features) # create data table
-cum_credits = term_table[order(term_num), cumulative_units_completed := cumsum(replace_na(units_completed, 0)), by = .(mellon_id)]
-cum_credits$cum_avg_credits = cum_credits$cumulative_units_completed / cum_credits$term_num
+cum_credits = term_features %>%
+  replace_na(list(units_completed=0)) %>%
+  arrange(term_num) %>%
+  group_by(mellon_id) %>%
+  mutate(cumulative_units_completed = cumsum(units_completed))%>%
+  mutate(cum_avg_credits = cumulative_units_completed / term_num)
 
 term_features = merge(term_features,
                       cum_credits[,c("mellon_id","term_code","cumulative_units_completed","cum_avg_credits")],

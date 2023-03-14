@@ -1,0 +1,124 @@
+---
+title: "Missing Data Imputation"
+author: "Dominik Glandorf"
+date: "2023-03-01"
+output: pdf_document
+---
+
+```{r, include=FALSE}
+library(pROC)
+library(forcats)
+```
+
+# Problem statement
+Due to the large amount of missing/non-applicable data in our dataset (e.g. 44.3% of students without any AP exams), deletion of rows with any missing data is impractical because it would leave us with a tiny fraction of the whole set.
+
+# Solution strategies
+In general, the strategies vary in the number of added parameters, hence interpretability and potential impact on the predictor's distribution.
+
+## For all types
+1. Train a classifier that predicts NA values from other predictors. Increases dependencies between predictors.
+
+## Categorical variables
+1. Own category for NA: We add NA values as a dummy variable (and the reference category).
+2. Use the most frequent class: We merge them with the most frequent class, save one parameter but also bias the distribution to its mode.
+
+## Continuous variables
+1. Discretize and use the same strategy as for continuous variables.
+2. Use mean.
+3. Use random value.
+
+# Comparison of strategies
+We can compare the strategies in terms of the AUC in a logistic regression. All variables are tested alone for their predictiveness using different strategies.
+
+
+```{r, warning=FALSE, message=FALSE}
+setwd("~/EWS")
+source("read_data.R")
+students = get_student_sub()
+terms = get_term_features()
+```
+```{r}
+students$low_income[is.na(students$low_income)]=F
+students$household_size_app[students$household_size_app>6] = 6
+students$father_edu_level_code[students$father_edu_level_code==4]=NA
+saa = table(students$sport_at_admission)
+students$sport_at_admission[students$sport_at_admission %in% names(saa[saa<nrow(students)/1000])] = "other"
+
+students = students %>% sample_n(nrow(students)) # shuffle
+```
+
+```{r}
+categorical = c("int_student","ethnicity","first_generation","father_edu_level_code","mother_edu_level_code",  "low_income","ell","single_parent","foster_care","household_size_app","sport_at_admission","cal_res_at_app")
+continuous = c("age_at_enrolment","uc_total_score","uc_math_score","uc_read_score","uc_writing_score","number_ap","passed_ap_rel","best_ap","avg_ap","hs_gpa","distance_from_home")
+```
+```{r}
+compute_AUC = function(dat,i,CV_folds) {
+  train = dat[1:nrow(dat)%%CV_folds!=i,]
+  test = dat[1:nrow(dat)%%CV_folds==i,]
+  log.reg.fit = glm(dropout ~ ., train, family = 'binomial')
+  dropout_prob = predict(log.reg.fit, test, type = "response")
+  return(suppressMessages(auc(test$dropout, dropout_prob)))
+}
+
+mode = function(vector) tail(names(sort(table(vector))), 1)
+
+AUC_categorical = function(dat, predictor, NA_strategy, CV_folds=5) {
+  dat = dat %>% select("dropout", feature=predictor) %>% mutate(feature=as.factor(feature))
+  
+  if (NA_strategy == "mode") {
+    dat = dat %>% replace_na(list(feature=mode(dat$feature)))
+  }
+  if (NA_strategy == "new_level") {
+    dat = dat %>% mutate(feature = fct_explicit_na(feature, "unknown"))
+  }
+
+  return(round(mean(sapply((1:CV_folds)-1, function(i) compute_AUC(dat,i,CV_folds))),3))
+}
+
+plot_AUCs = function(AUCs) {
+  AUCs$variable = rownames(AUCs)
+  AUCs.long = AUCs %>% pivot_longer(cols = head(names(AUCs), ncol(AUCs)-1), names_to="method", values_to="value")
+  ggplot(AUCs.long, aes(x=variable, y=value, fill=method)) +
+    geom_bar(stat = "identity", position = "dodge") +
+    theme(axis.text.x = element_text(angle = 45, hjust = 1)) +
+    labs(x="Predictor", y="AUC", fill="NA strategy") +
+    coord_cartesian(ylim = c(0.5,1))
+}
+```
+
+```{r}
+get_aucs = function(method) sapply(categorical, function(c) AUC_categorical(students, c, method))
+aucs_cat = data.frame(none=get_aucs(""), mode=get_aucs("mode"), new_level=get_aucs("new_level"))
+plot_AUCs(aucs_cat)
+```
+
+```{r}
+AUC_continuous = function(dat, predictor, NA_strategy, CV_folds=5) {
+  dat = dat %>% select("dropout", feature=predictor)
+
+  if (NA_strategy == "mean") {
+    dat = dat %>% replace_na(list(feature=mean(dat$feature)))
+  }
+  
+  if (NA_strategy == "discretize5") {
+   quantiles = quantile(dat$feature, probs = seq(0, 1, 0.2), na.rm=T) # 5 equally sized quantiles
+   quantiles = quantiles + 1:6 * 0.0001 # to prevent an error for unequally distr variables
+   dat = dat %>% 
+     mutate(feature = cut(feature, breaks = quantiles, include.lowest=T, labels=F)) %>%
+      mutate(feature = as.factor(feature)) %>%
+      mutate(feature = fct_explicit_na(feature, "unknown"))
+  }
+  
+  if (NA_strategy == "random") {
+    dat = dat %>% mutate(feature = ifelse(is.na(feature), sample(feature[!is.na(feature)], 1), feature))
+  }
+  
+  return(round(mean(sapply((1:CV_folds)-1, function(i) compute_AUC(dat,i,CV_folds))),3))
+}
+
+get_aucs = function(method) sapply(continuous, function(c) AUC_continuous(students, c, method))
+aucs = data.frame(none=get_aucs(""), mean=get_aucs("mean"), discretize=get_aucs("discretize5"), random=get_aucs("random"))
+plot_AUCs(aucs)
+```
+

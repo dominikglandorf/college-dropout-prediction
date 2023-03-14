@@ -1,0 +1,11 @@
+---
+title: "Process model"
+author: "Dominik Glandorf"
+date: "2023-03-14"
+output: pdf_document
+---
+
+To derive new theories about the process of dropout appropriate models need to be developed
+
+Course credits for dropouts closer to their last term compared to non-dropouts
+

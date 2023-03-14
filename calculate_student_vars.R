@@ -48,10 +48,11 @@ student_vars = merge(student_vars, scores, by="mellon_id")
 number_ap = rowSums(!is.na(bg[,paste0('ap_score_',1:20,"")]))
 passed_ap_abs = rowSums((bg[,paste0('ap_score_',1:20,"")])>2, na.rm=T)
 passed_ap_rel = passed_ap_abs / number_ap
-best_ap = apply(bg[,paste0('ap_score_',1:20,"")], 1, FUN=function(x) max(x, na.rm=T))
+best_ap = suppressWarnings(pmap_dbl(select(bg, paste0('ap_score_',1:20,"")), max, na.rm = TRUE))
+best_ap[best_ap<0] = NA
 avg_ap = apply(bg[,paste0('ap_score_',1:20,"")], 1, FUN=function(x) mean(x, na.rm=T))
-ap_data = data.frame(mellon_id = bg$mellon_id, number_ap=number_ap, passed_ap=passed_ap,
-                     best_ap=best_ap, avg_ap=avg_ap)
+ap_data = data.frame(mellon_id = bg$mellon_id, number_ap=number_ap, passed_ap_abs=passed_ap_abs,
+                     passed_ap_rel=passed_ap_rel, best_ap=best_ap, avg_ap=avg_ap)
 student_vars = merge(student_vars, ap_data, by="mellon_id")
 
 ## target/label: dropout ##
@@ -81,28 +82,27 @@ student_vars$dropout[four_terms_padding] = !student_vars$graduated[four_terms_pa
 
 
 # copy variables from background_data
-student_vars = merge(student_vars,
-                     bg[,c("mellon_id",
-                                                "admitdate",
-                                                #"female",
-                                                "int_student",
-                                                "ethnicity",
-                                                "first_generation",
-                                                "low_income",
-                                                "father_edu_level_code",
-                                                "mother_edu_level_code",
-                                                "ell",
-                                                "single_parent",
-                                                "foster_care",
-                                                "household_size_app",
-                                                "distance_from_home",
-                                                "sport_at_admission",
-                                                "cal_res_at_app",
-                                                "hs_gpa",
-                                                "toefl_score",
-                                                "ielts_score" )],
+student_vars = merge(student_vars, bg[,c("mellon_id",
+                                        "admitdate",
+                                        "female",
+                                        "int_student",
+                                        "ethnicity",
+                                        "first_generation",
+                                        "low_income",
+                                        "father_edu_level_code",
+                                        "mother_edu_level_code",
+                                        "ell",
+                                        "single_parent",
+                                        "foster_care",
+                                        "household_size_app",
+                                        "distance_from_home",
+                                        "sport_at_admission",
+                                        "cal_res_at_app",
+                                        "hs_gpa",
+                                        "toefl_score",
+                                        "ielts_score" )],
                      by="mellon_id")
-#student_vars$female = student_vars$female == "yes"
+student_vars$female = student_vars$female == "yes"
 student_vars$low_income = student_vars$low_income == "yes"
 
 
