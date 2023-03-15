@@ -4,17 +4,50 @@ source('read_data.R')
 students = get_student_sub()
 terms = get_term_data(ids = students$mellon_id)
 courses = get_course_data(ids = students$mellon_id)
+index = c("mellon_id","term_code","course_code")
 
-# course was taken in school of majors
-courses = courses %>%
+# add whether course was taken in one school of majors
+courses_features = courses %>%
+  # add school for department of course from mapping in config.R
   mutate(school=dept_schools[dept_name_abbrev]) %>%
-  left_join(terms %>% select(c('mellon_id','term_code', paste0('major_school_name_abbrev_', c(1,2,3,4)))),
-            by=c("mellon_id","term_code")) %>% 
+  # add schools of all four majors
+  left_join(terms %>% select(c('mellon_id','term_code', paste0('major_school_name_abbrev_', 1:4)))) %>% 
+  # in_school reflects whether the school of the course's department is one of the schools of the students major
   mutate(in_school = (school == major_school_name_abbrev_1 |
                       (!is.na(major_school_name_abbrev_2) & school == major_school_name_abbrev_2) |
                       (!is.na(major_school_name_abbrev_3) & school == major_school_name_abbrev_3) |
                       (!is.na(major_school_name_abbrev_4) & school == major_school_name_abbrev_4)
-                     ))
+                     )) %>% 
+  # drop helper variables
+  select(-paste0('major_school_name_abbrev_', 1:4))
+
+### generate course peer composition: gender ###
+# join student gender
+courses_features = courses_features %>% 
+  left_join(students %>% select(mellon_id, female))
+
+composition_data <- courses_features %>%  
+  # add n.o. total students and per gender in term x course
+  group_by(term_code, course_code) %>% 
+  summarize(ttl_stu_crs = n(),
+            ttl_female_crs = sum(female==T, na.rm=T),
+            ttl_male_crs = sum(female==F, na.rm=T)) %>% 
+  # add ratios of females and males
+  mutate(rel_female_crs = ttl_female_crs/ttl_stu_crs,
+         rel_male_crs = ttl_male_crs/ttl_stu_crs)
+# print(composition_data, n=100)
+
+# join composition data to courses features
+courses_features <- courses_features %>% 
+  left_join(composition_data) %>% 
+  # make own group explicit
+  mutate(
+    ttl_owngen_crs=if_else(female==T, ttl_female_crs, ttl_male_crs),
+    rel_owngen_crs=if_else(female==T, rel_female_crs, rel_male_crs)
+    )
+#print(temp[,c('female','ttl_stu_crs','ttl_female_crs','ttl_male_crs','rel_female_crs','rel_male_crs','ttl_owngen_crs','rel_owngen_crs')],n=150)
+
+# To do: add first_generation and ethnicity composition. More?
 
 # save to file
-write_csv(courses, file.path(path_data, 'course_features_subset.csv'))
+write_csv(courses_features, file.path(path_data, 'course_features_subset.csv'))
