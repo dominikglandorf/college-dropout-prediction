@@ -6,6 +6,8 @@ output: pdf_document
 ---
 
 ```{r, include=FALSE}
+if(!require(mice)) install.packages('mice')
+#if(!require(missMDA)) install.packages('missMDA')
 library(pROC)
 library(forcats)
 ```
@@ -16,8 +18,9 @@ Due to the large amount of missing/non-applicable data in our dataset (e.g. 44.3
 # Solution strategies
 In general, the strategies vary in the number of added parameters, hence interpretability and potential impact on the predictor's distribution.
 
-## For all types
-1. Train a classifier that predicts NA values from other predictors. Increases dependencies between predictors.
+## For mixed types
+1. Train a classifier that recursively predicts NA values from other predictors -> MICE, missMDA. Increases dependencies between predictors.
+
 
 ## Categorical variables
 1. Own category for NA: We add NA values as a dummy variable (and the reference category).
@@ -47,11 +50,20 @@ students$sport_at_admission[students$sport_at_admission %in% names(saa[saa<nrow(
 
 students = students %>% sample_n(nrow(students)) # shuffle
 ```
-
 ```{r}
 categorical = c("int_student","ethnicity","first_generation","father_edu_level_code","mother_edu_level_code",  "low_income","ell","single_parent","foster_care","household_size_app","sport_at_admission","cal_res_at_app")
 continuous = c("age_at_enrolment","uc_total_score","uc_math_score","uc_read_score","uc_writing_score","number_ap","passed_ap_rel","best_ap","avg_ap","hs_gpa","distance_from_home")
 ```
+# MICE
+```{r}
+data = students %>% select(all_of(c(categorical, continuous)[1:5]))
+data$ethnicity = as.factor(data$ethnicity)
+tempData <- mice(data,m=5,maxit=10,meth='rf',seed=500)
+summary(tempData)
+```
+
+
+
 ```{r}
 compute_AUC = function(dat,i,CV_folds) {
   train = dat[1:nrow(dat)%%CV_folds!=i,]
