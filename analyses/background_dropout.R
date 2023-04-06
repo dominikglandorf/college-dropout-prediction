@@ -10,7 +10,7 @@ ggplot(data = students, aes(x = female)) +
   geom_bar(data=subset(students,dropout == F),aes(y = (..count..)/sum(..count..)),fill = "darkgreen", alpha = 0.4) +
   theme_minimal() +
   theme(legend.position = "none") +
-  labs(title = "Distribution of gender",
+  labs(title = "Dropouts vs Non-Dropouts by Gender",
        x = "Is female",
        y = "Frequency") +
   theme(text = element_text(size = 16))
@@ -63,10 +63,11 @@ ggplot(data = students, aes(x = ethnicity)) +
   geom_bar(data=subset(students,dropout == F),aes(y = (..count..)/sum(..count..)),fill = "darkgreen", alpha = 0.4) +
   theme_minimal() +
   theme(legend.position = "none") +
-  labs(title = "",
+  labs(title = "Dropouts vs Non-Dropouts by Ethnicity",
        x = "",
-       y = "") +
-  theme(text = element_text(size = 16)) +
+       y = "Frequency") +
+  theme(text = element_text(size = 16),
+        axis.text.x = element_text(angle = 60, hjust = 1)) #+
   scale_x_discrete(label=abbreviate)
 
 dropout_rates = do.call(data.frame, aggregate(dropout ~ ethnicity, students, FUN = function(x) c(mean = mean(x), n = length(x))))
@@ -84,14 +85,14 @@ ggplot(data = dropout_rates, aes(x=ethnicity, y=dropout.mean)) +
 unique(students$first_generation)
 mean(is.na(students$first_generation))
 
-ggplot(data = students, aes(x = first_generation)) +
+ggplot(data = students, aes(x = as.logical(first_generation))) +
   geom_bar(data=subset(students,dropout == T),aes(y = (..count..)/sum(..count..)),fill = "red", alpha = 0.4) +
   geom_bar(data=subset(students,dropout == F),aes(y = (..count..)/sum(..count..)),fill = "darkgreen", alpha = 0.4) +
   theme_minimal() +
   theme(legend.position = "none") +
-  labs(title = "",
-       x = "",
-       y = "") +
+  labs(title = "Dropouts vs Non-Dropouts by First Generation",
+       x = "First generation",
+       y = "Frequency") +
   theme(text = element_text(size = 16))
 
 dropout_rates = do.call(data.frame, aggregate(dropout ~ first_generation, students, FUN = function(x) c(mean = mean(x), n = length(x))))
@@ -114,9 +115,9 @@ ggplot(data = students, aes(x = low_income)) +
   geom_bar(data=subset(students,dropout == F),aes(y = (..count..)/sum(..count..)),fill = "darkgreen", alpha = 0.4) +
   theme_minimal() +
   theme(legend.position = "none") +
-  labs(title = "",
-       x = "",
-       y = "") +
+  labs(title = "Dropouts vs Non-Dropouts by Low Income",
+       x = "Low Income",
+       y = "Frequency") +
   theme(text = element_text(size = 16))
 
 dropout_rates = do.call(data.frame, aggregate(dropout ~ low_income, students, FUN = function(x) c(mean = mean(x), n = length(x))))
@@ -283,15 +284,15 @@ ggplot(data = dropout_rates, aes(x=household_size_app, y=dropout.mean, fill=drop
 unique(students$distance_from_home)
 mean(is.na(students$distance_from_home))
 
-students$dists = pmin(1000, 10* round(as.integer(students$distance_from_home)/10))
+students$dists = pmin(1000, 20* round(as.integer(students$distance_from_home)/20))
 ggplot(data = students, aes(x = dists)) +
   geom_bar(data=subset(students,dropout == T),aes(y = (..count..)/sum(..count..)),fill = "red", alpha = 0.4) +
   geom_bar(data=subset(students,dropout == F),aes(y = (..count..)/sum(..count..)),fill = "darkgreen", alpha = 0.4) +
   theme_minimal() +
   theme(legend.position = "none") +
-  labs(title = "",
-       x = "",
-       y = "") +
+  labs(title = "Dropouts vs Non-Dropouts over distance from home",
+       x = "Distance [miles]",
+       y = "Frequency") +
   theme(text = element_text(size = 16))
 
 dropout_rates = do.call(data.frame, aggregate(dropout ~dists, students, FUN = function(x) c(mean = mean(x), n = length(x))))

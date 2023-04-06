@@ -56,9 +56,9 @@ continuous = c("age_at_enrolment","uc_total_score","uc_math_score","uc_read_scor
 ```
 # MICE
 ```{r}
-data = students %>% select(all_of(c(categorical, continuous)[1:5]))
+data = students %>% select(all_of(c(categorical, continuous)))
 data$ethnicity = as.factor(data$ethnicity)
-tempData <- mice(data,m=5,maxit=10,meth='rf',seed=500)
+tempData <- mice(data,m=1,maxit=1,meth='rf',seed=500)
 summary(tempData)
 ```
 

@@ -2,61 +2,101 @@
 source('read_data.R')
 
 bg = get_student_background_data()
-term_data <- get_term_data()
 
 ## feature calculation ##
-# first_term, last_term
-student_vars = group_by(term_data, mellon_id) %>% summarise(first_code = min(term_code), last_code = max(term_code), num_terms = n())
-student_vars$first_year = as.integer(substr(student_vars$first_code, 0, 4))
-student_vars$first_term = substr(student_vars$first_code, 5, 6)
-student_vars$first_month = term_part_codes$start_month[match(student_vars$first_term, term_part_codes$code)]
-student_vars$first_term_desc = paste(term_part_codes$desc[match(student_vars$first_term, term_part_codes$code)], student_vars$first_year)
+# start as freshman
+bg$start_as_freshman = (bg$application_status == "Freshmen")
 
-student_vars$last_year = as.integer(substr(student_vars$last_code, 0, 4))
-student_vars$last_term = substr(student_vars$last_code, 5, 6)
-student_vars$last_term_desc = paste(term_part_codes$desc[match(student_vars$last_term, term_part_codes$code)], student_vars$last_year)
-student_vars$last_month = term_part_codes$end_month[match(student_vars$last_term, term_part_codes$code)]
+# pre-university scores
+bg$uc_math_score = apply(bg[,c("sat_math_score","uc_math_score","admitdate")], 1, FUN=function(x) {
+  if(!is.na(x[2])) return(as.integer(x[2])) # prioritize UC score
+  if(is.na(x[3])) return(NA) # if admitdate is unknown, return NA
+  # translate SAT to UC score depending on whether admission was before 2012
+  return(get_uc_from_sat(as.integer(x[1]), as.integer(substr(x[3],2,3)) < 12))
+})
+
+# AP exams
+bg$number_ap = rowSums(!is.na(bg[,paste0('ap_score_',1:20,"")]))
+bg$passed_ap_abs = rowSums((bg[,paste0('ap_score_',1:20,"")])>2, na.rm=T)
+bg$passed_ap_rel = bg$passed_ap_abs / bg$number_ap
+bg$best_ap = suppressWarnings(pmap_dbl(select(bg, paste0('ap_score_',1:20,"")), max, na.rm = TRUE))
+bg$best_ap[bg$best_ap<0] = NA
+bg$avg_ap = apply(bg[,paste0('ap_score_',1:20,"")], 1, FUN=function(x) mean(x, na.rm=T))
+
+# cast demographic features to logical
+bg$female = bg$female == "yes"
+bg$low_income = bg$low_income == "yes"
+bg$ethnicity_smpl = bg$ethnicity
+bg$ethnicity_smpl[bg$ethnicity_smpl=="American Indian / Alaskan Native"] = "Indigenous"
+bg$ethnicity_smpl[bg$ethnicity_smpl=="Pacific Islander"] = "Indigenous"
+
+# select predictors
+student_vars = bg %>% select(mellon_id,
+                             # administrative
+                             start_as_freshman,
+                             admitdate,
+                             sport_at_admission,
+                             # scores
+                             hs_gpa,
+                             uc_total_score,
+                             uc_read_score,
+                             uc_writing_score,
+                             uc_math_score,
+                             toefl_score,
+                             ielts_score,
+                             # AP
+                             number_ap,
+                             passed_ap_abs,
+                             passed_ap_rel,
+                             best_ap,
+                             avg_ap,
+                             # demographics
+                             female,
+                             int_student,
+                             ethnicity_smpl,
+                             first_generation,
+                             low_income,
+                             father_edu_level_code,
+                             mother_edu_level_code,
+                             ell,
+                             single_parent,
+                             foster_care,
+                             household_size_app,
+                             distance_from_home,
+                             cal_res_at_app)
 
 
 # number of years enrolled
-student_vars$number_of_years <- with(student_vars, {last_year - first_year + (last_month - first_month)/12})
+term_data <- get_term_data()
+term_summary = group_by(term_data, mellon_id) %>%
+  summarise(first_code = min(term_code),
+            last_code = max(term_code),
+            num_terms = n()) %>%
+  # first four digits are the year of the term, latter two are the term
+  mutate(first_year = as.integer(substr(first_code, 0, 4)),
+         first_term = substr(first_code, 5, 6),
+         last_year = as.integer(substr(last_code, 0, 4)),
+         last_term = substr(last_code, 5, 6)) %>% 
+  # join month information for terms
+  left_join(term_part_codes %>% select(code, start_month),
+            by=c("first_term"="code")) %>% 
+  left_join(term_part_codes %>% select(code, end_month),
+            by=c("last_term"="code")) %>% 
+  mutate(number_of_years = last_year - first_year + (end_month - start_month)/12)
+student_vars = student_vars %>%
+  merge(term_summary %>% select(mellon_id, number_of_years, last_code, first_term, first_year))
 
 # age at enrollment
-birth_data <- bg %>% select(mellon_id, birth_year, birth_month)
-student_vars <- merge(student_vars, birth_data, by="mellon_id")
-student_vars$age_at_enrolment = with(student_vars, {
-  first_year - birth_year + (first_month - birth_month) / 12
-})
+birth_data = bg %>%
+  select(mellon_id, birth_year, birth_month) %>% 
+  merge(term_summary) %>% 
+  mutate(age_at_enrolment = first_year - birth_year + (start_month - birth_month) / 12)
+student_vars = student_vars %>%
+  merge(birth_data %>% select(mellon_id, age_at_enrolment))
 
-# started as freshman
-transfer_data = data.frame(
-  mellon_id = bg$mellon_id,
-  start_as_freshman = (bg$application_status == "Freshmen"),
-  appl_status = bg$application_status)
-student_vars = merge(student_vars, transfer_data, by="mellon_id")
-
-# pre-university scores
-scores = bg[,c("mellon_id","uc_total_score","uc_read_score","uc_writing_score")]
-scores$uc_math_score = apply(bg[,c("sat_math_score","uc_math_score","admitdate")], 1, FUN=function(x) {
-  if(!is.na(x[2])) return(as.integer(x[2])) # prioritize UC score
-  if(is.na(x[3])) return(NA) # if admitdate is unknown, return NA
-  return(get_uc_from_sat(as.integer(x[1]), as.integer(substr(x[3],2,3)) < 12))
-})
-student_vars = merge(student_vars, scores, by="mellon_id")
-
-# ap classes
-number_ap = rowSums(!is.na(bg[,paste0('ap_score_',1:20,"")]))
-passed_ap_abs = rowSums((bg[,paste0('ap_score_',1:20,"")])>2, na.rm=T)
-passed_ap_rel = passed_ap_abs / number_ap
-best_ap = suppressWarnings(pmap_dbl(select(bg, paste0('ap_score_',1:20,"")), max, na.rm = TRUE))
-best_ap[best_ap<0] = NA
-avg_ap = apply(bg[,paste0('ap_score_',1:20,"")], 1, FUN=function(x) mean(x, na.rm=T))
-ap_data = data.frame(mellon_id = bg$mellon_id, number_ap=number_ap, passed_ap_abs=passed_ap_abs,
-                     passed_ap_rel=passed_ap_rel, best_ap=best_ap, avg_ap=avg_ap)
-student_vars = merge(student_vars, ap_data, by="mellon_id")
 
 ## target/label: dropout ##
-# count non-NA in the four major_graduated columns per students
+# check whether there is any non-NA in the four major_graduated columns per students
 graduate_data = group_by(term_data, mellon_id) %>% summarise(
   graduated_1 = sum(!is.na(major_graduated_1)),
   graduated_2 = sum(!is.na(major_graduated_2)),
@@ -80,30 +120,6 @@ four_terms_padding = student_vars$last_code < max(student_vars$last_code-100)
 # CONDITION: graduation -> DROPOUT = FALSE
 student_vars$dropout[four_terms_padding] = !student_vars$graduated[four_terms_padding]
 
-
-# copy variables from background_data
-student_vars = merge(student_vars, bg[,c("mellon_id",
-                                        "admitdate",
-                                        "female",
-                                        "int_student",
-                                        "ethnicity",
-                                        "first_generation",
-                                        "low_income",
-                                        "father_edu_level_code",
-                                        "mother_edu_level_code",
-                                        "ell",
-                                        "single_parent",
-                                        "foster_care",
-                                        "household_size_app",
-                                        "distance_from_home",
-                                        "sport_at_admission",
-                                        "cal_res_at_app",
-                                        "hs_gpa",
-                                        "toefl_score",
-                                        "ielts_score" )],
-                     by="mellon_id")
-student_vars$female = student_vars$female == "yes"
-student_vars$low_income = student_vars$low_income == "yes"
 
 
 # save to file

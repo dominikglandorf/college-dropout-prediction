@@ -180,34 +180,39 @@ ggplot(data = dropout_rates_transfer, aes(x=Group.1, y=x)) +
 # FROM NOW ANALYSIS WITH SUBSET
 ###############################
 student_sub = get_student_sub()
-dim(student_sub) # 46408 x 25
 
 bg_sub = get_student_background_data(ids = student_sub$mellon_id)
 term_sub = get_term_data(ids = student_sub$mellon_id)
 course_sub = get_course_data(ids = student_sub$mellon_id)
 
-bg_sub = merge(bg_sub, student_sub[,c("mellon_id","admitdate")], by="mellon_id")
+#bg_sub = merge(bg_sub, student_sub[,c("mellon_id","admitdate")], by="mellon_id")
 
 ## LABEL: DROPOUT ##
-mean(is.na(student_sub$dropout))
+mean(is.na(student_sub$dropout)) # amount of missing data
+
+# plot unconditional distribution of dropout
 ggplot(student_sub, aes(x=dropout)) +
   geom_bar() + theme_minimal() + labs(x="",y="")
-# dropout rates over cohorts
+
+# dropout rate by cohort
 dropout_rates = aggregate(dropout ~ admitdate, student_sub,FUN=function(x) mean(x, na.rm=T))
 sd(dropout_rates$dropout)
+dropout_rates$admitdate = paste0("20", substring(dropout_rates$admitdate,2))
 
 ggplot(data = dropout_rates, aes(x=admitdate, y=dropout)) +
   geom_bar(stat="identity") +
   theme_minimal() +
-  geom_text(aes(label=round(dropout,2)), vjust = -0.5) + 
-  theme(text = element_text(size = 16),
-        legend.key.size = unit(0.3, 'cm'),
-        axis.text.x=element_text(size=10,angle=90, hjust=1,vjust=0.5)) +
+  #geom_text(aes(label=round(dropout,2)), vjust = -0.5) +
+  theme(plot.title = element_text(size = 18),
+        axis.title = element_text(size = 18, color="black"),
+        axis.text = element_text(size = 14, color="black"),
+        axis.text.x = element_text(vjust = +2.5),
+        axis.text.y = element_text(hjust = +1.25)) +
   labs(title = "Dropout by cohort",
-       x = "Cohort",
+       x = "Admission year",
        y = "Dropout rate") +
-  ylim(0, 0.15)
-
+  scale_y_continuous(labels = scales::percent_format())
+par()
 # Compare dropout variables / obsolete because differences were very low
 table(student_sub$dropout)
 sum(is.na(student_sub$dropout))
@@ -297,14 +302,15 @@ ggplot(data = student_sub, aes(x=5*round(uc_total_score/5))) +
   geom_bar(data=subset(student_sub,dropout == F),aes(y = (..count..)/sum(..count..)),fill = "darkgreen", alpha = 0.4) +
   geom_bar(data=subset(student_sub,dropout == T),aes(y = (..count..)/sum(..count..)),fill = "red", alpha = 0.4) +
   theme_minimal() +
-  theme(legend.position = "none") +
   labs(title = "Distribution of UC total scores",
        x = "Score",
-       y = "Frequency") +
+       y = "Frequency",
+       fill="Dropout") +
   theme(text = element_text(size = 16))
 
 student_sub$total_score_buckets =5*round(student_sub$uc_total_score/5)
 dropout_rates_total_score = do.call(data.frame, aggregate(dropout ~ total_score_buckets, student_sub, FUN = function(x) c(mean = mean(x), n = length(x))))
+dropout_rates_total_score = dropout_rates_total_score[4:nrow(dropout_rates_total_score),]
 ggplot(data = dropout_rates_total_score, aes(x=total_score_buckets, y=dropout.mean, fill=dropout.n > 46)) +
   geom_bar(stat="identity") +
   theme_minimal() +
@@ -312,10 +318,10 @@ ggplot(data = dropout_rates_total_score, aes(x=total_score_buckets, y=dropout.me
   theme(text = element_text(size = 16),
         legend.key.size = unit(0.3, 'cm'),
         axis.text.x=element_text(size=10,angle=90, hjust=1,vjust=0.5)) +
-  theme(legend.position = "none") +
   labs(title = "Dropout rates by UC total score",
        x = "Score",
-       y = "Dropout rate")
+       y = "Dropout rate",
+       fill="n>1???")
 
 mean(is.na(student_sub$uc_math_score))
 ggplot(data = student_sub, aes(x=5*round(uc_math_score/5))) +
@@ -411,6 +417,17 @@ ggplot(data.frame(x=n_terms, y=rates, n=n_obs), aes(x=x, y=y, fill=n>46)) +
 
 
 term_features = get_term_features()
+term_features = merge(term_features, student_sub[,c("mellon_id", "dropout", "admitdate")], by="mellon_id")
+term_features_1 = subset(term_features, term_num==1)
+dropout_rates_major = do.call(data.frame, aggregate(dropout ~ major_1, term_features_1, FUN = function(x) c(mean = mean(x), n = length(x))))
+ggplot(data = dropout_rates_major, aes(x=major_1, y=dropout.mean, fill=dropout.n > 46)) +
+  geom_bar(stat="identity") +
+  theme_minimal() +
+  theme(text = element_text(size = 12), axis.text.x = element_text(angle = 90, hjust=1)) +
+  labs(title = "Dropout rates by Major",
+       x = "Major in first term",
+       y = "Dropout rate",
+       fill="n>1???") 
 
 # units completed
 term_features = merge(term_features, student_sub[,c("mellon_id", "dropout", "admitdate")], by="mellon_id")
@@ -443,7 +460,7 @@ ggplot(data = dropout_rates_units_completed, aes(x=as.integer.units_completed., 
   xlim(-1, 32)
 
 # only for first term
-term_features_1 = subset(term_features, term_num==1)
+
 ggplot(data = term_features_1, aes(x = as.integer(cum_avg_credits))) +
   geom_bar(data=subset(term_features_1,dropout == T),aes(y = (..count..)/sum(..count..)),fill = "red", alpha = 0.4) +
   geom_bar(data=subset(term_features_1,dropout == F),aes(y = (..count..)/sum(..count..)),fill = "darkgreen", alpha = 0.4) +
@@ -760,3 +777,4 @@ ggplot(data = term_features_3, aes(x = num_majors)) +
        x = "Number of majors",
        y = "Frequency") +
   theme(text = element_text(size = 16))
+

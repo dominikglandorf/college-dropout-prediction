@@ -29,7 +29,7 @@ predictors = c("age_at_enrolment",
               "uc_writing_score",
               "number_ap",
               "passed_ap_rel",
-              "best_ap", # check distribution
+              "best_ap",
               "avg_ap",
               "int_student",
               "ethnicity",
@@ -87,7 +87,8 @@ odds_ratios = data.frame(OR=exp(log.reg.fit$coefficients),
 ggplot(odds_ratios, aes(x=row.names(odds_ratios),y=OR, fill=p<0.05))+
   geom_bar(stat="identity") +
   theme(axis.text.x = element_text(angle = 90, vjust = 0.25, hjust=1)) +
-  scale_y_continuous(trans='log')
+  scale_y_continuous(trans='log') +
+  xlab("Predictor")
 ```
 # Model evaluation
 ```{r, message=FALSE}
