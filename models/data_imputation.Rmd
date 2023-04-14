@@ -21,7 +21,6 @@ In general, the strategies vary in the number of added parameters, hence interpr
 ## For mixed types
 1. Train a classifier that recursively predicts NA values from other predictors -> MICE, missMDA. Increases dependencies between predictors.
 
-
 ## Categorical variables
 1. Own category for NA: We add NA values as a dummy variable (and the reference category).
 2. Use the most frequent class: We merge them with the most frequent class, save one parameter but also bias the distribution to its mode.
@@ -31,8 +30,6 @@ In general, the strategies vary in the number of added parameters, hence interpr
 2. Use mean.
 3. Use random value.
 
-# Comparison of strategies
-We can compare the strategies in terms of the AUC in a logistic regression. All variables are tested alone for their predictiveness using different strategies.
 
 
 ```{r, warning=FALSE, message=FALSE}
@@ -48,18 +45,35 @@ students$father_edu_level_code[students$father_edu_level_code==4]=NA
 saa = table(students$sport_at_admission)
 students$sport_at_admission[students$sport_at_admission %in% names(saa[saa<nrow(students)/1000])] = "other"
 
-students = students %>% sample_n(nrow(students)) # shuffle
+#students = students %>% sample_n(nrow(students)) # shuffle
 ```
 ```{r}
-categorical = c("int_student","ethnicity","first_generation","father_edu_level_code","mother_edu_level_code",  "low_income","ell","single_parent","foster_care","household_size_app","sport_at_admission","cal_res_at_app")
+categorical = c("int_student","ethnicity_smpl","first_generation","father_edu_level_code","mother_edu_level_code",  "low_income","ell","single_parent","foster_care","household_size_app","sport_at_admission","cal_res_at_app")
 continuous = c("age_at_enrolment","uc_total_score","uc_math_score","uc_read_score","uc_writing_score","number_ap","passed_ap_rel","best_ap","avg_ap","hs_gpa","distance_from_home")
 ```
 # MICE
 ```{r}
 data = students %>% select(all_of(c(categorical, continuous)))
-data$ethnicity = as.factor(data$ethnicity)
-tempData <- mice(data,m=1,maxit=1,meth='rf',seed=500)
-summary(tempData)
+data$ethnicity_smpl = as.factor(data$ethnicity_smpl)
+# parameters of mice
+# m: the number of imputed datasets
+# maxit: the number of iterations in each imputation
+# meth: imputation method = random forest
+system.time(tempData <- mice(data, m=1, maxit=5, meth='rf', seed=500))
+```
+```{r}
+# check distributions for discrete cols
+data_imp = complete(tempData, 1)
+
+for (name in continuous) {
+  #col_imp = paste0(name, "_imp")
+  #data[col_imp] = pull(data_imp, name)
+  
+  print(ggplot(data, aes_string(x=name))+ 
+    geom_bar())
+  print(ggplot(data_imp, aes_string(x=name))+ 
+    geom_bar())
+}
 ```
 
 

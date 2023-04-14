@@ -1,0 +1,202 @@
+College Code,School,Major Code,Major,CIP Code,CIP,Undergrad Major,OIR STEM,IVLE STEM,HHMI Nat Sci
+2,Health Science,0,Undeclared,30.9999,"Multi-/InterdisciplinaryStudies,Other",1,0,NA,0
+2,Health Science,5,Unaffiliated,30.9999,"Multi-/InterdisciplinaryStudies,Other",1,0,NA,0
+2,Health Science,789,Public Health,51.2201,"PublicHealth,General",0,0,NA,NA
+2,Health Science,01T,Medicinal Chemistry and Pharmacology,26.1001,Pharmacology,1,1,0,0
+2,Health Science,75A,Pharmaceutical Sciences,51.201,PharmaceuticalSciences,1,0,1,0
+2,Health Science,7A0,Public Health Sciences,51.2299,"PublicHealth,Other",1,0,0,0
+2,Health Science,7A1,Public Health Policy,51.2299,"PublicHealth,Other",1,0,0,0
+6,Interdisiciplinary Studies,0,Undeclared,30.9999,"Multi-/InterdisciplinaryStudies,Other",1,0,NA,0
+8,Undergrad Ed,0,Undeclared,30.9999,"Multi-/InterdisciplinaryStudies,Other",1,0,NA,0
+8,Undergrad Ed,5,Unaffiliated,30.9999,"Multi-/InterdisciplinaryStudies,Other",1,0,NA,0
+55,Biological Sci,0,Undeclared,30.9999,"Multi-/InterdisciplinaryStudies,Other",1,0,0,1
+55,Biological Sci,5,Unaffiliated,30.9999,"Multi-/InterdisciplinaryStudies,Other",1,0,0,1
+55,Biological Sci,36,Neurobiology and Behavior,26.1504,NeurobiologyandBehavior,0,0,NA,NA
+55,Biological Sci,114,Biochemistry and Molecular Biol,26.021,BiochemistryandMolecualrBiology,2,0,NA,1
+55,Biological Sci,120,Biological Sciences,26.0101,"Biology/BiologicalSciences,General",1,1,1,1
+55,Biological Sci,123,Biology,26.0101,"Biology/BiologicalSciences,General",0,1,NA,NA
+55,Biological Sci,257,Biotechnology,26.1201,Biotechnology,0,1,NA,NA
+55,Biological Sci,390,Genetics,26.0801,"Genetics,General",2,1,1,1
+55,Biological Sci,569,Microbiology and Immunology,26.0508,MicrobiologyandImmunology,2,1,0,1
+55,Biological Sci,576,Molecular Biology and Biochemistry,26.021,BiochemistryandMolecualrBiology,0,0,NA,NA
+55,Biological Sci,593,Neurobiology,26.1503,NeurobiologyandAnatomy,2,0,0,1
+55,Biological Sci,618,Developmental and Cell Biology,26.0406,Cell/CellualrandMolecualrBiology,1,1,1,1
+55,Biological Sci,680,Plant Biology,26.0301,Botany/PlantBiology,NA,1,0,1
+55,Biological Sci,708,Ecology and Evolutionary Biology,26.131,EcologyandEvolutionaryBiology,1,1,0,1
+55,Biological Sci,00V,Mathematical and Computational Biology,26.1199,"Biomathematics,Bioinformatics& ComputationalBiology,..",0,0,NA,NA
+55,Biological Sci,04G,Cellular and Molecular Biosciences,26.0406,Cell/CellualrandMolecualrBiology,0,1,0,NA
+55,Biological Sci,05H,Biology/ Education,13.1322,BiologyTeacherEducation,1,0,0,0
+55,Biological Sci,05Q,Bio& ED Media Design,13.1322,BiologyTeacherEducation,0,0,0,NA
+55,Biological Sci,07F,Biotechnology Management,26.1201,Biotechnology,0,1,0,NA
+55,Biological Sci,08R,Exercise Sciences,26.0908,ExercisePhysiology,2,1,0,1
+55,Biological Sci,0B6,"Mathematical, Computational, and Systems Biology",26.1199,"Biomathematics,Bioinformatics& ComputationalBiology,..",0,0,NA,NA
+55,Biological Sci,59B,Interdepartmental Neuroscience,26.1501,Neuroscience,0,1,0,NA
+55,Biological Sci,99A,Human Biology,30.2701,HumanBiology,2,1,1,1
+57,Arts,0,Undeclared,30.9999,"Multi-/InterdisciplinaryStudies,Other",1,0,0,0
+57,Arts,5,Unafilliated,30.9999,"Multi-/InterdisciplinaryStudies,Other",1,0,0,0
+57,Arts,64,Drama and Theatre,50.0501,"DramaandDramatics/TheatreArts,General",1,0,0,0
+57,Arts,90,Art,50.0101,"VisualandPerformingArts,General",1,0,0,0
+57,Arts,91,Studio Art,50.0702,"Fine/StudioArts,General",1,0,0,0
+57,Arts,210,Dance,50.0301,"Dance,General",1,0,0,0
+57,Arts,231,Drama,50.0501,"DramaandDramatics/TheatreArts,General",1,0,0,0
+57,Arts,579,Music,50.0901,"Music,General",1,0,0,0
+57,Arts,582,Music-Performance,50.0903,"MusicPerformance,General",1,0,0,0
+57,Arts,796,Dance-Choreography,50.0301,"Dance,General",1,0,0,0
+57,Arts,797,Dance-Performance,50.0301,"Dance,General",1,0,0,0
+57,Arts,02B,Music Theatre,50.0509,MusicalTheatre,1,0,0,0
+57,Arts,05I,Critical and Curatorail Studies,50.9999,"VisualandPerformingArts,Other",0,0,0,NA
+57,Arts,09NA,"Integrated Composition, Improvisation, and Technology",50.0999,"Music,Other",0,0,0,NA
+57,Arts,44D,Arts and Humanities,24.0103,Humanities/HumanisticStudies,1,0,0,0
+60,Humanities,0,Undeclared,30.9999,"Multi-/InterdisciplinaryStudies,Other",1,0,0,0
+60,Humanities,5,Unaffiliated,30.9999,"Multi-/InterdisciplinaryStudies,Other",1,0,0,0
+60,Humanities,14,African-AmericanStudies,5.0201,African-American/BalckStudies,1,0,0,0
+60,Humanities,50,EastAsainLanguagesandLiteratures,16.03,"EastAsainLanguages,Literatures,andLinguistics,General",1,0,0,0
+60,Humanities,65,VisualStudies,50.9999,"VisualandPerformingArts,Other",1,0,0,0
+60,Humanities,93,ArtHistory,50.0703,"ArtHistory,Criticism andConservation",1,0,0,0
+60,Humanities,100,AsainAmericanStudies,5.0206,Asain-AmericanStudies,1,0,0,0
+60,Humanities,163,ChineseStudies,5.0123,ChineseStudies,1,0,0,0
+60,Humanities,169,CalssicalCivilization,30.2202,"Calssical,AncientMediterraneanandNearEasternStudiesa..",1,0,0,0
+60,Humanities,174,Calssics,16.12,"CalssicsandCalssicalLanguages,Literatures,andLinguistics..",1,0,0,0
+60,Humanities,192,ComparativeLiterature,16.0104,ComparativeLiterature,1,0,0,0
+60,Humanities,204,CreativeWriting,23.1302,CreativeWriting,1,0,0,0
+60,Humanities,345,English,23.0101,"EnglishLanguageandLiterature,General",1,0,0,0
+60,Humanities,367,Film Studies,50.0601,Film/Cinema/VideoStudies,1,0,0,0
+60,Humanities,387,French,16.0901,FrenchLanguageandLiterature,1,0,0,0
+60,Humanities,408,German,16.0501,GermanLanguageandLiterature,1,0,0,0
+60,Humanities,429,History,54.0101,"History,General",1,0,0,0
+60,Humanities,469,ChineseLanguageandLiterature,16.0301,ChineseLanguageandLiterature,1,0,0,0
+60,Humanities,470,JapaneseLanguageandLiterature,16.0302,JapaneseLanguageandLiterature,1,0,0,0
+60,Humanities,651,Philosophy,38.0101,Philosophy,1,0,0,0
+60,Humanities,749,EastAsainCultures,5.0104,EastAsainStudies,1,0,0,0
+60,Humanities,762,EuropeanStudies,5.0106,EuropeanStudies/Civilization,1,0,0,0
+60,Humanities,801,ReligiousStudies,38.0201,Religion/ReligiousStudies,1,0,0,0
+60,Humanities,882,Spanish,16.0905,SpanishLanguageandLiterature,1,0,0,0
+60,Humanities,01D,KoreanLiteratureandCulture,16.0303,KoreanLanguageandLiterature,1,0,0,0
+60,Humanities,08Y,GenderandSeNAualityStudies,5.0299,"Ethnic,CulturalMinority,Gender,andGroupStudies,Other",1,0,0,0
+60,Humanities,27D,CultureandTheory,30.2601,CulturalStudies/CriticalThinkingandAnalysis,1,0,0,0
+60,Humanities,36B,Film andMediaStudies,50.0601,Film/Cinema/VideoStudies,1,0,0,0
+60,Humanities,40B,GermanStudies,5.0125,GermanStudies,1,0,0,0
+60,Humanities,44C,HumanitiesandArts,24.0103,Humanities/HumanisticStudies,1,0,0,0
+60,Humanities,48A,LiteraryJournalism,9.0499,"Journalism,Other",1,0,0,0
+60,Humanities,49A,GlobalCultures,30.2001,International/GlobalStudies,1,0,0,0
+62,Physical Sciences,0,Undeclared,30.9999,"Multi-/InterdisciplinaryStudies,Other",1,0,NA,1
+62,Physical Sciences,5,Unaffiliated,30.9999,"Multi-/InterdisciplinaryStudies,Other",1,0,NA,1
+62,Physical Sciences,153,Chemistry,40.0501,"Chemistry,General",1,1,1,1
+62,Physical Sciences,272,Physics-Chemical and Materails Physics,40.0899,"Physics,Other",0,1,0,NA
+62,Physical Sciences,325,Chemistry-Chemical and Materails Physics,40.0599,"Chemistry,Other",0,1,NA,NA
+62,Physical Sciences,351,Environmental Science,3.0104,EnvironmentalScience,1,1,1,1
+62,Physical Sciences,540,Mathematics,27.0101,"Mathematics,General",1,1,1,1
+62,Physical Sciences,666,Physics,40.0801,"Physics,General",1,1,1,1
+62,Physical Sciences,763,Earth System Science,40.0601,"Geology/EarthScience,General",1,1,1,1
+62,Physical Sciences,03E,Earth and Environmental Studies,3.0103,EnvironmentalStudies,NA,1,1,1
+62,Physical Sciences,23G,Earth and Environmental Sciences,40.0601,"Geology/EarthScience,General",NA,1,1,1
+65,Social Sciences,0,Undeclared,30.9999,"Multi-/InterdisciplinaryStudies,Other",1,0,NA,0
+65,Social Sciences,5,Unaffiliated,30.9999,"Multi-/InterdisciplinaryStudies,Other",1,0,NA,0
+65,Social Sciences,63,Anthropology,45.0201,Anthropology,1,0,NA,0
+65,Social Sciences,144,BusinessEconomics,52.0601,Business/ManagerailEconomics,1,0,NA,0
+65,Social Sciences,246,Economics,45.0601,"Economics,General",1,0,NA,0
+65,Social Sciences,448,LogicandPhilosophyofScience,38.0199,"Philosophy,Other",1,0,NA,0
+65,Social Sciences,581,Demographic and Social Analysis,45.0501,DemographyandPopualtionStudies,0,0,NA,NA
+65,Social Sciences,610,Political Psychology,45.1099,"PoliticalScienceandGovernment,Other",0,0,NA,NA
+65,Social Sciences,611,PublicChoice-Economics,45.0699,"Economics,Other",0,0,NA,NA
+65,Social Sciences,614,PublicChoice-PoliticalScience,45.1099,"PoliticalScienceandGovernment,Other",0,0,NA,NA
+65,Social Sciences,617,Transportation Economics,45.0699,"Economics,Other",0,0,NA,NA
+65,Social Sciences,619,Mathematical Behavioral Science,27.0399,"AppliedMathematics,Other",0,1,0,NA
+65,Social Sciences,629,Transportation Science,30.9999,"Multi-/InterdisciplinaryStudies,Other",0,0,NA,NA
+65,Social Sciences,699,PoliticalScience,45.1001,"PoliticalScienceandGovernment,General",1,0,0,0
+65,Social Sciences,780,Psychology,42.0101,"Psychology,General",1,0,0,0
+65,Social Sciences,836,International Studies,30.2001,International/GlobalStudies,1,0,0,0
+65,Social Sciences,858,Social Science,45.0101,"SocialSciences,General",1,0,NA,0
+65,Social Sciences,867,Sociology,45.1101,Sociology,1,0,0,0
+65,Social Sciences,01R,Cognitive Neuroscience,26.1501,Neuroscience,0,1,NA,NA
+65,Social Sciences,07P,"Medicine,Science,andTechnologyStudies",45.9999,"SocialSciences,Other",0,0,NA,NA
+65,Social Sciences,07Y,Cognitive Sciences,30.2501,CognitiveScience,1,0,0,0
+65,Social Sciences,24G,Quantitative Economics,45.0603,EconometricsandQuantitativeEconomics,1,0,0,0
+77,Engineering,0,Undeclared,30.9999,"Multi-/InterdisciplinaryStudies,Other",1,0,NA,1
+77,Engineering,5,Unaffiliated,30.9999,"Multi-/InterdisciplinaryStudies,Other",1,0,NA,1
+77,Engineering,83,Biochemical Engineering,14.0501,BioengineeringandBiomedicalEngineering,0,1,NA,NA
+77,Engineering,193,Computer Science and Engineering,14.0901,"ComputerEngineering,General",1,1,NA,1
+77,Engineering,268,Computer Networks and Distributed Computing,11.0901,ComputerSystemsNetworkingandTelecommunications,0,0,NA,NA
+77,Engineering,269,Computer System sand Software,14.0901,"ComputerEngineering,General",0,1,NA,NA
+77,Engineering,273,Engineering,14.0101,"Engineering,General",NA,1,NA,1
+77,Engineering,276,Electrical Engineering,14.1001,ElectricalandElectronicsEngineering,1,1,NA,1
+77,Engineering,277,Mechanical Engineering,14.1901,MechanicalEngineering,1,1,NA,1
+77,Engineering,279,Aerospace Engineering,14.0201,"Aerospace,AeronauticalandAstronautical/SpaceEngineeri..",1,1,NA,1
+77,Engineering,284,Civil Engineering,14.0801,"CivilEngineering,General",1,1,1,1
+77,Engineering,289,Biomedical Engineering,14.0501,BioengineeringandBiomedicalEngineering,1,1,NA,1
+77,Engineering,290,Electrical and Computer Engineering,14.1001,ElectricalandElectronicsEngineering,0,1,1,NA
+77,Engineering,294,Chemical Engineering,14.0701,ChemicalEngineering,0,1,1,NA
+77,Engineering,302,Computer Engineering,14.0901,"ComputerEngineering,General",1,1,1,1
+77,Engineering,328,Materails Science and Engineering,14.1801,MaterailsEngineering,0,1,1,NA
+77,Engineering,384,Environmental Engineering,14.1401,Environmental/EnvironmentalHealthEngineering,1,1,1,1
+77,Engineering,751,Mechanical and Aerospace Engineering,14.1901,MechanicalEngineering,0,1,0,NA
+77,Engineering,00U,Materails and Manufacturing Technology,14.3601,ManufacturingEngineering,0,0,NA,NA
+77,Engineering,06K,Engineering Management,14.0101,"Engineering,General",0,1,0,NA
+77,Engineering,1A2,Computer Graphics and Visualization,11.0803,ComputerGraphics,0,0,NA,NA
+77,Engineering,28B,Biomedical Engineering: Premed,14.0501,BioengineeringandBiomedicalEngineering,1,1,1,1
+77,Engineering,32B,Materails Science Engineering,14.1801,MaterailsEngineering,1,1,1,1
+77,Engineering,32C,Interdisciplinary Materials Science and Engineering,14.1801,MaterailsEngineering,0,1,0,NA
+84,Law,501,Law,22.0101,Law,1,0,NA,0
+87,Business,141,BusinessAdministration,52.0201,"BusinessAdministrationandManagement,General",1,0,0,0
+87,Business,364,Administration-ENAecutive,52.0201,"BusinessAdministrationandManagement,General",1,0,0,0
+87,Business,534,Management,52.0201,"BusinessAdministrationandManagement,General",1,0,0,0
+87,Business,602,Administration-FullyEmployed,52.0201,"BusinessAdministrationandManagement,General",1,0,0,0
+87,Business,764,Administration-HealthCare,51.0701,HealthandMedicalAdministrativeServices,1,0,0,0
+87,Business,07M,Accountancy,52.0301,Accounting,1,0,0,0
+88,Medicine,48,Anatomy,26.0403,Anatomy,0,1,NA,NA
+88,Medicine,117,BiologicalChemistry,26.0202,Biochemistry,0,1,NA,NA
+88,Medicine,353,Environmental Toxicology,26.1006,Environmental Toxicology,0,0,NA,NA
+88,Medicine,357,Epidemiology,26.1309,Epidemiology,0,1,0,NA
+88,Medicine,389,GeneticCounseling,51.1509,GeneticCounseling/Counselor,0,0,NA,NA
+88,Medicine,551,MedicalMicrobiology,26.0503,MedicalMicrobiologyandBacteriology,0,1,0,NA
+88,Medicine,558,Medicine,51.1201,Medicine,0,0,NA,NA
+88,Medicine,645,Pharmacology,26.1001,Pharmacology,0,1,0,NA
+88,Medicine,646,Pharmacology and Toxicology,26.1007,PharmacologyandToxicology,0,0,NA,NA
+88,Medicine,675,PhysiologyandBiophysics,26.0901,"Physiology,General",0,1,0,NA
+88,Medicine,05NA,BiomedicalandTransaltionalScience,51.1401,MedicalScientist,0,0,NA,NA
+88,Medicine,07T,PharmacologicalSciences,26.1007,PharmacologyandToxicology,0,0,NA,NA
+88,Medicine,07W,EnvironmentalHealth,51.2202,EnvironmentalHealth,0,0,NA,NA
+88,Medicine,66G,Experimental Pathology,26.091,Pathology/ENAperimentalPathology,0,1,0,NA
+89,Education,221,EducationalAdministration,13.0401,"EducationalLeadershipandAdministration,General",1,0,0,0
+89,Education,249,Education,13.0101,"Education,General",1,0,0,0
+89,Education,08Q,EducationSciences,13.0101,"Education,General",1,0,0,0
+89,Education,0B0,Education-MA/PhD,13.0101,"Education,General",1,0,0,0
+89,Education,22L,EducationalAdministrationandLeadership,13.0401,"EducationalLeadershipandAdministration,General",1,0,0,0
+89,Education,25B,ElementaryandSecondaryEducation,13.1206,"TeacherEducation,MultipleLevels",1,0,0,0
+90,Program in Nursing Science,0,Nursing Science Undeclared,,,1,NA,NA,0
+90,Program in Nursing Science,2,Nursing Science Double Major,,,1,NA,NA,0
+90,Program in Nursing Science,5,Nursing Science Unaffiliated,,,1,NA,NA,0
+90,Program in Nursing Science,361,Family Nurse Practitioner,51.3805,FamilyPracticeNurse/Nursing,0,0,NA,NA
+90,Program in Nursing Science,598,Nursing Science,51.3808,NursingScience,1,0,NA,0
+90,Program in Nursing Science,08S,Adult/GeronotologicalPrimaryCareNursePractitioner,51.3821,GeraitricNurse/Nursing,0,0,NA,NA
+90,Program in Nursing Science,0ca,Community and Population Health,,,0,NA,NA,NA
+95,ICS,0,Undeclared,30.9999,"Multi-/InterdisciplinaryStudies,Other",1,0,NA,0
+95,ICS,5,Unaffiliated,30.9999,"Multi-/InterdisciplinaryStudies,Other",1,0,NA,0
+95,ICS,193,Computer Science and Engineering,14.0901,"ComputerEngineering,General",1,1,NA,0
+95,ICS,201,Computer Science,11.0701,ComputerScience,1,1,NA,0
+95,ICS,459,Information and Computer Science,11.0101,"ComputerandInformationSciences,General",1,1,0,0
+95,ICS,891,Statistics,27.0501,"Statistics,General",1,1,0,0
+95,ICS,01N,BusinessInformationManagement,52.1206,InformationResourceManagement,1,0,NA,0
+95,ICS,03T,BiomedicalComputing,26.1103,Bioinformatics,1,0,NA,0
+95,ICS,04W,ComputerGameScience,50.0411,GameandInteractiveMediaDesign,1,0,0,0
+95,ICS,06G,SoftwareEngineering,14.0903,ComputerSoftwareEngineering,1,1,0,0
+95,ICS,0AM,DataScience,30.0801,MathematicsandComputerScience,1,1,1,0
+95,ICS,19H,Informatics,11.0104,Informatics,1,1,0,0
+95,ICS,20C,ICS-ArtsComputationEngineering,30.9999,"Multi-/InterdisciplinaryStudies,Other",1,0,NA,0
+95,ICS,20N,NetworkedSystems,11.0901,ComputerSystemsNetworkingandTelecommunications,1,0,NA,0
+97,Social Ecology,0,Undeclared,30.9999,"Multi-/InterdisciplinaryStudies,Other",1,0,NA,0
+97,Social Ecology,5,Unaffiliated,30.9999,"Multi-/InterdisciplinaryStudies,Other",1,0,NA,0
+97,Social Ecology,68,Applied Ecology,26.1301,Ecology,NA,1,NA,0
+97,Social Ecology,220,"Criminology,LawandSociety",45.0401,Criminology,1,0,NA,0
+97,Social Ecology,230,Environmental Analysis and Design,3.0103,EnvironmentalStudies,NA,1,NA,0
+97,Social Ecology,632,Psychology and Social Behavior,42.2707,SocialPsychology,1,0,0,0
+97,Social Ecology,790,PublicPolicy,44.0501,"PublicPolicyAnalysis,General",0,0,NA,NA
+97,Social Ecology,815,EnvironmentalHealthScienceandPolicy,51.2202,EnvironmentalHealth,0,0,NA,NA
+97,Social Ecology,851,Social Ecology,30.9999,"Multi-/InterdisciplinaryStudies,Other",1,0,0,0
+97,Social Ecology,912,Urban Studies,45.1201,UrbanStudies/Affairs,1,0,0,0
+97,Social Ecology,916,UrbanandRegionalPalnning,4.0301,"City/Urban,CommunityandRegionalPalnning",0,0,NA,NA
+97,Social Ecology,05S,Social Policy and Public Service,45.0101,"SocialSciences,General",1,0,NA,0
+97,Social Ecology,09R,"Philosophy, Political Science, and Economics",30.9999,"Multi-/InterdisciplinaryStudies,Other",1,0,NA,0
+97,Social Ecology,16A,Chicano/LatinoStudies,5.0203,"Hispanic-American,PuertoRican,andMeNAican-American/C..",1,0,NA,0
+97,Social Ecology,22B,"Criminology,LawandSociety-MAS",45.0401,Criminology,1,0,NA,0
+97,Social Ecology,91A,"Planning,Policy,andDesign",4.0301,"City/Urban,CommunityandRegionalPalnning",0,0,NA,NA
