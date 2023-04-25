@@ -30,6 +30,16 @@ bg$ethnicity_smpl = bg$ethnicity
 bg$ethnicity_smpl[bg$ethnicity_smpl=="American Indian / Alaskan Native"] = "Indigenous"
 bg$ethnicity_smpl[bg$ethnicity_smpl=="Pacific Islander"] = "Indigenous"
 
+# clip very large households
+bg$household_size_app[bg$household_size_app > 7] = 7
+# delete very rare categories
+bg$father_edu_level_code[bg$father_edu_level_code==4] = NA
+bg$mother_edu_level_code[bg$mother_edu_level_code==4] = NA
+# summarize rare sports categories (less than 1%)
+saa = table(bg$sport_at_admission)
+bg$sport_at_admission[bg$sport_at_admission %in% names(saa[saa<nrow(bg)/100])] = "other"
+
+
 # select predictors
 student_vars = bg %>% select(mellon_id,
                              # administrative

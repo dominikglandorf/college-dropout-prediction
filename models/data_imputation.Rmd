@@ -66,13 +66,15 @@ system.time(tempData <- mice(data, m=1, maxit=5, meth='rf', seed=500))
 data_imp = complete(tempData, 1)
 
 for (name in continuous) {
-  #col_imp = paste0(name, "_imp")
-  #data[col_imp] = pull(data_imp, name)
-  
   print(ggplot(data, aes_string(x=name))+ 
     geom_bar())
   print(ggplot(data_imp, aes_string(x=name))+ 
     geom_bar())
+}
+
+for (name in categorical) {
+  print(table(pull(data, name))/length(pull(data, name)))
+  print(table(pull(data_imp, name)//length(pull(data_imp, name))))
 }
 ```
 

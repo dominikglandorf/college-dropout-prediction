@@ -197,16 +197,27 @@ get_course_data = function (ids = c(), exclude_term_parts=summer_part_codes) {
   return(data)
 }
 
-get_student_vars = function () {
-  data = read_csv(file.path(path_data, 'student_vars.csv'))
+get_student_vars = function () read_csv(file.path(path_data, 'student_vars.csv'))
+
+get_student_sub = function () read_csv(file.path(path_data, 'student_vars_subset.csv'), show_col_types = FALSE)
+
+get_term_features = function() read_csv(file.path(path_data, 'term_features_subset.csv'), show_col_types = FALSE)
+
+get_course_features = function() read_csv(file.path(path_data, 'course_features_subset.csv'), show_col_types = FALSE)
+
+get_aggregated_features = function() {
+  data = read_csv(file.path(path_data, 'features_aggregated.csv'), show_col_types = FALSE)
+  data$ethnicity_smpl = as.factor(data$ethnicity_smpl)
+  data$sport_at_admission = as.factor(data$sport_at_admission)
+  data$cal_res_at_app = as.factor(data$cal_res_at_app)
   return(data)
 }
 
-get_student_sub = function() {
-  data = read_csv(file.path(path_data, 'student_vars_subset.csv'), show_col_types = FALSE)
+get_imputed_features = function() {
+  data = read_csv(file.path(path_data, 'features_imputed.csv'), show_col_types = FALSE)
+  data$ethnicity_smpl = as.factor(data$ethnicity_smpl)
+  data$sport_at_admission = as.factor(data$sport_at_admission)
+  data$cal_res_at_app = as.factor(data$cal_res_at_app)
+  data$dropout = as.factor(data$dropout)
   return(data)
-}
-
-get_term_features = function() {
-  data = read_csv(file.path(path_data, 'term_features_subset.csv'), show_col_types = FALSE)
 }
