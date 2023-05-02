@@ -210,6 +210,7 @@ get_aggregated_features = function() {
   data$ethnicity_smpl = as.factor(data$ethnicity_smpl)
   data$sport_at_admission = as.factor(data$sport_at_admission)
   data$cal_res_at_app = as.factor(data$cal_res_at_app)
+  data$school_1 = as.factor(data$school_1)
   return(data)
 }
 
@@ -219,5 +220,6 @@ get_imputed_features = function() {
   data$sport_at_admission = as.factor(data$sport_at_admission)
   data$cal_res_at_app = as.factor(data$cal_res_at_app)
   data$dropout = as.factor(data$dropout)
+  data$school_1 = as.factor(data$school_1)
   return(data)
 }

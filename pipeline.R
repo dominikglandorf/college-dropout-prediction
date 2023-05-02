@@ -1,4 +1,4 @@
-# run this script to create the three datasets:
+# run this script to create a dataset of a subset of students with imputed missing data based on these three information levels:
 # 1. student level
 # 2. student x term level
 # 3. student x term x course level

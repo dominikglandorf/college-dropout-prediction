@@ -16,12 +16,20 @@ rf <- randomForest(dropout ~ ., train)
 predictions.rf <- predict(rf, newdata=test, type="prob")[,2]
 roc.rf <- roc(test$dropout, predictions.rf)
 auc.rf = auc(roc.rf)
+varImpPlot(rf)
 
 # Fit Logistic Regression
 lr = glm(dropout ~ ., train, family = 'binomial')
 predictions.lr = predict(lr, test, type = "response")
 roc.lr <- roc(test$dropout, predictions.lr)
 auc.lr = auc(roc.lr)
+
+odds_ratios = data.frame(OR=exp(lr$coefficients))
+ggplot(odds_ratios, aes(x=row.names(odds_ratios),y=OR))+
+  geom_bar(stat="identity") +
+  theme(axis.text.x = element_text(angle = 90, vjust = 0.25, hjust=1)) +
+  scale_y_continuous(trans='log') +
+  xlab("Predictor")
 
 # Fit Support Vector Machine 
 svm.fit = svm(dropout ~ ., train, type = 'C-classification', kernel = 'polynomial', probability = T)

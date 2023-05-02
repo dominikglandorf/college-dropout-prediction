@@ -1,9 +1,9 @@
 source('read_data.R')
 
 #students = get_student_sub()
-#bg = get_student_background_data(ids = students$mellon_id)
-#terms = get_term_data(ids = students$mellon_id)
-#courses = get_course_data(ids = students$mellon_id)
+bg = get_student_background_data(ids = students$mellon_id)
+terms = get_term_data(ids = students$mellon_id)
+courses = get_course_data(ids = students$mellon_id)
 
 
 get_majors = function(term) paste(na.omit(c(term['major_name_1'], term['major_name_2'], term['major_name_3'], term['major_name_4'])), collapse=", ")
@@ -57,7 +57,7 @@ inspect_graduated = function(s_id) {
 }
 
 
-sample(students$mellon_id, 10)
+sample(students$mellon_id, 30)
 #s_id = "2992237"
 #inspect_student(s_id)
 

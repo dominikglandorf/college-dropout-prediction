@@ -39,6 +39,8 @@ bg$mother_edu_level_code[bg$mother_edu_level_code==4] = NA
 saa = table(bg$sport_at_admission)
 bg$sport_at_admission[bg$sport_at_admission %in% names(saa[saa<nrow(bg)/100])] = "other"
 
+# check possible range for test scores
+bg$toefl_score[bg$toefl_score>120] = NA
 
 # select predictors
 student_vars = bg %>% select(mellon_id,

@@ -1,6 +1,6 @@
 source('read_data.R')
 students = get_student_sub()
-dim(students) # 46408 x 43
+dim(students) # 46410 x 36
 
 # GENDER
 mean(is.na(students$female)) # same as before
@@ -443,3 +443,62 @@ ggplot(data=students, aes(x=avg_ap_disc, y=after_stat(count)/sum(after_stat(coun
 avg_ap_dropout_rates=my_agg(dropout ~ avg_ap_disc, students)
 ggplot(data =avg_ap_dropout_rates, aes(x=avg_ap_disc, y=dropout.mean)) +
   geom_bar(stat="identity",fill="#54BCC2")
+
+# mellon ids
+students$ids = 10000*round(as.integer(students$mellon_id)/10000)
+students$ids[students$ids>500000] = students$ids[students$ids>500000] - 2500000
+ggplot(data = students, aes(x = ids)) +
+  geom_bar(data=subset(students,dropout == T),aes(y = (..count..)/sum(..count..)),fill = "red", alpha = 0.4) +
+  geom_bar(data=subset(students,dropout == F),aes(y = (..count..)/sum(..count..)),fill = "darkgreen", alpha = 0.4) +
+  theme_minimal() +
+  theme(legend.position = "none") +
+  labs(title = "Dropouts vs Non-Dropouts over distance from home",
+       x = "Distance [miles]",
+       y = "Frequency") +
+  theme(text = element_text(size = 16))
+
+dropout_rates = do.call(data.frame, aggregate(dropout ~ ids, students, FUN = function(x) c(mean = mean(x), n = length(x))))
+ggplot(data = dropout_rates, aes(x=ids, y=dropout.mean, fill=dropout.n>46)) +
+  geom_bar(stat="identity") +
+  theme_minimal() +
+  theme(text = element_text(size = 16),
+        legend.position = "none") +
+  labs(title = "Dropout rate by mellon id",
+       x = "",
+       y = "") 
+aggregate(mellon_id ~ admitdate, students, FUN=mean)
+aggregate(dropout ~ admitdate, students, FUN=mean)
+aggregate(dropout ~ id_group, students, FUN=mean)
+students = merge(students, terms[,c("mellon_id","school_1")])
+
+students$id_group = 2
+students$id_group[students$mellon_id < 370000] = 1
+students$id_group[students$mellon_id > 400000] = 1
+table(students$id_group, students$admitdate)
+table(students$id_group, students$school_1)
+aggregate(dropout ~ school_1, students, FUN=mean)
+
+ggplot(data = students[students$school_1=="Div of Undergraduate Education",], aes(x = ids)) +
+  geom_bar(data=subset(students[students$school_1=="Div of Undergraduate Education",],dropout == T),aes(y = (..count..)/sum(..count..)),fill = "red", alpha = 0.4) +
+  geom_bar(data=subset(students[students$school_1=="Div of Undergraduate Education",],dropout == F),aes(y = (..count..)/sum(..count..)),fill = "darkgreen", alpha = 0.4) +
+  theme_minimal() +
+  theme(legend.position = "none") +
+  labs(title = "Dropouts vs Non-Dropouts over distance from home",
+       x = "Distance [miles]",
+       y = "Frequency") +
+  theme(text = element_text(size = 16))
+
+# compare id group 1 vs 2
+group1 = students$id_group == 1
+for (name in names(students)) {
+  print(name)
+  if (class(students[,name])=="character") {
+    plot(table(students[,c(name,"id_group")]),main=name)
+  } else {
+    print(ggplot(data = students, aes_string(x = name)) +
+      geom_bar(data=subset(students,group1),aes(y = (..count..)/sum(..count..)),fill = "red", alpha = 0.4) +
+      geom_bar(data=subset(students,!group1),aes(y = (..count..)/sum(..count..)),fill = "darkgreen", alpha = 0.4) +
+      theme_minimal() +
+      theme(legend.position = "none"))
+  }
+}
