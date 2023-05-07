@@ -4,20 +4,26 @@ if(!require(mice)) install.packages('mice')
 # read feature dataset
 source('read_data.R')
 data = get_aggregated_features()
-features = data %>% select(-dropout) # exclude label from data imputation
 
 # parameters of mice
 # m: the number of imputed datasets
+if (!exists("nr_imputed_datasets")) nr_imputed_datasets = 5
 # maxit: the number of iterations in each imputation
-# meth: imputation method = random forest
-system.time(tempData <- mice(features, m=1, maxit=5, meth='rf', seed=500))
-features_imp = complete(tempData, 1)
+# meth: imputation method (rf means random forest)
+system.time(tempData <- mice(data,
+                             m=nr_imputed_datasets,
+                             maxit=1,
+                             meth='rf',
+                             seed=500))
 
-# join label again
-features_imp$dropout = data$dropout
-# filter to rows where dropout data
-data_imp = features_imp %>% filter(complete.cases(features_imp))
+for (i in 1:nr_imputed_datasets) {
+  features_imp = complete(tempData, i)
 
-# save to data directory
-write_csv(data_imp, file.path(path_data, 'features_imputed.csv'))#
-#md.pattern(data[,1:10])
+  # remove students with unknown outcome
+  data_imp = features_imp[!is.na(data$dropout),]
+  
+  # save to data directory
+  write_csv(data_imp, file.path(path_data, paste0('features_imputed_', i, '.csv')))
+  #md.pattern(data[,1:10])
+}
+

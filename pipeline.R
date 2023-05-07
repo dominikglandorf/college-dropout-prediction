@@ -6,6 +6,7 @@
 # CONFIGURATION
 # this property defines up to which point in the time (=the term number) for each respective student the final dataset is assembled
 until_term = 3
+nr_imputed_datasets = 2
 
 setwd() # set to source file directory
 

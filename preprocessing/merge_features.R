@@ -22,6 +22,13 @@ students = students %>% select(-start_as_freshman,
 
 ## TERM DATA
 terms = get_term_features()
+# create change scores
+terms_changes = terms %>%
+  filter(term_num <= until_term) %>% 
+  group_by(mellon_id) %>% 
+  arrange(term_num) %>% 
+  summarise(cum_avg_credits_lin = last(cum_avg_credits)-first(cum_avg_credits))
+
 # filter term information up to this point
 terms = terms %>% filter(term_num == until_term)
 # join information from last term, right join to drop students that dropped out earlier
@@ -32,7 +39,8 @@ students = students %>%
                              school_1,
                              cum_avg_credits,
                              cum_avg_credits.rel_term_num,
-                             cum_avg_credits.rel_major))
+                             cum_avg_credits.rel_major)) %>% 
+  left_join(terms_changes)
 
 ## COURSE DATA
 courses = get_course_features()

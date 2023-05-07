@@ -116,6 +116,8 @@ courses_features <- courses_features %>%
   )
 #print(courses_features[,c('first_generation','ttl_stu_crs','ttl_first_gen_crs','ttl_non_first_gen_crs','rel_first_gen_crs','rel_non_first_gen_crs','ttl_ownfirstgen_crs','rel_ownfirstgen_crs')],n=150)
 
+#grades = str_replace(courses_features$final_grade, "\\W", "")
+
 courses_features = courses_features %>% select(mellon_id,
                                                term_code, 
                                                course_code,
@@ -123,7 +125,11 @@ courses_features = courses_features %>% select(mellon_id,
                                                ttl_stu_crs,
                                                rel_owngen_crs,
                                                rel_ownethnicity_crs,
-                                               rel_ownfirstgen_crs)
+                                               rel_ownfirstgen_crs,
+                                               honors_course,
+                                               online_course,
+                                               #final_grade
+                                               )
 
 # save to file
 write_csv(courses_features, file.path(path_data, 'course_features_subset.csv'))
