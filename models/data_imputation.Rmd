@@ -5,80 +5,118 @@ date: "2023-03-01"
 output: pdf_document
 ---
 
-```{r, include=FALSE}
+```{r, include=FALSE, warning=FALSE, message=FALSE}
 if(!require(mice)) install.packages('mice')
-#if(!require(missMDA)) install.packages('missMDA')
-library(pROC)
-library(forcats)
+if(!require(corrplot)) install.packages('corrplot')
+setwd("~/EWS")
+source("read_data.R")
+data = get_aggregated_features()
 ```
 
 # Problem statement
-Due to the large amount of missing/non-applicable data in our dataset (e.g. 44.3% of students without any AP exams), deletion of rows with any missing data is impractical because it would leave us with a tiny fraction of the whole set.
+Due to the large amount of missing/non-applicable data in our dataset (e.g. 44.3% of students without any AP exams), keeping only complete observations is impractical because it would leave us with a tiny fraction of the whole set and is likely to bias the drawn conclusions if data is not missing completely at random.
 
-# Solution strategies
-In general, the strategies vary in the number of added parameters, hence interpretability and potential impact on the predictor's distribution.
+## Univariate missingness
+```{r} 
+missing_per_feature = data.frame(
+  feature=names(data),
+  mean_na=colMeans(is.na(data)),
+  type=sapply(data, typeof))
 
-## For mixed types
-1. Train a classifier that recursively predicts NA values from other predictors -> MICE, missMDA. Increases dependencies between predictors.
+ggplot(missing_per_feature, aes(x=reorder(feature,mean_na),
+                                y=mean_na,
+                                fill=type=="double")) +
+  geom_bar(stat="identity") +
+  theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1)) +
+  labs(title="Missing data by feature", x="Feature", y="Amount missing", fill="Continuous") +
+  scale_y_continuous(labels = scales::percent)
+```
+- IELTS score should be dropped
+```{r}
+data = data[,names(data)!='ielts_score']
+```
+- TOEFL score? Maybe convert into: toefl reported, check correlation with int student
+```{r}
+cor(data$int_student, !is.na(data$toefl_score), use="complete.obs")
+toefl_dropout = aggregate(data %>% filter(int_student==1), dropout ~ round(toefl_score/5), FUN=mean)
+toefl_nr = aggregate(data %>% filter(int_student==1), dropout ~ round(toefl_score/5), FUN=length)
+toefl_dropout$nr = toefl_nr$dropout
+names(toefl_dropout) = c("score","dropout")
+ggplot(toefl_dropout, aes(x=score, y=dropout, fill=nr)) + geom_bar(stat="identity")
+```
 
-## Categorical variables
+- Sports at admission has an unclear interpretation anyway
+```{r}
+table(data$sport_at_admission)
+```
+- make binary predictor
+- Advanced Placement exams are reported for roughly every other student
+  combine it into categorical, no imputation
+- remove cohorts with large amount of missing data
+
+```{r}
+missing_per_student = rowSums(is.na(data))
+ggplot() + aes(missing_per_student) + geom_bar() + labs(title="Number of missing features per student", x="", y="")
+```
+
+
+## Bivariate missingness
+```{r}
+na_biv = cor(is.na(data[,colSums(is.na(data))>0]))
+corrplot(na_biv)
+na_biv[lower.tri(na_biv, diag=T)] = NA
+```
+Missing value prediction may be hard for the clusters where multiple variables are missing.
+
+```{r}
+library(VIM)
+marginplot(data[,c("uc_math_score","hs_gpa")])
+```
+
+
+## Frequent patterns of missing data
+```{r}
+md.pattern(data)
+```
+
+```{r}
+md.pattern(data[,c("sport_at_admission", "hs_gpa", "uc_math_score","best_ap")], rotate.names = T)
+```
+
+```{r}
+aggr(data, col=c('navyblue','red'), numbers=TRUE, sortVars=TRUE, labels=names(data), cex.axis=.7, gap=3, ylab=c("Histogram of missing data","Pattern"))
+```
+
+# Solution strategy
+Simple strategies just do single and univariate imputation (see below).
+
+Better: Train a model that recursively predicts NA values from other predictors -> MICE, missMDA. Downside: Increases dependencies between predictors.
+
+Simple strategies for categorical variables
 1. Own category for NA: We add NA values as a dummy variable (and the reference category).
 2. Use the most frequent class: We merge them with the most frequent class, save one parameter but also bias the distribution to its mode.
 
-## Continuous variables
+Simple strategies for continuous variables
 1. Discretize and use the same strategy as for continuous variables.
 2. Use mean.
 3. Use random value.
 
-
-
-```{r, warning=FALSE, message=FALSE}
-setwd("~/EWS")
-source("read_data.R")
-students = get_student_sub()
-terms = get_term_features()
-```
-```{r}
-students$low_income[is.na(students$low_income)]=F
-students$household_size_app[students$household_size_app>6] = 6
-students$father_edu_level_code[students$father_edu_level_code==4]=NA
-saa = table(students$sport_at_admission)
-students$sport_at_admission[students$sport_at_admission %in% names(saa[saa<nrow(students)/1000])] = "other"
-
-#students = students %>% sample_n(nrow(students)) # shuffle
-```
-```{r}
-categorical = c("int_student","ethnicity_smpl","first_generation","father_edu_level_code","mother_edu_level_code",  "low_income","ell","single_parent","foster_care","household_size_app","sport_at_admission","cal_res_at_app")
-continuous = c("age_at_enrolment","uc_total_score","uc_math_score","uc_read_score","uc_writing_score","number_ap","passed_ap_rel","best_ap","avg_ap","hs_gpa","distance_from_home")
-```
 # MICE
+MICE does iterative multivariate imputation using a model such as random forest.
 ```{r}
-data = students %>% select(all_of(c(categorical, continuous)))
-data$ethnicity_smpl = as.factor(data$ethnicity_smpl)
 # parameters of mice
 # m: the number of imputed datasets
 # maxit: the number of iterations in each imputation
 # meth: imputation method = random forest
-system.time(tempData <- mice(data, m=1, maxit=5, meth='rf', seed=500))
+system.time(tempData <- mice(data, m=3, maxit=3, meth='rf', seed=500))
 ```
+# Diagnose imputation
 ```{r}
-# check distributions for discrete cols
-data_imp = complete(tempData, 1)
-
-for (name in continuous) {
-  print(ggplot(data, aes_string(x=name))+ 
-    geom_bar())
-  print(ggplot(data_imp, aes_string(x=name))+ 
-    geom_bar())
-}
-
-for (name in categorical) {
-  print(table(pull(data, name))/length(pull(data, name)))
-  print(table(pull(data_imp, name)//length(pull(data_imp, name))))
-}
+densityplot(tempData)
 ```
 
-
+# Old strategy tests
+This is an outdated implementation of different simple imputation strategies and testing their impact on the prediction.
 
 ```{r}
 compute_AUC = function(dat,i,CV_folds) {
