@@ -29,7 +29,8 @@ ggplot(missing_per_feature, aes(x=reorder(feature,mean_na),
   geom_bar(stat="identity") +
   theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1)) +
   labs(title="Missing data by feature", x="Feature", y="Amount missing", fill="Continuous") +
-  scale_y_continuous(labels = scales::percent)
+  scale_y_continuous(labels = scales::percent) +
+  coord_flip()
 ```
 - IELTS score should be dropped
 ```{r}
@@ -57,6 +58,26 @@ table(data$sport_at_admission)
 ```{r}
 missing_per_student = rowSums(is.na(data))
 ggplot() + aes(missing_per_student) + geom_bar() + labs(title="Number of missing features per student", x="", y="")
+```
+
+# Cohorts between 2008 and 2011
+```{r}
+students = get_student_sub()
+data = data %>% left_join(students %>% select(mellon_id, first_year))
+data_sub = data %>% filter(first_year <= 2010)
+
+missing_per_feature = data.frame(
+  feature=names(data_sub),
+  mean_na=colMeans(is.na(data_sub)),
+  type=sapply(data_sub, typeof))
+
+ggplot(missing_per_feature, aes(x=reorder(feature,mean_na),
+                                y=mean_na,
+                                fill=type=="double")) +
+  geom_bar(stat="identity") +
+  theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1)) +
+  labs(title="Missing data by feature", x="Feature", y="Amount missing", fill="Continuous") +
+  scale_y_continuous(labels = scales::percent)
 ```
 
 

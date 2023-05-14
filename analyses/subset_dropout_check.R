@@ -22,10 +22,15 @@ bg %>% select(mellon_id, )
 # active student means if student is still enrolled 
 # full time is only meaningful for active students
 # major count often NA
-bg_infos = bg %>% select(mellon_id, cohort, application_status, application_term_code, pascd, admitdate, entry_units_completed_transfer, grad_major_1, grad_major_2, grad_major_3, graduated_term, start_as_freshman)
+bg_infos = bg %>% select(student_sid, cohort, application_status, application_term_code, pascd, admitdate, entry_units_completed_transfer, grad_major_1, grad_major_2, grad_major_3, graduated_term)
 term_infos = term_data %>% select(mellon_id, term_code, levelcd, registration_status, total_terms_enrolled_excluding_s, major_school_name_1, major_school_name_2, major_graduated_1, major_graduated_2)
 merged = courses %>% left_join(term_infos) %>% left_join(bg_infos) %>% left_join(student_vars %>% select(mellon_id, dropout))
 merged = merged %>% arrange(mellon_id, term_code, levelcd)
 merged2 = merged %>% filter(mellon_id < 395000) %>% filter(mellon_id > 375000) %>% 
   select(mellon_id, start_as_freshman, dropout, levelcd, application_status, admitdate, graduated_term,major_graduated_1, major_graduated_2,term_code, major_school_name_1, major_school_name_2,course_code, course_title, dept_name_abbrev, units_completed, final_grade)
 merged3 = merged2 %>% filter(start_as_freshman) %>% select(-start_as_freshman,-application_status)
+
+students = get_student_sub()
+aggregate(students, is.na(hs_gpa) ~ admitdate, FUN=mean)
+aggregate(students, is.na(best_ap) ~ admitdate, FUN=mean)
+aggregate(students, is.na(uc_math_score) ~ admitdate, FUN=mean)

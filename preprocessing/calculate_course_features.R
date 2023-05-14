@@ -1,10 +1,14 @@
-# set wd to source file directory
+# set wd to parent directory
 
 # read datasets
 source('read_data.R')
 students = get_student_sub()
 terms = get_term_data(ids = students$mellon_id)
 courses = get_course_data(ids = students$mellon_id)
+
+# courses with final grade CR are usually copies, W is withdrawn
+courses = courses %>% filter(final_grade != "CR" &
+                               final_grade != "W")
 
 # add feature in_school: course was taken in one school of majors
 courses_features = courses %>%
@@ -116,7 +120,17 @@ courses_features <- courses_features %>%
   )
 #print(courses_features[,c('first_generation','ttl_stu_crs','ttl_first_gen_crs','ttl_non_first_gen_crs','rel_first_gen_crs','rel_non_first_gen_crs','ttl_ownfirstgen_crs','rel_ownfirstgen_crs')],n=150)
 
-#grades = str_replace(courses_features$final_grade, "\\W", "")
+# grades see https://www.reg.uci.edu/services/transcripts/notations.html
+courses_features = courses_features %>% 
+  mutate(final_grade_num = recode(final_grade,
+                                  "A+"=4,"A"=4,"A-"=3.7,
+                                  "B+"=3.3,"B"=3,"B-"=2.7,
+                                  "C+"=2.3,"C"=2,"C-"=1.7,
+                                  "D+"=1.3,"D"=1,"D-"=0.7,
+                                  "H"=-1, "F"=0, "I"=-1, "NP"=0)) %>% 
+  mutate(final_grade_num = ifelse(final_grade_num == -1, NA, final_grade_num),
+         passed = final_grade_num > 0 | final_grade == "P")
+#courses2 = courses_features %>% arrange(mellon_id, term_code, course_code) %>% select(mellon_id, term_code, course_code, course_dept_code_and_num, final_grade, final_grade_num, units_completed, passed)
 
 courses_features = courses_features %>% select(mellon_id,
                                                term_code, 
@@ -128,8 +142,9 @@ courses_features = courses_features %>% select(mellon_id,
                                                rel_ownfirstgen_crs,
                                                honors_course,
                                                online_course,
-                                               #final_grade
-                                               )
+                                               final_grade_num,
+                                               passed,
+                                               units_completed)
 
 # save to file
 write_csv(courses_features, file.path(path_data, 'course_features_subset.csv'))

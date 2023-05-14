@@ -11,6 +11,10 @@ term_features$term_num = ave(term_features$mellon_id,
                              term_features$mellon_id,
                              FUN=seq_along)
 
+# replace rare majors (less than 0.1% of terms)
+rare_majors = major_freqs[major_freqs<nrow(terms)/1000]
+terms$major_name_1[terms$major_name_1 %in% names(rare_majors)] = "OTHER"
+
 # make to factors
 term_features$mellon_id = as.factor(term_features$mellon_id)
 
@@ -85,6 +89,9 @@ term_features = merge(term_features,
 terms_na_majors = terms[,c("major_name_1","major_name_2","major_name_3","major_name_4")]
 terms_na_majors[terms_na_majors=="UNDECLARED"] = NA
 terms_na_majors[terms_na_majors=="UNAFFILIATED"] = NA
+
+major_freqs = table(terms$major_name_1)
+
 
 term_majors = data.frame(mellon_id=terms$mellon_id,
                          term_code=terms$term_code,
