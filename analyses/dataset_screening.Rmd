@@ -7,11 +7,13 @@ output: pdf_document
 
 # Background variables
 ```{r, include=F}
-student_vars <- read.csv("~/EWS/Variable_request_EWS_Student.csv")
+setwd('~/EWS/')
+
+student_vars <- read.csv("~/EWS/data/Variable_request_EWS_Student.csv")
 requested_vars = student_vars$Variable.name
+
 source('read_data.R')
-students = get_student_sub()
-bg = get_student_background_data(students$mellon_id)
+bg = get_student_background_data()
 available_vars = names(bg)
 expected_available = requested_vars[requested_vars %in% available_vars]
 missing_in_data = requested_vars[!requested_vars %in% available_vars]

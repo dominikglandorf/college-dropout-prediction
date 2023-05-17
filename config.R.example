@@ -16,9 +16,15 @@ get_uc_from_act =  function(act, pre_12=F) {
   if (pre_12) return(act_uc[match(act,act_uc$act),"uc_pre_12"])
   return(act_uc[match(act,act_uc$act),"uc_post_12"])
 }
-get_uc_from_sat = function(sat, pre_12=F) {
-  if (pre_12) return(round((sat-200)/6))
-  return(round((sat+200)/10))
+
+get_uc_from_sat = function(sat, cohort) {
+  UC = sat
+  UC[is.na(cohort)] = NA
+  pre_12 = !is.na(cohort) & cohort < 2012
+  post_12 = !is.na(cohort) & cohort >= 2012
+  UC[pre_12] = round((sat[pre_12]-200)/6)
+  UC[post_12] = round((sat[post_12]+200)/10)
+  return(UC)
 }
 
 dept_schools <- c(
