@@ -6,8 +6,35 @@ students = get_student_sub()
 courses = get_course_data(ids = students$mellon_id)
 
 # courses with final grade CR are usually copies, W is withdrawn
-courses = courses %>% filter(final_grade != "CR" &
+courses2 = courses %>% filter(final_grade != "CR" &
                                final_grade != "W")
+
+# find those courses where CR is the only final_grade (usually only one)
+# by course title
+courses_only_CR_by_title = courses %>%
+  group_by(mellon_id, term_code, course_title) %>% 
+  summarize(only_CR = all(final_grade == "CR")) %>% 
+  filter(only_CR) %>% 
+  ungroup() %>% 
+  select(mellon_id, term_code, course_title)
+courses_CR_1 = courses %>%
+  inner_join(courses_only_CR_by_title)
+
+# by course dept and num
+courses_only_CR_by_code = courses %>%
+  group_by(mellon_id, term_code, course_dept_code_and_num) %>% 
+  summarize(only_CR = all(final_grade == "CR")) %>% 
+  filter(only_CR) %>% 
+  ungroup() %>% 
+  select(mellon_id, term_code, course_dept_code_and_num)
+courses_CR_2 = courses %>%
+  inner_join(courses_only_CR_by_code)
+
+# only courses that are identified by both criteria as CR only should be added
+courses_CR = inner_join(courses_CR_1, courses_CR_2)
+
+# add back this intersection to all courses
+courses = bind_rows(courses2, courses_CR)
 
 # join demographic information
 courses = courses %>% 
@@ -46,8 +73,8 @@ courses <- courses %>%
       ethnicity_smpl == "Hispanic" ~ rel_hispanic_crs,
       ethnicity_smpl == "Indigenous" ~ rel_indigenous_crs,
       ethnicity_smpl == "White non-Hispanic" ~ rel_white_crs,
-      TRUE ~ NA),
-    rel_ownfirstgen_crs=if_else(first_generation==T,
+      TRUE ~ as.numeric(NA)),
+    rel_ownfirstgen_crs=ifelse(first_generation==T,
                                 rel_first_gen_crs,
                                 rel_non_first_gen_crs)
     )

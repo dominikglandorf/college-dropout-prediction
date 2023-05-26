@@ -58,7 +58,7 @@ bg = bg %>% select(mellon_id,
                    uc_total_score,
                    uc_read_score,
                    uc_writing_score,
-                   uc_math_score,
+                   uc_math_score_recode,
                    toefl_score,
                    ielts_score,
                    # AP
@@ -83,6 +83,12 @@ bg = bg %>% select(mellon_id,
                    household_size_app,
                    distance_from_home,
                    cal_res_at_app)
+
+binary = c("ell", "first_generation","foster_care","int_student","single_parent")
+bg = bg %>% mutate(across(all_of(binary),  ~ as.logical(.)))
+
+factors = c("ethnicity_smpl","sport_at_admission","cal_res_at_app","father_edu_level_code","mother_edu_level_code")
+bg = bg %>% mutate(across(all_of(factors), factor))
 
 # save to file
 write_csv(bg, file.path(path_data, 'background.csv'))

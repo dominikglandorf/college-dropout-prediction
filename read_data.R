@@ -212,24 +212,12 @@ get_term_features = function() read_csv(file.path(path_data, 'terms_subset.csv')
 
 get_course_features = function() read_csv(file.path(path_data, 'courses_subset.csv'), show_col_types = FALSE)
 
-get_aggregated_features = function() {
-  data = read_csv(file.path(path_data, 'features_aggregated.csv'), show_col_types = FALSE)
-  data$ethnicity_smpl = as.factor(data$ethnicity_smpl)
-  data$sport_at_admission = as.factor(data$sport_at_admission)
-  data$cal_res_at_app = as.factor(data$cal_res_at_app)
-  data$major_name_1 = as.factor(data$major_name_1)
-  data$major_school_name_1 = as.factor(data$major_school_name_1)
-  data$first_major = as.factor(data$first_major)
-  data$first_school = as.factor(data$first_school)
-  return(data)
-}
+get_aggregated_features = function() read_csv(file.path(path_data, 'features_aggregated.csv'), show_col_types = FALSE)
+
+get_data_to_impute = function() read_csv(file.path(path_data, 'data_to_impute.csv'), show_col_types = FALSE)
 
 get_imputed_features = function() {
-  data = read_csv(file.path(path_data, 'features_imputed.csv'), show_col_types = FALSE)
-  data$ethnicity_smpl = as.factor(data$ethnicity_smpl)
-  data$sport_at_admission = as.factor(data$sport_at_admission)
-  data$cal_res_at_app = as.factor(data$cal_res_at_app)
-  data$dropout = as.factor(data$dropout)
-  data$major_school_name_1 = as.factor(data$major_school_name_1)
-  return(data)
+  file_names <- list.files(path_data, pattern = "^features_imputed_.*", full.names = TRUE)
+  data_list <- lapply(file_names, read_csv, show_col_types = FALSE)
+  return(data_list)
 }

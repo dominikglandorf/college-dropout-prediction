@@ -23,8 +23,9 @@ terms = terms %>% select(mellon_id,
                         gpa_term,
                         acadyr,
                         starts_with("major_name_"),
-                        -starts_with("major_name_abbrev"),
-                        starts_with("major_school_name_"))
+                        -starts_with("major_name_abbrev_"),
+                        starts_with("major_school_name_"),
+                        starts_with("major_stem_"))
 # enumerate terms
 terms = terms %>% group_by(mellon_id) %>%
   arrange(term_code) %>% mutate(term_num = row_number()) %>% ungroup()
@@ -37,15 +38,20 @@ terms = terms %>%
                 ~ case_when(. %in% names(rare_majors) ~ "OTHER",
                             TRUE ~ as.character(.))))
 
-# replace unknown with NA
-replace_with_NA = c("UNDECLARED", "UNAFFILIATED")
+# summarize undeclared and unaffiliated to one category
+unde_una = "UNDECL-UNAFF"
 terms = terms %>%
   mutate(across(starts_with("major_name_"),
-                ~ case_when(. %in% replace_with_NA ~ as.character(NA),
+                ~ case_when(. %in% c("UNDECLARED", "UNAFFILIATED") ~ unde_una,
                             TRUE ~ as.character(.))))
 
 # count number of majors
-terms$num_majors = rowSums(!is.na(terms %>% select(starts_with("major_name_"))))
+majors = terms %>% select(starts_with("major_name_"))
+terms$num_majors = rowSums(!is.na(majors) & majors != unde_una)
+
+# annotate STEM majors
+terms = terms %>% mutate(any_major_stem = rowSums(select(., starts_with("major_stem_")), na.rm=T)>0) %>% 
+  select(-starts_with("major_stem_"))
 
 # save to file
 write_csv(terms, file.path(path_data, 'terms_subset.csv'))

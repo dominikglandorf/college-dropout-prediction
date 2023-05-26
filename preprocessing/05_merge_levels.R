@@ -74,10 +74,10 @@ term_course_info = courses %>%
             gpa = mean(final_grade_num, na.rm=TRUE),
             passed = mean(passed, na.rm=TRUE),
             in_school = mean(in_school, na.rm=TRUE),
-            ttl_stu_crs = mean(ttl_stu_crs),
-            rel_owngen_crs = mean(rel_owngen_crs),
-            rel_ownethnicity_crs = mean(rel_ownethnicity_crs),
-            rel_ownfirstgen_crs = mean(rel_ownfirstgen_crs))
+            ttl_stu_crs = mean(ttl_stu_crs, na.rm=TRUE),
+            rel_owngen_crs = mean(rel_owngen_crs, na.rm=TRUE),
+            rel_ownethnicity_crs = mean(rel_ownethnicity_crs, na.rm=TRUE),
+            rel_ownfirstgen_crs = mean(rel_ownfirstgen_crs, na.rm=TRUE))
 
 # cumulative term stats normalized by term number
 terms = terms %>% 
@@ -136,16 +136,16 @@ terms_first = terms %>%
 # filter term information up to this point
 terms = terms %>% filter(term_num == until_term)
 
-# join to student, right join to drop students that dropped out earlier
+# join term data to student, right join to drop students that dropped out earlier
 students = students %>%
   inner_join(terms %>% select(mellon_id,
+                              year_study,
                               num_majors,
+                              any_major_stem,
                               major_name_1,
                               major_school_name_1,
                               cum_avg_credits,
-                              cum_avg_credits_rel_term,
                               cum_avg_credits_rel_major,
-                              cum_avg_credits_rel_term_major,
                               cum_avg_n_courses,
                               cum_avg_gpa,
                               cum_avg_passed,
@@ -156,12 +156,12 @@ students = students %>%
                               cum_avg_rel_ownfirstgen_crs)) %>% 
   inner_join(terms_changes) %>% 
   inner_join(terms_first %>%
-              select(mellon_id, major_name_1, major_school_name_1, cum_avg_credits,
-                     cum_avg_credits_rel_term,cum_avg_credits_rel_major) %>%
-              rename(first_major = major_name_1,
+              select(mellon_id, year_study, major_name_1, major_school_name_1, cum_avg_credits,
+                     cum_avg_credits_rel_major) %>%
+              rename(first_year_study = year_study,
+                     first_major = major_name_1,
                      first_school = major_school_name_1,
                      first_credits = cum_avg_credits,
-                     first_credits_term = cum_avg_credits_rel_term,
                      first_credits_major = cum_avg_credits_rel_major))
 
 students = students %>% select(-mellon_id)
