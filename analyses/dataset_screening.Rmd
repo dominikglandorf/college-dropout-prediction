@@ -9,7 +9,7 @@ output: pdf_document
 ```{r, include=F}
 setwd('~/EWS/')
 
-student_vars <- read.csv("~/EWS/data/Variable_request_EWS_Student.csv")
+student_vars <- read.csv("data/Variable_request_EWS_Student.csv")
 requested_vars = student_vars$Variable.name
 
 source('read_data.R')
@@ -38,7 +38,8 @@ for (var in c(available_vars, unexpected_in_data)) {
   bg_vars[var,'type'] = types[var]
 }
 bg_vars$total_missing = NA
-admitdates = unique(bg$admitdate)
+admitdates = na.omit(unique(bg$cohort))
+admitdates = admitdates[!is.na(admitdates) & admitdates > 2005 & admitdates < 2018]
 for (a in admitdates[order(admitdates)]) {
   bg_vars[paste0('missing_', a)] = NA
 }
@@ -66,7 +67,7 @@ for (var in rownames(subset(bg_vars, in_data))) {
   bg_vars[var,'total_missing'] = missing
   print(paste0("Missing: ", round(missing*100, 1), "%"), quote=F)
   
-  missing_cohorts = aggregate(is.na(bg[,var]), by=list(bg$admitdate), FUN=mean)
+  missing_cohorts = aggregate(is.na(bg[,var]), by=list(bg$cohort), FUN=mean)
   for (a in admitdates) {
     bg_vars[var,paste0('missing_', a)] = missing_cohorts[missing_cohorts$Group.1==a,var]
   }
@@ -121,10 +122,11 @@ write.csv2(bg_vars, 'bg_vars.csv', )
 
 # Student by term
 ```{r, include=F}
-term_vars <- read.csv("~/EWS/Variable_request_EWS_StudentTerm.csv")
+setwd('~/EWS/')
+term_vars <- read.csv("data/Variable_request_EWS_StudentTerm.csv")
 requested_vars = term_vars$Variable.Name
 
-terms = get_term_data(students$mellon_id)
+terms = get_term_data()
 available_vars = names(terms)
 expected_available = requested_vars[requested_vars %in% available_vars]
 missing_in_data = requested_vars[!requested_vars %in% available_vars]
@@ -149,14 +151,13 @@ for (var in c(available_vars, unexpected_in_data)) {
   term_vars[var,'type'] = types[var]
 }
 term_vars$total_missing = NA
-admitdates = unique(bg$admitdate)
+
 for (a in admitdates[order(admitdates)]) {
   term_vars[paste0('missing_', a)] = NA
 }
-```
-```{r}
-# merge admitdate to terms
-terms = merge(terms, bg[,c('mellon_id','admitdate')], by="mellon_id")
+
+# merge cohort to terms
+terms = merge(terms, bg[,c('mellon_id','cohort')], by="mellon_id")
 ```
 
 ## Available variables
@@ -180,7 +181,7 @@ for (var in rownames(subset(term_vars, in_data))) {
   term_vars[var,'total_missing'] = missing
   print(paste0("Missing: ", round(missing*100, 1), "%"), quote=F)
   
-  missing_cohorts = aggregate(is.na(terms[,var]), by=list(terms$admitdate), FUN=mean)
+  missing_cohorts = aggregate(is.na(terms[,var]), by=list(terms$cohort), FUN=mean)
   for (a in admitdates) {
     term_vars[var,paste0('missing_', a)] = missing_cohorts[missing_cohorts$Group.1==a,'x']
   }
@@ -233,10 +234,11 @@ write.csv2(term_vars, 'term_vars.csv')
 
 # Student by term by course
 ```{r, include=F}
-course_vars <- read.csv("~/EWS/Variable_request_EWS_StudentTermCourse.csv")
+setwd('~/EWS/')
+course_vars <- read.csv("data/Variable_request_EWS_StudentTermCourse.csv")
 requested_vars = course_vars$Variable.name
 
-courses = get_course_data(students$mellon_id)
+courses = get_course_data()
 available_vars = names(courses)
 expected_available = requested_vars[requested_vars %in% available_vars]
 missing_in_data = requested_vars[!requested_vars %in% available_vars]
@@ -261,14 +263,13 @@ for (var in c(available_vars, unexpected_in_data)) {
   course_vars[var,'type'] = types[var]
 }
 course_vars$total_missing = NA
-admitdates = unique(bg$admitdate)
+
 for (a in admitdates[order(admitdates)]) {
   course_vars[paste0('missing_', a)] = NA
 }
-```
-```{r}
-# merge admitdate to courses
-courses = merge(courses, bg[,c('mellon_id','admitdate')], by="mellon_id")
+
+# merge cohort to courses
+courses = merge(courses, bg[,c('mellon_id','cohort')], by="mellon_id")
 ```
 
 ## Requested and available variables
@@ -279,7 +280,7 @@ is_derived_from="___" # is used in feature engineering
 for (var in rownames(subset(course_vars, in_data))) {
   print(paste0('Variable: ', var, ", type: ", types[var], ', requested: ', if(course_vars[var,'requested'])'yes'else'no'), quote=F)
   
-  unique_values = unique(courses[,var])
+  unique_values = unique(courses[[var]])
   num_unique = length(unique_values)
   course_vars[var,'num_unique'] = num_unique
   
@@ -292,7 +293,7 @@ for (var in rownames(subset(course_vars, in_data))) {
   course_vars[var,'total_missing'] = missing
   print(paste0("Missing: ", round(missing*100, 1), "%"), quote=F)
   
-  missing_cohorts = aggregate(is.na(courses[,var]), by=list(courses$admitdate), FUN=mean)
+  missing_cohorts = aggregate(is.na(courses[,var]), by=list(courses$cohort), FUN=mean)
   for (a in admitdates) {
     course_vars[var,paste0('missing_', a)] = missing_cohorts[missing_cohorts$Group.1==a,'x']
   }
@@ -340,13 +341,5 @@ predictors
 
 ```{r}
 write.csv2(course_vars, 'course_vars.csv')
-```
-
-```{r}
-aggregate(current_units_completed_total ~ active_student, terms, FUN=mean)
-table(terms$active_student)
-aggregate(current_units_completed_total ~ full_time, terms, FUN=mean)
-table(terms$full_time)
-
 ```
 

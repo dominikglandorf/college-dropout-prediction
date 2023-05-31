@@ -1,0 +1,123 @@
+---
+title: "Screen term data"
+author: "Dominik Glandorf"
+date: "2023-05-11"
+output: pdf_document
+---
+
+# Student by term
+```{r, include=F}
+setwd('~/EWS/')
+term_vars <- read.csv("data/Variable_request_EWS_StudentTerm.csv")
+requested_vars = term_vars$Variable.Name
+
+source('read_data.R')
+bg = get_student_background_data()
+bg = bg %>% filter(bg$cohort >= 2006 & bg$cohort <= 2018 & !is.na(bg$cohort))
+terms = get_term_data(ids=bg$mellon_id)
+available_vars = names(terms)
+expected_available = requested_vars[requested_vars %in% available_vars]
+missing_in_data = requested_vars[!requested_vars %in% available_vars]
+unexpected_in_data = available_vars[!available_vars %in% requested_vars]
+types = sapply(terms, class)
+```
+
+The spreadsheet knows `r length(requested_vars)` variables. The corresponding file contains `r length(available_vars)` columns. The expected variables `r paste(missing_in_data, collapse=",")` are not in the dataset. Therefore exist variables `r paste(unexpected_in_data, collapse=",")`.
+```{r, include=F}
+term_vars = data.frame(name=requested_vars, requested=T)
+term_vars$in_data = term_vars$name %in% available_vars
+extra_vars = data.frame(name=unexpected_in_data, in_data=T, requested=F)
+term_vars = rbind(term_vars, extra_vars)
+term_vars = column_to_rownames(term_vars, "name")
+term_vars$use_raw = NA
+term_vars$use_feature = NA
+term_vars$exclude = NA
+term_vars$num_unique = NA
+term_vars$examples = NA
+term_vars$type=NA
+for (var in c(available_vars, unexpected_in_data)) {
+  term_vars[var,'type'] = types[var]
+}
+term_vars$total_missing = NA
+
+admitdates = unique(bg$cohort)
+for (a in admitdates[order(admitdates)]) {
+  term_vars[paste0('missing_', a)] = NA
+}
+
+# merge cohort to terms
+terms = merge(terms, bg[,c('mellon_id','cohort')], by="mellon_id")
+```
+
+## Available variables
+```{r, echo=F, comment=NA}
+predictors=c()
+blacklist="mellon_id|group_" # should not be used as a predictor
+is_derived_from="___" # is used in feature engineering
+for (var in rownames(subset(term_vars, in_data))) {
+  print(paste0('Variable: ', var, ", type: ", types[var], ', requested: ', if(term_vars[var,'requested'])'yes'else'no'), quote=F)
+  
+  unique_values = unique(terms[,var])
+  num_unique = length(unique_values)
+  term_vars[var,'num_unique'] = num_unique
+  
+  first_values = unique_values[1:min(num_unique, 5)]
+  term_vars[var,'examples'] = paste0(first_values,collapse=", ")
+  
+  print(paste0('Values (', num_unique, ' unique): ', paste0(first_values,collapse=", "), if(num_unique > 5) ', ...' else ''),quote=FALSE)
+  
+  missing = mean(is.na(terms[,var]))
+  term_vars[var,'total_missing'] = missing
+  print(paste0("Missing: ", round(missing*100, 1), "%"), quote=F)
+  
+  missing_cohorts = aggregate(is.na(terms[,var]), by=list(terms$cohort), FUN=mean)
+  for (a in admitdates) {
+    term_vars[var,paste0('missing_', a)] = missing_cohorts[missing_cohorts$Group.1==a,'x']
+  }
+  if (missing > 0.01 && missing < 0.99) {
+    max = which.max(missing_cohorts[,'x'])
+    min = which.min(missing_cohorts[,'x'])
+    if (missing_cohorts[max,'x']-missing_cohorts[min,'x']>.5) {
+      print(missing_cohorts)
+    } else {
+      print(paste0("Most missing: ", missing_cohorts[max,"Group.1"], " ", round(missing_cohorts[max,'x']*100, 1), "%", ", Least missing: ", missing_cohorts[min,"Group.1"], " ", round(missing_cohorts[min,'x']*100, 1), "%"), quote=F)
+    }
+  }
+  if (var != "city_residence") {
+     print(ggplot(terms, aes(x=.data[[var]])) +
+    geom_bar() +
+    labs(x=var, y="Frequency"))
+  }
+ 
+  # print statusses
+  if (grepl( blacklist , var)) {
+    term_vars[var,'exclude'] = T 
+    print("should not be used as a predictor",quote=F)
+  } else {
+    term_vars[var,'exclude'] = F
+  } 
+  if (grepl( is_derived_from , var)) {
+    term_vars[var,'use_feature'] = T 
+    print("is used in feature engineering",quote=F)
+  } else {
+    term_vars[var,'use_feature'] = F
+  } 
+  # filter for variables that contain enough data, are continuous or a factor
+  if(missing < 0.5 &
+     (types[var] %in% c("numeric,integer") | num_unique <= 10)) {
+    predictors = c(predictors, var)
+    # TODO: decide if to use raw
+  }
+  
+
+  print("_________________________________________",quote=F)
+}
+```
+These are the predictors that remain when filtering for less than 50% missing, our blacklist and variables that need to be somehow transformed first: 
+```{r, echo=F, comment=NA}
+predictors
+```
+```{r}
+write.csv2(term_vars, 'term_vars.csv')
+```
+
