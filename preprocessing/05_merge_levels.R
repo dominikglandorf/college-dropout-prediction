@@ -4,7 +4,7 @@
 source('read_data.R')
 
 # check if temporal restriction was set
-if (!exists("until_term")) until_term = 3
+if (!exists("up_to_year")) up_to_year = 1
 
 ## STUDENT DATA
 # get student data, this data is almost fine for student-level prediction
@@ -19,9 +19,19 @@ students = students %>% select(-cohort,
 ## TERM DATA
 terms = get_term_features()
 
-# merge data from background and term levels
+enrollment_info = terms %>% 
+  group_by(mellon_id) %>% 
+  filter(term_code - min(term_code) < up_to_year * 100) %>%
+  summarize(num_terms = n(),
+            term_span = max(term_code) - min(term_code)) %>% 
+  mutate(term_span = recode(term_span,
+                           `0` = 1, `11` = 2, `22` = 3, `89` = 1,
+                           `100` = 4, `111` = 5, `122` = 6, `189` = 6,
+                           `200` = 7, `211` = 8, `222` = 9, `289` = 9))
 
-# age at enrollment: month of first term - birth date
+students = students %>% left_join(enrollment_info)
+
+# merge data from background and term levels
 student_term_info = terms %>% group_by(mellon_id) %>% 
   summarise(first_code = min(term_code),
             last_code = max(term_code)) %>%
@@ -31,16 +41,18 @@ student_term_info = terms %>% group_by(mellon_id) %>%
   # join month information for terms
   left_join(term_part_codes %>% select(code, start_month),
             by=c("first_term"="code"))
+
 students = students %>%
   left_join(student_term_info %>% select(mellon_id, first_year, start_month)) %>%
+  # age at enrollment: month of first term - birth date
   mutate(age_at_enrolment = first_year - birth_year + (start_month - birth_month) / 12) %>% 
   select(-birth_year, -birth_month, -start_month, -first_year)
 
 # dropout
-max_time_frame = max(student_term_info$last_code) - 100 # at least one year
+max_time_frame = max(student_term_info$last_code) - 100 # at least four terms passed to decide about dropout
 students = students %>%
   left_join(student_term_info %>% select(mellon_id, last_code)) %>% 
-  # drop students that are still enrolled
+  # drop students that are still enrolled within the timeframe
   filter(last_code < max_time_frame) %>% 
   mutate(dropout = !graduated) %>% 
   select(-last_code, -graduated) # drop helper variables
@@ -66,8 +78,8 @@ courses = courses %>%
 
 # term level features aggregated from course level
 term_course_info = courses %>%
-  left_join(terms %>% select(mellon_id, term_code, term_num)) %>% 
-  filter(term_num <= until_term) %>% # to speed up computation
+  group_by(mellon_id) %>% 
+  filter(term_code - min(term_code) < up_to_year * 100) %>% # to speed up computation
   group_by(mellon_id, term_code) %>% 
   summarize(n_courses = n(),
             units_completed = sum(units_completed, na.rm=TRUE),
@@ -81,9 +93,9 @@ term_course_info = courses %>%
 
 # cumulative term stats normalized by term number
 terms = terms %>% 
-  filter(term_num <= until_term) %>% # to speed up computation
   left_join(term_course_info) %>% 
   group_by(mellon_id) %>% 
+  filter(term_code - min(term_code) < up_to_year * 100) %>% # to limit data
   arrange(term_num) %>%
   mutate(cum_avg_credits = cumsum(units_completed) / term_num,
          cum_avg_n_courses = cumsum(n_courses) / term_num,
@@ -133,8 +145,10 @@ terms_first = terms %>%
 #terms_until_x = terms %>%
 #  filter(term_num == x)
 
-# filter term information up to this point
-terms = terms %>% filter(term_num == until_term)
+# filter term information up to this point = highest term code
+terms = terms %>%
+  group_by(mellon_id) %>% 
+  filter(term_code == max(term_code))
 
 # join term data to student, right join to drop students that dropped out earlier
 students = students %>%
@@ -167,4 +181,4 @@ students = students %>%
 students = students %>% select(-mellon_id)
 
 # save to storage
-write_csv(students, file.path(path_data, 'features_aggregated.csv'))  
+write_csv(students, file.path(path_data, paste0('features_aggregated_year_', up_to_year, '.csv')))

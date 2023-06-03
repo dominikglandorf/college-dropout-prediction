@@ -212,7 +212,7 @@ get_term_features = function() read_csv(file.path(path_data, 'terms_subset.csv')
 
 get_course_features = function() read_csv(file.path(path_data, 'courses_subset.csv'), show_col_types = FALSE)
 
-get_aggregated_features = function() read_csv(file.path(path_data, 'features_aggregated.csv'), show_col_types = FALSE)
+get_aggregated_features = function(up_to_year) read_csv(file.path(path_data, paste0('features_aggregated_year_', up_to_year, '.csv')), show_col_types = FALSE)
 
 get_data_to_impute = function() read_csv(file.path(path_data, 'data_to_impute.csv'), show_col_types = FALSE)
 
