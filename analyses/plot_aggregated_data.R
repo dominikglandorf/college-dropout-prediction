@@ -1,5 +1,5 @@
 source('read_data.R')
-data = get_aggregated_features()
+data = get_aggregated_features(1)
 
 colors = c("#8fc3f7", "white","#f73b3b")
 rescaler <- function(x, from) {
@@ -14,6 +14,16 @@ names(amount_na) = names(data)
 numeric_cols <- data %>%
   select(where(is.numeric), dropout)
 
+lower_limit = function(x) {
+  pos_comma = str_locate(x, ",")[1, "start"]
+  lower = substr(x, 2, pos_comma-1)
+  return(paste0(">", lower))
+}
+
+lower_limit_list = function(x) {
+  return(lapply(x, lower_limit))
+}
+
 plot_numeric = function(data) {
   # Plot numeric columns as histograms
   print(data %>% 
@@ -24,22 +34,23 @@ plot_numeric = function(data) {
     mutate(grp = cut(value, breaks=10)) %>% 
     group_by(variable, grp) %>% 
     summarize(n=n(),
-              dropout=mean(dropout)) %>% 
-    # mutate(dropout = pmin(dropout, 0.3)) %>% 
+              dropout=mean(dropout)) %>%
     ggplot(aes(x=grp, y=n, fill=dropout)) +
     geom_bar(stat="identity") +
-    facet_wrap(~variable, scales = "free", labeller=labeller(variable=amount_na)) +
+    facet_wrap(~variable, scales = "free", labeller=labeller(variable=amount_na), ncol=3) +
     scale_fill_gradientn(colours = colors, rescaler=rescaler)+
     geom_text(aes(y=n/2, label = scales::percent(dropout, accuracy = 1, trim = FALSE)), size=3) +
-    theme(axis.text.x=element_blank(), #remove x axis labels
+    theme(#axis.text.x=element_text(angle = 45, hjust = 1), #remove x axis labels
           axis.ticks.x=element_blank(), #remove x axis ticks
           axis.text.y=element_blank(),  #remove y axis labels
           axis.ticks.y=element_blank()  #remove y axis ticks
-    ))
+    )) +
+    scale_x_discrete(label=lower_limit_list)
 }
 
-plot_numeric(numeric_cols %>% select(1:16, dropout))
-plot_numeric(numeric_cols %>% select(16:31, dropout))
+plot_numeric(numeric_cols %>% select(1:12, dropout))
+plot_numeric(numeric_cols %>% select(13:24, dropout))
+plot_numeric(numeric_cols %>% select(25:33, dropout))
  
 
 # Extract non-numeric columns

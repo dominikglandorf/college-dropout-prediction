@@ -23,7 +23,8 @@ enrollment_info = terms %>%
   group_by(mellon_id) %>% 
   filter(term_code - min(term_code) < up_to_year * 100) %>%
   summarize(num_terms = n(),
-            term_span = max(term_code) - min(term_code)) %>% 
+            term_span = max(term_code) - min(term_code),
+            three_honors_terms = sum(honors)>=3) %>% 
   mutate(term_span = recode(term_span,
                            `0` = 1, `11` = 2, `22` = 3, `89` = 1,
                            `100` = 4, `111` = 5, `122` = 6, `189` = 6,
@@ -97,35 +98,36 @@ terms = terms %>%
   group_by(mellon_id) %>% 
   filter(term_code - min(term_code) < up_to_year * 100) %>% # to limit data
   arrange(term_num) %>%
-  mutate(cum_avg_credits = cumsum(units_completed) / term_num,
-         cum_avg_n_courses = cumsum(n_courses) / term_num,
-         cum_avg_gpa = cumsum(gpa) / term_num,
-         cum_avg_passed = cumsum(passed) / term_num,
-         cum_avg_in_school = cumsum(in_school) / term_num,
-         cum_avg_ttl_stu_crs = cumsum(ttl_stu_crs) / term_num,
-         cum_avg_rel_owngen_crs = cumsum(rel_owngen_crs) / term_num,
-         cum_avg_rel_ownethnicity_crs = cumsum(rel_ownethnicity_crs) / term_num,
-         cum_avg_rel_ownfirstgen_crs = cumsum(rel_ownfirstgen_crs) / term_num) %>% 
+  mutate(avg_credits = cumsum(units_completed) / term_num,
+         avg_n_courses = cumsum(n_courses) / term_num,
+         avg_grade = cumsum(gpa) / term_num,
+         avg_passed = cumsum(passed) / term_num,
+         avg_in_school = cumsum(in_school) / term_num,
+         avg_num_students = cumsum(ttl_stu_crs) / term_num,
+         avg_own_gender = cumsum(rel_owngen_crs) / term_num,
+         avg_own_ethnicity = cumsum(rel_ownethnicity_crs) / term_num,
+         avg_own_first_gen = cumsum(rel_ownfirstgen_crs) / term_num) %>% 
   ungroup()
 
 # add relative stats to term number, major and their interaction
 units_term_num = terms %>%
   group_by(term_num) %>% 
-  summarize(units_term = mean(cum_avg_credits, na.rm=T))
+  summarize(units_term = mean(avg_credits, na.rm=T))
 units_major = terms %>%
   group_by(major_name_1) %>% 
-  summarize(units_major = mean(cum_avg_credits, na.rm=T))
+  summarize(units_major = mean(avg_credits, na.rm=T))
 units_term_major = terms %>%
   group_by(term_num, major_name_1) %>% 
-  summarize(units_term_major = mean(cum_avg_credits, na.rm=T))
+  summarize(units_term_major = mean(avg_credits, na.rm=T))
 # join to terms
 terms = terms %>% 
   left_join(units_term_num) %>% 
   left_join(units_major) %>% 
   left_join(units_term_major) %>% 
-  mutate(cum_avg_credits_rel_term = cum_avg_credits - units_term,
-         cum_avg_credits_rel_major = cum_avg_credits - units_major,
-         cum_avg_credits_rel_term_major = cum_avg_credits - units_term_major) %>% 
+  mutate(avg_credits_rel_term = avg_credits - units_term,
+         avg_credits_rel_major = avg_credits - units_major,
+         avg_credits_rel_term_major = avg_credits - units_term_major,
+         health_subcampus = major_subcampus_1 == "Health science") %>% 
   select(-units_term, -units_major, -units_term_major)
 
 
@@ -135,7 +137,7 @@ terms = terms %>%
 terms_changes = terms %>%
   group_by(mellon_id) %>% 
   arrange(term_num) %>% 
-  summarise(cum_avg_credits_lin = last(cum_avg_credits)-first(cum_avg_credits))
+  summarise(avg_credits_lin = last(avg_credits)-first(avg_credits))
 
 # create score for information in first term
 terms_first = terms %>%
@@ -158,25 +160,25 @@ students = students %>%
                               any_major_stem,
                               major_name_1,
                               major_school_name_1,
-                              cum_avg_credits,
-                              cum_avg_credits_rel_major,
-                              cum_avg_n_courses,
-                              cum_avg_gpa,
-                              cum_avg_passed,
-                              cum_avg_in_school,
-                              cum_avg_ttl_stu_crs,
-                              cum_avg_rel_owngen_crs,
-                              cum_avg_rel_ownethnicity_crs,
-                              cum_avg_rel_ownfirstgen_crs)) %>% 
+                              avg_credits,
+                              avg_credits_rel_major,
+                              avg_n_courses,
+                              avg_grade,
+                              avg_passed,
+                              avg_in_school,
+                              avg_num_students,
+                              avg_own_gender,
+                              avg_own_ethnicity,
+                              avg_own_first_gen)) %>% 
   inner_join(terms_changes) %>% 
   inner_join(terms_first %>%
-              select(mellon_id, year_study, major_name_1, major_school_name_1, cum_avg_credits,
-                     cum_avg_credits_rel_major) %>%
+              select(mellon_id, year_study, major_name_1, major_school_name_1, avg_credits,
+                     avg_credits_rel_major) %>%
               rename(first_year_study = year_study,
                      first_major = major_name_1,
                      first_school = major_school_name_1,
-                     first_credits = cum_avg_credits,
-                     first_credits_major = cum_avg_credits_rel_major))
+                     first_credits = avg_credits,
+                     first_credits_major = avg_credits_rel_major))
 
 students = students %>% select(-mellon_id)
 

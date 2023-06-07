@@ -12,6 +12,7 @@ courses2 = courses %>% filter(final_grade != "CR" &
 # find those courses where CR is the only final_grade (usually only one)
 # by course title
 courses_only_CR_by_title = courses %>%
+  filter(!is.na(course_title)) %>% 
   group_by(mellon_id, term_code, course_title) %>% 
   summarize(only_CR = all(final_grade == "CR")) %>% 
   filter(only_CR) %>% 
@@ -22,6 +23,7 @@ courses_CR_1 = courses %>%
 
 # by course dept and num
 courses_only_CR_by_code = courses %>%
+  filter(!is.na(course_dept_code_and_num)) %>% 
   group_by(mellon_id, term_code, course_dept_code_and_num) %>% 
   summarize(only_CR = all(final_grade == "CR")) %>% 
   filter(only_CR) %>% 

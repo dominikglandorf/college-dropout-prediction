@@ -204,6 +204,8 @@ get_student_sub = function () read_csv(file.path(path_data, 'background_subset.c
 get_term_features = function() read_csv(file.path(path_data, 'terms_subset.csv'),  col_types = cols(
   major_name_3=col_character(),
   major_name_4=col_character(),
+  major_subcampus_3=col_character(),
+  major_subcampus_4=col_character(),
   major_school_name_3=col_character(),
   major_school_name_4=col_character(),
   major_school_name_abbrev_3=col_character(),

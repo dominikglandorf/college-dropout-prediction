@@ -25,6 +25,8 @@ bg$avg_ap = apply(bg[,paste0('ap_score_',1:20,"")], 1, FUN=function(x) mean(x, n
 # cast demographic features to logical
 bg$female = (bg$female == "yes")
 bg$low_income = (bg$low_income == "yes")
+bg$urm = (bg$urm == 1)
+
 # create a simplified version of ethnicity where very small groups are summarized as Indigenous
 bg$ethnicity_smpl = bg$ethnicity
 bg$ethnicity_smpl[bg$ethnicity_smpl=="American Indian / Alaskan Native"] = "Indigenous"
@@ -71,6 +73,7 @@ bg = bg %>% select(mellon_id,
                    birth_year,
                    birth_month,
                    female,
+                   citizenship_app,
                    int_student,
                    ethnicity_smpl,
                    first_generation,
@@ -82,7 +85,8 @@ bg = bg %>% select(mellon_id,
                    foster_care,
                    household_size_app,
                    distance_from_home,
-                   cal_res_at_app)
+                   cal_res_at_app,
+                   geo_category)
 
 binary = c("ell", "first_generation","foster_care","int_student","single_parent")
 bg = bg %>% mutate(across(all_of(binary),  ~ as.logical(.)))

@@ -25,7 +25,8 @@ terms = terms %>% select(mellon_id,
                         starts_with("major_name_"),
                         -starts_with("major_name_abbrev_"),
                         starts_with("major_school_name_"),
-                        starts_with("major_stem_"))
+                        starts_with("major_stem_"),
+                        starts_with("major_subcampus_"))
 # enumerate terms
 terms = terms %>% group_by(mellon_id) %>%
   arrange(term_code) %>% mutate(term_num = row_number()) %>% ungroup()

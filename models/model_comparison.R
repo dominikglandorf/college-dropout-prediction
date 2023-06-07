@@ -4,7 +4,10 @@ if(!require(pROC)) install.packages('pROC') # for ROC
 
 setwd("~/EWS")
 source("read_data.R")
-dat = get_imputed_features() # should not contain any missing data
+dat = get_imputed_features()[[1]] %>%
+  mutate_if(is.character, as.factor)
+
+dat = dat %>% select(-major_name_1, -first_major)
 
 # Split randomly into training and test data
 sample <- sample(c(TRUE, FALSE), nrow(dat), replace=TRUE, prob=c(0.7,0.3))
@@ -16,6 +19,16 @@ rf <- randomForest(dropout ~ ., train)
 predictions.rf <- predict(rf, newdata=test, type="prob")[,2]
 roc.rf <- roc(test$dropout, predictions.rf)
 auc.rf = auc(roc.rf)
+
+pr_curve <- pr.curve(scores.class0 = predictions.rf, weights.class0 = as.numeric(test$dropout)-1, curve=T)
+ggplot(as.data.frame(pr_curve$curve), aes(x=V1, y=V2)) +
+  geom_line() +
+  ylim(0, 1) +
+  geom_hline(yintercept=mean(as.numeric(test$dropout)-1)) +
+  labs(title=paste0("PR-Curve (AUC: ", round(pr_curve$auc.davis.goadrich, 2), ")"),
+       x="Recall",
+       y="Precision")
+
 varImpPlot(rf)
 
 # Fit Logistic Regression

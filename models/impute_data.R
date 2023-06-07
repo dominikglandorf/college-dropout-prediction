@@ -3,7 +3,7 @@ if(!require(mice)) install.packages('mice')
 
 # read feature dataset
 source('read_data.R')
-data = get_aggregated_features() %>%
+data = get_aggregated_features(1) %>%
   mutate_if(is.character, as.factor)
 
 # WHAT NOT TO IMPUTE (analysis see analyses/data_imputation.Rmd)
@@ -32,13 +32,13 @@ write_csv(data, file.path(path_data, paste0('data_to_impute.csv')))
 
 # parameters of mice
 # m: the number of imputed datasets
-if (!exists("nr_imputed_datasets")) nr_imputed_datasets = 5
+if (!exists("nr_imputed_datasets")) nr_imputed_datasets = 1
 # maxit: the number of iterations in each imputation
 # meth: imputation method (rf means random forest)
 # checked out '2l.lmer', gives a lot of warnings
 imp <- mice(data,
             m=nr_imputed_datasets,
-            maxit=5,
+            maxit=3,
             meth='rf')
 # use with to pool results
 datasets = lapply(1:nr_imputed_datasets, function(i) complete(imp, i))
