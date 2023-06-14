@@ -38,7 +38,7 @@ if (!exists("nr_imputed_datasets")) nr_imputed_datasets = 1
 # checked out '2l.lmer', gives a lot of warnings
 imp <- mice(data,
             m=nr_imputed_datasets,
-            maxit=3,
+            maxit=5,
             meth='rf')
 # use with to pool results
 datasets = lapply(1:nr_imputed_datasets, function(i) complete(imp, i))

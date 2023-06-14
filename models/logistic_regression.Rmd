@@ -5,8 +5,6 @@ date: "2023-01-31"
 output: pdf_document
 ---
 ```{r, include=FALSE}
-library(pROC)
-if(!require(PRROC)) install.packages('PRROC') # for PR curve
 if(!require(caret)) install.packages('caret') # for VarImp
 if(!require(car)) install.packages('car') # for vif
 ```
@@ -15,11 +13,12 @@ if(!require(car)) install.packages('car') # for vif
 ## Load data
 ```{r, warning=FALSE, message=FALSE}
 setwd("~/EWS")
+source('models/evaluation.R')
 source("read_data.R")
 data = get_imputed_features()[[1]] %>%
   mutate_if(is.character, as.factor)
 
-data = data %>% select(-major_name_1,  -first_major)
+data = data%>% select(-major_name_1,  -first_major, -first_school)
 ```
 
 # Model estimation
@@ -47,9 +46,7 @@ plot_vif = function (model) {
 plot_vif(log.reg.fit)
 ```
 ```{r}
-log.reg.fit2 = glm(dropout ~ ., train %>% select(-uc_total_score, -num_terms, -first_credits, -cum_avg_credits, -first_credits_major, -first_school), family = 'binomial')
-```
-```{r}
+log.reg.fit2 = glm(dropout ~ ., train %>% select(-uc_total_score, -num_terms, -first_credits, -cum_avg_credits), family = 'binomial')
 plot_vif(log.reg.fit2)
 ```
 
@@ -60,23 +57,22 @@ log_imp = varImp(log.reg.fit2)
 log_imp %>% arrange(-log_imp$Overall)
 ```
 # Model evaluation
-```{r, message=FALSE}
-dropout_prob = predict(log.reg.fit, test, type = "response") # response outputs the prob instead of log odds
-
-rocobj <- roc(test$dropout, dropout_prob)
-auc <- round(auc(test$dropout, dropout_prob),4)
-ggroc(rocobj) +
-  ggtitle(paste0('ROC Curve ', '(AUC = ', auc, ')')) + 
-  geom_abline(intercept = 1, slope = 1, color = "red", linetype = "dashed")
-```
+Scores of the model:
 ```{r}
-pr_curve <- pr.curve(scores.class0 = dropout_prob, weights.class0 = as.numeric(test$dropout), curve=T)
-#plot(pr_curve, main = "Precision-Recall Curve", xlab = "Recall", ylab = "Precision)
-ggplot(as.data.frame(pr_curve$curve), aes(x=V1, y=V2)) +
-  geom_line() +
-  ylim(0, 1) +
-  geom_hline(yintercept=mean(test$dropout)) +
-  labs(title=paste0("PR-Curve (AUC: ", round(pr_curve$auc.davis.goadrich, 2), ")"),
-       x="Recall",
-       y="Precision")
+predicted_scores = predict(log.reg.fit2, test, type = "response") # response outputs the prob instead of log odds
+true_labels = test$dropout
 ```
+Find best threshold-based metrics:
+```{r}
+acc = accuracy_by_threshold(predicted_scores, true_labels)
+plot_metric_by_threshold(acc$accuracies, metric_label="Accuracy")
+
+Fscores = Fbetascore_by_threshold(predicted_scores, true_labels)
+plot_metric_by_threshold(Fscores$Fscores, metric_label="F2 score")
+```
+Plot ROC and PR Curve and calculate Areas under Curve
+```{r}
+plot_ROC(predicted_scores, true_labels)
+plot_PR(predicted_scores, true_labels)
+```
+
