@@ -7,6 +7,7 @@ output: pdf_document
 ```{r, include=FALSE}
 if(!require(caret)) install.packages('caret') # for VarImp
 if(!require(car)) install.packages('car') # for vif
+if(!require(recipes)) install.packages('recipes')
 ```
 
 # Data preparation
@@ -16,9 +17,39 @@ setwd("~/EWS")
 source('models/evaluation.R')
 source("read_data.R")
 data = get_imputed_features()[[1]] %>%
-  mutate_if(is.character, as.factor)
+  mutate_if(is.character, as.factor) %>%
+  mutate_if(is.logical, as.numeric)
 
-data = data%>% select(-major_name_1,  -first_major, -first_school)
+data = data %>% select(-first_major,  -first_school, -major_name_1)
+```
+
+# Dummy coding
+```{r}
+factor_columns <- data %>%
+  select_if(is.factor) %>%
+  names()
+
+dummies <-  recipe(dropout ~ ., data) %>%
+  step_dummy(all_of(factor_columns)) %>%
+  #step_normalize(all_predictors()) %>% 
+  prep(data)
+
+data <- bake(dummies, new_data=NULL)
+```
+# Find and remove aliases
+```{r}
+model = lm(dropout ~ ., data)
+aliases = alias(model)
+alias_columns = rownames(aliases$Complete)
+for (i in 1:nrow(aliases$Complete)) {
+  print(rownames(aliases$Complete)[i])
+  print(names(aliases$Complete[i,])[aliases$Complete[i,]>0])
+}
+data = data %>% select(-one_of(alias_columns))
+
+model = lm(dropout ~ ., data)
+aliases = alias(model)
+alias_columns = rownames(aliases$Complete)
 ```
 
 # Model estimation
@@ -29,24 +60,75 @@ train <- data[sample, ]
 test <- data[!sample, ]
 ```
 
+
 ```{r}
 log.reg.fit = glm(dropout ~ ., train, family = 'binomial')
-summary(log.reg.fit)
+#summary(log.reg.fit)
+```
+```{r}
+aliases = alias(log.reg.fit)
+rownames(aliases$Complete)
 ```
 ## Check VIF
 ```{r,fig.height=10}
 plot_vif = function (model) {
   vif_values = as.data.frame(vif(model))
-  names(vif_values) = c("VIF", "df", "VIF_corrected")
+  names(vif_values) = c("VIF","df","VIF_corrected")
   vif_values$col = row.names(vif_values)
   print(ggplot(vif_values, aes(x=col, y=VIF_corrected)) +
     geom_bar(stat="identity") +
     coord_flip())
 }
 plot_vif(log.reg.fit)
+#vif_values = as.data.frame(vif(log.reg.fit))
 ```
 ```{r}
-log.reg.fit2 = glm(dropout ~ ., train %>% select(-uc_total_score, -num_terms, -first_credits, -cum_avg_credits), family = 'binomial')
+undec_model = glm(major_name_1_UNDECL.UNAFF ~ ., train, family = 'binomial')
+coefficients <- coef(undec_model)
+index_largest <- which.max(abs(coefficients))
+largest_variable <- coeff_names[index_largest]
+# number of majors predicts it very good bc major_1=UNDECL.UNAFF -> num_of_majors=0
+```
+
+```{r}
+avg_credits_model = lm(avg_credits ~ ., train)
+coefficients <- coef(avg_credits_model)
+which.max(abs(coefficients[2:length(coefficients)]))
+plot(coefficients, type = "b", xlab = "Coefficient", ylab = "Estimate")
+plot(train$avg_credits, predict(avg_credits_model), xlab = "True Values", ylab = "Predictions")
+abline(a = 0, b = 1, col = "red") 
+```
+```{r}
+model = glm(geo_category_Non.OC.Southern.CA ~ ., train, family="binomial")
+coefficients <- coef(model)
+print(which.max(abs(coefficients[2:length(coefficients)])))
+plot(coefficients, type = "b", xlab = "Coefficient", ylab = "Estimate")
+plot(train$geo_category_Non.OC.Southern.CA, predict(model), xlab = "True Values", ylab = "Predictions")
+```
+```{r}
+model = glm(avg_own_ethnicity ~ ., train, family="binomial")
+coefficients <- coef(model)
+print(which.max(abs(coefficients[2:length(coefficients)])))
+plot(coefficients, type = "b", xlab = "Coefficient", ylab = "Estimate")
+plot(train$avg_own_ethnicity, predict(model), xlab = "True Values", ylab = "Predictions")
+```
+```{r,fig.height=14}
+log_num = glm(dropout ~ ., train %>% select(dropout, num_terms), family = 'binomial')
+predicted_scores = predict(log_num, test, type = "response") # response outputs the prob instead of log odds
+true_labels = test$dropout
+plot_PR(predicted_scores, true_labels)
+get_all_metrics(predicted_scores, as.logical(true_labels))
+
+log_span = glm(dropout ~ ., train %>% select(dropout, term_span), family = 'binomial')
+predicted_scores = predict(log_span, test, type = "response") # response outputs the prob instead of log odds
+true_labels = test$dropout
+plot_PR(predicted_scores, true_labels)
+get_all_metrics(predicted_scores, as.logical(true_labels))
+```
+```{r}
+log.reg.fit2 = glm(dropout ~ ., train %>% select(-uc_total_score,
+                                                 -first_credits,
+                                                 -term_span), family = 'binomial')
 plot_vif(log.reg.fit2)
 ```
 
@@ -56,6 +138,24 @@ plot_vif(log.reg.fit2)
 log_imp = varImp(log.reg.fit2)
 log_imp %>% arrange(-log_imp$Overall)
 ```
+
+```{r}
+scores = c()
+true_labels = as.logical(test$dropout)
+for (column in names(train %>% select(-dropout))) {
+  print(column)
+  
+  permuted = test
+  permuted[[column]] = sample(permuted[[column]])
+  predicted_scores = predict(log.reg.fit2, permuted, type = "response")
+  
+  metrics = get_all_metrics(predicted_scores, true_labels)
+  scores = c(scores, metrics$F2score)
+}
+pfi = data.frame(predictor=names(train %>% select(-dropout)), score=scores)
+pfi[order(pfi$score),]
+```
+
 # Model evaluation
 Scores of the model:
 ```{r}
@@ -67,12 +167,55 @@ Find best threshold-based metrics:
 acc = accuracy_by_threshold(predicted_scores, true_labels)
 plot_metric_by_threshold(acc$accuracies, metric_label="Accuracy")
 
-Fscores = Fbetascore_by_threshold(predicted_scores, true_labels)
+Fscores = Fbetascore_by_threshold(predicted_scores, as.logical(true_labels))
 plot_metric_by_threshold(Fscores$Fscores, metric_label="F2 score")
 ```
 Plot ROC and PR Curve and calculate Areas under Curve
 ```{r}
 plot_ROC(predicted_scores, true_labels)
 plot_PR(predicted_scores, true_labels)
+```
+```{r}
+get_all_metrics(predicted_scores, as.logical(true_labels))
+```
+```{r}
+data = get_imputed_features()[[1]] %>%
+  mutate_if(is.character, as.factor) %>%
+  mutate_if(is.logical, as.numeric)
+
+data = data %>% select(-first_major,  -first_school, -major_name_1)
+
+sample <- sample(c(TRUE, FALSE), nrow(data), replace=TRUE, prob=c(0.7,0.3))
+train <- data[sample, ]
+test <- data[!sample, ]
+
+log.reg.fit = glm(dropout ~ ., train, family = 'binomial')
+predicted_scores = predict(log.reg.fit, test, type = "response") # response outputs the prob instead of log odds
+true_labels = test$dropout
+plot_PR(predicted_scores, true_labels)
+get_all_metrics(predicted_scores, as.logical(true_labels))
+
+predicted_train_scores = predict(log.reg.fit, train, type = "response") # response outputs the prob instead of log odds
+true_train_labels = train$dropout
+plot_PR(predicted_train_scores, true_train_labels)
+get_all_metrics(predicted_train_scores, as.logical(true_train_labels))
+```
+```{r}
+data = get_imputed_features()[[1]] %>%
+  mutate_if(is.character, as.factor) %>%
+  mutate_if(is.logical, as.numeric)
+
+data = data %>% select(-first_major,  -first_school, -major_name_1)#, -uc_total_score, -first_credits, -avg_credits, -first_credits_major, -num_terms,  -avg_own_ethnicity)
+
+sample <- sample(c(TRUE, FALSE), nrow(data), replace=TRUE, prob=c(0.7,0.3))
+train <- data[sample, ]
+test <- data[!sample, ]
+
+log.reg.fit = glm(dropout ~ ., train, family = 'binomial')
+predicted_scores = predict(log.reg.fit, test, type = "response") # response outputs the prob instead of log odds
+true_labels = test$dropout
+
+plot_PR(predicted_scores, true_labels)
+get_all_metrics(predicted_scores, as.logical(true_labels))
 ```
 

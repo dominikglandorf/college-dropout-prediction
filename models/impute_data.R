@@ -32,7 +32,7 @@ write_csv(data, file.path(path_data, paste0('data_to_impute.csv')))
 
 # parameters of mice
 # m: the number of imputed datasets
-if (!exists("nr_imputed_datasets")) nr_imputed_datasets = 1
+if (!exists("nr_imputed_datasets")) nr_imputed_datasets = 3
 # maxit: the number of iterations in each imputation
 # meth: imputation method (rf means random forest)
 # checked out '2l.lmer', gives a lot of warnings

@@ -31,9 +31,9 @@ terms = terms %>% select(mellon_id,
 terms = terms %>% group_by(mellon_id) %>%
   arrange(term_code) %>% mutate(term_num = row_number()) %>% ungroup()
 
-# replace rare majors (less than 0.1% of terms)
+# replace rare majors (less than 0.5% of terms)
 major_freqs = table(terms$major_name_1)
-rare_majors = major_freqs[major_freqs<nrow(terms)/1000]
+rare_majors = major_freqs[major_freqs<nrow(terms)/200]
 terms = terms %>%
   mutate(across(starts_with("major_name_"),
                 ~ case_when(. %in% names(rare_majors) ~ "OTHER",
@@ -45,6 +45,7 @@ terms = terms %>%
   mutate(across(starts_with("major_name_"),
                 ~ case_when(. %in% c("UNDECLARED", "UNAFFILIATED") ~ unde_una,
                             TRUE ~ as.character(.))))
+
 
 # count number of majors
 majors = terms %>% select(starts_with("major_name_"))

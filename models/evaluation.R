@@ -3,7 +3,7 @@ if(!require(pROC)) install.packages('pROC') # for RO curve
 if(!require(PRROC)) install.packages('PRROC') # for PR curve
 
 
-thresholds = seq(0, 1, 0.001)
+thresholds = seq(0, 1, 0.005)
 
 accuracy_by_threshold = function(predicted_scores, true_labels) {
   accuracies = sapply(thresholds, function(t) Accuracy(predicted_scores>t, true_labels))
@@ -100,4 +100,6 @@ get_all_metrics = function(predicted_scores, true_labels) {
               accuracy=acc$best_metric,
               AUROC=auroc))
 }
+
+
 

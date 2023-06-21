@@ -25,7 +25,7 @@ enrollment_info = terms %>%
   summarize(num_terms = n(),
             term_span = max(term_code) - min(term_code),
             three_honors_terms = sum(honors)>=3) %>% 
-  mutate(term_span = recode(term_span,
+  mutate(term_span = dplyr::recode(term_span,
                            `0` = 1, `11` = 2, `22` = 3, `89` = 1,
                            `100` = 4, `111` = 5, `122` = 6, `189` = 6,
                            `200` = 7, `211` = 8, `222` = 9, `289` = 9))
