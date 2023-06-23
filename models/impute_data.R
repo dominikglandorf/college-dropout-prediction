@@ -1,9 +1,11 @@
 # this script imputes missing data using MICE
 if(!require(mice)) install.packages('mice')
 
+up_to_year = 1
+
 # read feature dataset
 source('read_data.R')
-data = get_aggregated_features(1) %>%
+data = get_aggregated_features(up_to_year) %>%
   mutate_if(is.character, as.factor)
 
 # WHAT NOT TO IMPUTE (analysis see analyses/data_imputation.Rmd)
@@ -26,13 +28,12 @@ data = data %>%
 
 data = data %>% select(-single_parent, -household_size_app)
 
-#data = data %>% select(-major_name_1, -major_school_name_1, -first_major, -first_school)
 
-write_csv(data, file.path(path_data, paste0('data_to_impute.csv')))
+write_csv(data, file.path(path_data, paste0('data_to_impute_year_', up_to_year, '.csv')))
 
 # parameters of mice
 # m: the number of imputed datasets
-if (!exists("nr_imputed_datasets")) nr_imputed_datasets = 3
+if (!exists("nr_imputed_datasets")) nr_imputed_datasets = 5
 # maxit: the number of iterations in each imputation
 # meth: imputation method (rf means random forest)
 # checked out '2l.lmer', gives a lot of warnings
@@ -42,4 +43,4 @@ imp <- mice(data,
             meth='rf')
 # use with to pool results
 datasets = lapply(1:nr_imputed_datasets, function(i) complete(imp, i))
-written = lapply(1:nr_imputed_datasets, function(i) write_csv(datasets[[i]], file.path(path_data, paste0('features_imputed_', i, '.csv'))))
+written = lapply(1:nr_imputed_datasets, function(i) write_csv(datasets[[i]], file.path(path_data, paste0('features_year_', up_to_year, '_imp_nr_', i, '.csv'))))

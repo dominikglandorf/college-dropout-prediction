@@ -218,8 +218,8 @@ get_aggregated_features = function(up_to_year) read_csv(file.path(path_data, pas
 
 get_data_to_impute = function() read_csv(file.path(path_data, 'data_to_impute.csv'), show_col_types = FALSE)
 
-get_imputed_features = function() {
-  file_names <- list.files(path_data, pattern = "^features_imputed_.*", full.names = TRUE)
+get_imputed_features = function(up_to_year=1) {
+  file_names <- list.files(path_data, pattern = paste0("^features_year_", up_to_year, "_imp_nr_.*"), full.names = TRUE)
   data_list <- lapply(file_names, read_csv, show_col_types = FALSE)
   return(data_list)
 }

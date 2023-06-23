@@ -16,11 +16,15 @@ if(!require(recipes)) install.packages('recipes')
 setwd("~/EWS")
 source('models/evaluation.R')
 source("read_data.R")
-data = get_imputed_features()[[1]] %>%
+data = get_imputed_features(1)[[1]] %>%
   mutate_if(is.character, as.factor) %>%
   mutate_if(is.logical, as.numeric)
 
-data = data %>% select(-first_major,  -first_school, -major_name_1)
+data = data %>% select(-major_name_1,
+                       -uc_total_score,
+                       -first_credits,
+                       -first_credits_major,
+                       -term_span)
 ```
 
 # Dummy coding
@@ -135,31 +139,18 @@ plot_vif(log.reg.fit2)
 
 ## Feature Importance
 ```{r}
-log_imp = varImp(log.reg.fit2)
+log_imp = varImp(log.reg.fit)
 log_imp %>% arrange(-log_imp$Overall)
 ```
 
 ```{r}
-scores = c()
-true_labels = as.logical(test$dropout)
-for (column in names(train %>% select(-dropout))) {
-  print(column)
-  
-  permuted = test
-  permuted[[column]] = sample(permuted[[column]])
-  predicted_scores = predict(log.reg.fit2, permuted, type = "response")
-  
-  metrics = get_all_metrics(predicted_scores, true_labels)
-  scores = c(scores, metrics$F2score)
-}
-pfi = data.frame(predictor=names(train %>% select(-dropout)), score=scores)
-pfi[order(pfi$score),]
+feature_importance(function(x) predict(log.reg.fit, x, type="response"), test)
 ```
 
 # Model evaluation
 Scores of the model:
 ```{r}
-predicted_scores = predict(log.reg.fit2, test, type = "response") # response outputs the prob instead of log odds
+predicted_scores = predict(log.reg.fit, test, type = "response") # response outputs the prob instead of log odds
 true_labels = test$dropout
 ```
 Find best threshold-based metrics:

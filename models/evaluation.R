@@ -102,4 +102,21 @@ get_all_metrics = function(predicted_scores, true_labels) {
 }
 
 
+feature_importance = function(model_predict, test) {
+  scores = c()
+  true_labels = as.logical(test$dropout)
+  for (feature in names(test %>% select(-dropout))) {
+    permuted = test
+    permuted[[feature]] = sample(permuted[[feature]])
+    
+    predicted_scores = model_predict(permuted)
+    
+    #F2 = Fbetascore_by_threshold(predicted_scores, true_labels)
+    prauc = PRAUC(predicted_scores, true_labels)
+    scores = c(scores, prauc)#F2$best_metric)
+  }
+  pfi = data.frame(predictor=names(test %>% select(-dropout)), score=scores)
+  return(pfi[order(pfi$score),])
+}
+
 

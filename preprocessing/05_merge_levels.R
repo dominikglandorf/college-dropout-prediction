@@ -132,12 +132,22 @@ terms = terms %>%
 
 
 # term data aggregation to student level
+get_number_of_major_changes = function(majors) {
+  majors = ifelse(majors == "UNDECL-UNAFF", NA, majors)
+  return(sum(majors != lag(majors), na.rm=T))
+}
+
+get_number_of_school_changes = function(schools) {
+  return(sum(schools != lag(schools), na.rm=T))
+}
 
 # create change scores
 terms_changes = terms %>%
   group_by(mellon_id) %>% 
   arrange(term_num) %>% 
-  summarise(avg_credits_lin = last(avg_credits)-first(avg_credits))
+  summarise(avg_credits_lin = last(avg_credits)-first(avg_credits),
+            major_changes = get_number_of_major_changes(major_name_1),
+            school_changes = get_number_of_school_changes(major_school_name_1))
 
 # create score for information in first term
 terms_first = terms %>%
@@ -157,6 +167,7 @@ students = students %>%
   inner_join(terms %>% select(mellon_id,
                               year_study,
                               num_majors,
+                              num_schools,
                               any_major_stem,
                               major_name_1,
                               major_school_name_1,
@@ -172,13 +183,14 @@ students = students %>%
                               avg_own_first_gen)) %>% 
   inner_join(terms_changes) %>% 
   inner_join(terms_first %>%
-              select(mellon_id, year_study, major_name_1, major_school_name_1, avg_credits,
+              select(mellon_id, year_study, avg_credits,
                      avg_credits_rel_major) %>%
               rename(first_year_study = year_study,
-                     first_major = major_name_1,
-                     first_school = major_school_name_1,
                      first_credits = avg_credits,
-                     first_credits_major = avg_credits_rel_major))
+                     first_credits_major = avg_credits_rel_major)) %>% 
+  mutate(first_year_study = dplyr::recode(first_year_study,
+                                          "Sophomore" = "SophSenior",
+                                          "Senior" = "SophSenior"))
 
 students = students %>% select(-mellon_id)
 

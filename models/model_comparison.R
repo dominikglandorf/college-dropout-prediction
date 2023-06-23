@@ -7,13 +7,18 @@ source('models/evaluation.R')
 
 
 train_and_evaluate = function (dat) {
+  print("Next dataset")
   dat = dat %>%
-    mutate_if(is.character, as.factor) %>% 
-    mutate(first_year_study = recode(first_year_study, "Sophomore" = "SophSenior", "Senior" = "SophSenior"))
+    mutate_if(is.character, as.factor)
   
-  dat = dat %>% select(-first_school, -first_major, -major_name_1)
+  dat = dat %>% select(-major_name_1,
+                       -uc_total_score,
+                       -first_credits,
+                       -first_credits_major,
+                       -term_span)
   
-  dat = dat %>% sample_n(10000)
+  # to speed up training, a subsample could be taken here
+  dat = dat %>% sample_n(5000)
   
   # Split randomly into training and test data
   sample <- sample(c(TRUE, FALSE), nrow(dat), replace=TRUE, prob=c(0.7,0.3))
@@ -23,47 +28,31 @@ train_and_evaluate = function (dat) {
   true_labels = test$dropout
   
   # Fit Logistic Regression
+  print("Logistic Regression")
   lr = glm(dropout ~ ., train, family = 'binomial')
   predictions.lr = predict(lr, test, type = "response")
+  lr_pfi = feature_importance(function(x) predict(lr, x, type = "response"), test)
   lr_metrics = get_all_metrics(predictions.lr, true_labels)
   
   # Fit Random Forest
+  print("Random Forest")
   rf <- randomForest(as.factor(dropout) ~ ., train)
   predictions.rf <- predict(rf, newdata=test, type="prob")[,2]
+  rf_pfi = feature_importance(function(x) predict(rf, newdata=x, type = "prob")[,2], test)
   rf_metrics = get_all_metrics(predictions.rf, true_labels)
   
   # combine metrics
-  return(data.frame(rbind(lr_metrics, rf_metrics)))
+  return(list(
+    scores=data.frame(rbind(lr_metrics, rf_metrics)),
+    lr_pfi=lr_pfi,
+    rf_pfi=rf_pfi))
 }
 
-datasets = get_imputed_features()
-eval_results = lapply(datasets, train_and_evaluate)
-
-# Fit Random Forest
-rf <- randomForest(as.factor(dropout) ~ ., train)
-predictions.rf <- predict(rf, newdata=test, type="prob")[,2]
-
-rf_metrics = get_all_metrics(predictions.rf, true_labels)
-varImpPlot(rf)
-
-
-
+datasets = get_imputed_features(1)
+eval_results = lapply(datasets[1:2], train_and_evaluate)
 
 # Fit Support Vector Machine 
+# this does not really work so far
 svm.fit = svm(dropout ~ ., train, type = 'C-classification', kernel = 'polynomial', probability = T)
 predictions.svm = attr(predict(svm.fit, test, probability=T), 'probabilities')[,1]
 svm_metrics = get_all_metrics(predictions.svm, true_labels)
-
-
-data.frame(rbind(lr_metrics, rf_metrics, svm_metrics)) 
-
-plot_multiple_ROC(list("LR"=predictions.lr,
-                       "RF"=predictions.rf,
-                       "SVM"=predictions.svm),
-                  true_labels)
-
-plot_multiple_PRC(list("LR"=predictions.lr,
-                       "RF"=predictions.rf,
-                       "SVM"=predictions.svm),
-                  true_labels)
-

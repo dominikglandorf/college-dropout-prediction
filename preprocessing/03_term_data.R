@@ -50,6 +50,9 @@ terms = terms %>%
 # count number of majors
 majors = terms %>% select(starts_with("major_name_"))
 terms$num_majors = rowSums(!is.na(majors) & majors != unde_una)
+schools = terms %>% select(starts_with("major_school_name_"),
+                           -starts_with("major_school_name_abbrev_"))
+terms$num_schools = rowSums(!is.na(schools) & schools != "Div of Undergraduate Education")
 
 # annotate STEM majors
 terms = terms %>% mutate(any_major_stem = rowSums(select(., starts_with("major_stem_")), na.rm=T)>0) %>% 
