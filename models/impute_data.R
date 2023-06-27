@@ -1,7 +1,7 @@
 # this script imputes missing data using MICE
 if(!require(mice)) install.packages('mice')
 
-up_to_year = 1
+up_to_year = 2
 
 # read feature dataset
 source('read_data.R')

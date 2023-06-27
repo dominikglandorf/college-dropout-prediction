@@ -4,16 +4,22 @@ if(!require(recipes)) install.packages('recipes')
 
 setwd("~/EWS")
 source("read_data.R")
-dat = get_imputed_features()[[1]] %>%
-  mutate_if(is.character, as.factor) %>%
-  mutate_if(is.logical, as.factor)
+source('models/evaluation.R')
 
-dat = dat %>% select(-major_name_1, -first_major)
+dat = get_imputed_features(1)[[1]] %>%
+  mutate_if(is.character, as.factor) %>%
+  mutate_if(is.logical, as.numeric)
+
+dat = dat %>% select(-major_name_1,
+                     -uc_total_score,
+                     -first_credits,
+                     -first_credits_major,
+                     -term_span)
 
 #dat = dat[sample(nrow(dat), 5000),]
 
 dummies <-  recipe(dropout ~ ., data = dat) %>%
-  step_dummy(female, int_student, ethnicity_smpl, first_generation, low_income, ell, cal_res_at_app, year_study, any_major_stem, major_school_name_1, first_year_study, first_school) %>%
+  step_dummy(citizenship_app, ethnicity_smpl, int_student, geo_category, cal_res_at_app, year_study, major_school_name_1, first_year_study) %>%
   step_normalize(all_predictors()) %>% 
   prep(training = dat)
 dat <- bake(dummies, new_data = NULL)
@@ -25,17 +31,13 @@ train <- dat[sample, ]
 test <- dat[!sample, ]
 
 # run kNN classifier
-dropout_pred <- knn(train %>% select(-dropout),test %>% select(-dropout),cl=train$dropout,k=15, prob=T)
-dropout_prob = attr(dropout_pred, "prob")
+predictions.kNN <- knn(train %>% select(-dropout),
+                       test %>% select(-dropout),
+                       cl=train$dropout,
+                       k=10, prob=T)
+scores.kNN = attr(predictions.kNN, "prob")
 # we have to inverse the probs where no probability was predicted
-dropout_prob[dropout_pred==FALSE]=1-dropout_prob[dropout_pred==FALSE]
+scores.kNN[predictions.kNN==0] = 1 - scores.kNN[predictions.kNN==0]
 
-pr_curve <- pr.curve(scores.class0 = dropout_prob, weights.class0 = as.numeric(test$dropout)-1, curve=T)
-ggplot(as.data.frame(pr_curve$curve), aes(x=V1, y=V2)) +
-  geom_line() +
-  ylim(0, 1) +
-  geom_hline(yintercept=mean(as.numeric(test$dropout)-1)) +
-  labs(title=paste0("PR-Curve (AUC: ", round(pr_curve$auc.davis.goadrich, 2), ")"),
-       x="Recall",
-       y="Precision")
+get_all_metrics(scores.kNN, as.logical(test$dropout))
 
