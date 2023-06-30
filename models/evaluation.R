@@ -89,13 +89,16 @@ plot_multiple_PRC = function(scores_by_method, true_labels) {
     theme_minimal()
 }
 
+get_auprc = function(predicted_scores, true_labels) {
+  pr_curve <- pr.curve(scores.class0 = predicted_scores, weights.class0 = as.numeric(true_labels), curve=T)
+  auprc = as.numeric(pr_curve$auc.davis.goadrich)
+}
+
 get_all_metrics = function(predicted_scores, true_labels) {
   acc = accuracy_by_threshold(predicted_scores, true_labels)
   Fsco = Fbetascore_by_threshold(predicted_scores, true_labels)
   auroc = AUC(predicted_scores, true_labels)
-  #auprc = PRAUC(predicted_scores, true_labels)
-  pr_curve <- pr.curve(scores.class0 = predicted_scores, weights.class0 = as.numeric(true_labels), curve=T)
-  auprc = pr_curve$auc.davis.goadrich
+  auprc = get_auprc(predicted_scores, true_labels)
   
   return(list(F2score=Fsco$best_metric,
               AUPRC=auprc,
