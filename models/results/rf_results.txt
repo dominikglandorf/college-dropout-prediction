@@ -1,0 +1,79 @@
+$metrics
+         mean      sd          
+F2score  0.6233907 0.002097653 
+AUPRC    0.5735342 0.0007919361
+accuracy 0.901721  0.0003026561
+AUROC    0.8254956 0.0009878307
+
+$hyperparameters
+$hyperparameters[[1]]
+$hyperparameters[[1]][[1]]
+  ntree mtry
+9  1000    5
+
+$hyperparameters[[1]][[2]]
+   ntree mtry
+14  1000    7
+
+$hyperparameters[[1]][[3]]
+  ntree mtry
+5  1500    3
+
+
+$hyperparameters[[2]]
+$hyperparameters[[2]][[1]]
+   ntree mtry
+10  1500    5
+
+$hyperparameters[[2]][[2]]
+   ntree mtry
+14  1000    7
+
+$hyperparameters[[2]][[3]]
+   ntree mtry
+10  1500    5
+
+
+$hyperparameters[[3]]
+$hyperparameters[[3]][[1]]
+  ntree mtry
+4  1000    3
+
+$hyperparameters[[3]][[2]]
+  ntree mtry
+5  1500    3
+
+$hyperparameters[[3]][[3]]
+  ntree mtry
+9  1000    5
+
+
+$hyperparameters[[4]]
+$hyperparameters[[4]][[1]]
+  ntree mtry
+9  1000    5
+
+$hyperparameters[[4]][[2]]
+   ntree mtry
+14  1000    7
+
+$hyperparameters[[4]][[3]]
+  ntree mtry
+9  1000    5
+
+
+$hyperparameters[[5]]
+$hyperparameters[[5]][[1]]
+   ntree mtry
+10  1500    5
+
+$hyperparameters[[5]][[2]]
+  ntree mtry
+8   500    5
+
+$hyperparameters[[5]][[3]]
+   ntree mtry
+15  1500    7
+
+
+

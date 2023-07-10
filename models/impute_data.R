@@ -1,7 +1,7 @@
 # this script imputes missing data using MICE
 if(!require(mice)) install.packages('mice')
 
-up_to_year = 2
+up_to_year = 1
 
 # read feature dataset
 source('read_data.R')
@@ -33,7 +33,7 @@ write_csv(data, file.path(path_data, paste0('data_to_impute_year_', up_to_year, 
 
 # parameters of mice
 # m: the number of imputed datasets
-if (!exists("nr_imputed_datasets")) nr_imputed_datasets = 5
+if (!exists("nr_imputed_datasets")) nr_imputed_datasets = 10
 # maxit: the number of iterations in each imputation
 # meth: imputation method (rf means random forest)
 # checked out '2l.lmer', gives a lot of warnings

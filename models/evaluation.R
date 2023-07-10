@@ -100,10 +100,10 @@ get_all_metrics = function(predicted_scores, true_labels) {
   auroc = AUC(predicted_scores, true_labels)
   auprc = get_auprc(predicted_scores, true_labels)
   
-  return(list(F2score=Fsco$best_metric,
-              AUPRC=auprc,
-              accuracy=acc$best_metric,
-              AUROC=auroc))
+  return(list(F2score=as.numeric(Fsco$best_metric),
+              AUPRC=as.numeric(auprc),
+              accuracy=as.numeric(acc$best_metric),
+              AUROC=as.numeric(auroc)))
 }
 
 

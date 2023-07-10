@@ -64,7 +64,6 @@ train_and_evaluate = function (dat, split) {
     step_dummy(all_nominal(), one_hot = TRUE) %>%
     step_normalize(all_predictors()) %>% 
     prep(training = dat)
-
   
   kNN_predict = function(test) {
     predictions.kNN <- knn(bake(prep_recipe, new_data = train %>% select(-dropout)),

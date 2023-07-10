@@ -27,6 +27,6 @@ source('preprocessing/04_course_data.R')
 rm(list = ls())
 
 # aggregates variables and merge datasets from all levels until a specific term
-up_to_year = 1
+up_to_year = 2
 source('preprocessing/05_merge_levels.R')
 rm(list = ls())

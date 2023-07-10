@@ -47,6 +47,10 @@ bg$toefl_score[bg$toefl_score>120] = NA
 # graduation data
 bg$graduated = !is.na(bg$graduated_term)
 
+# citiznship data: "in Transit" suffix was just used in a certain range of data why it should be discarded
+bg = bg %>% 
+  mutate(citizenship_app = recode(citizenship_app, "US Citizen in Transit" = "US Citizen"))
+
 # select relevant variables 
 bg = bg %>% select(mellon_id,
                    # administrative
