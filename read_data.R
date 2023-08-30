@@ -216,10 +216,18 @@ get_course_features = function() read_csv(file.path(path_data, 'courses_subset.c
 
 get_aggregated_features = function(up_to_year) read_csv(file.path(path_data, paste0('features_aggregated_year_', up_to_year, '.csv')), show_col_types = FALSE)
 
-get_data_to_impute = function() read_csv(file.path(path_data, 'data_to_impute.csv'), show_col_types = FALSE)
+get_aggregated_features_by_span = function(up_to_span) read_csv(file.path(path_data, paste0('features_aggregated_max_', up_to_span, '.csv')), show_col_types = FALSE)
+
+get_data_to_impute = function(up_to_year=1) read_csv(file.path(path_data, paste0("data_to_impute_year_", up_to_year, ".csv")), show_col_types = FALSE)
 
 get_imputed_features = function(up_to_year=1) {
   file_names <- list.files(path_data, pattern = paste0("^features_year_", up_to_year, "_imp_nr_.*"), full.names = TRUE)
+  data_list <- lapply(file_names, read_csv, show_col_types = FALSE)
+  return(data_list)
+}
+
+get_imputed_features_by_span =  function(span=1) {
+  file_names <- list.files(path_data, pattern = paste0("^features_max_", span, "_imp_nr_.*"), full.names = TRUE)
   data_list <- lapply(file_names, read_csv, show_col_types = FALSE)
   return(data_list)
 }

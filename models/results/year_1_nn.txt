@@ -1,0 +1,191 @@
+$metrics
+         mean      sd          
+F2score  0.6057317 0.00287387  
+AUPRC    0.5612487 0.001646163 
+accuracy 0.8993737 0.0004395683
+AUROC    0.8230254 0.0009593728
+
+$pfi
+               predictor  score.mean    score.sd
+33             num_terms 0.464952121 0.005861720
+7              avg_grade 0.467107860 0.008366447
+14            avg_passed 0.501787905 0.005679178
+18                   ell 0.535282930 0.003952506
+19        ethnicity_smpl 0.541689780 0.002702918
+29   major_school_name_1 0.544459854 0.003991305
+39            year_study 0.552413237 0.001597242
+21                female 0.553668296 0.001569349
+31            num_majors 0.553883882 0.002268885
+16       citizenship_app 0.554744852 0.002123802
+15        cal_res_at_app 0.554928302 0.001809940
+32           num_schools 0.555649567 0.002726825
+24          geo_category 0.556362731 0.002164290
+26           int_student 0.557510584 0.002130778
+17    distance_from_home 0.558396080 0.002401041
+37         uc_read_score 0.558459732 0.001570072
+11     avg_own_ethnicity 0.558607678 0.001779041
+9          avg_n_courses 0.559012226 0.001929766
+10      avg_num_students 0.559038424 0.001969569
+25                hs_gpa 0.559049210 0.001744605
+3                ap_best 0.559071581 0.001958519
+20 father_edu_level_code 0.559205844 0.002109477
+36  uc_math_score_recode 0.559221861 0.001758403
+34        school_changes 0.559421032 0.002021964
+1       age_at_enrolment 0.559497101 0.001658546
+2         any_major_stem 0.559531021 0.001596045
+27            low_income 0.559723641 0.001451081
+30 mother_edu_level_code 0.559790521 0.001848593
+38      uc_writing_score 0.559804044 0.001608087
+4            avg_credits 0.559891580 0.001785111
+5        avg_credits_lin 0.559953023 0.001792440
+12     avg_own_first_gen 0.560024863 0.001659327
+8          avg_in_school 0.560055772 0.001609425
+13        avg_own_gender 0.560065237 0.001430178
+22      first_generation 0.560118707 0.001600123
+23      first_year_study 0.560190702 0.001950548
+28         major_changes 0.560406395 0.001618479
+35    three_honors_terms 0.560523293 0.001683739
+6  avg_credits_rel_major 0.560648057 0.001925552
+
+$hyperparameters
+$hyperparameters[[1]]
+$hyperparameters[[1]][[1]]
+   first_layer reduction dropout epochs
+19         256      0.25     0.5     10
+
+$hyperparameters[[1]][[2]]
+  first_layer reduction dropout epochs
+8         512      0.25     0.5      5
+
+$hyperparameters[[1]][[3]]
+   first_layer reduction dropout epochs
+19         256      0.25     0.5     10
+
+
+$hyperparameters[[2]]
+$hyperparameters[[2]][[1]]
+   first_layer reduction dropout epochs
+19         256      0.25     0.5     10
+
+$hyperparameters[[2]][[2]]
+   first_layer reduction dropout epochs
+19         256      0.25     0.5     10
+
+$hyperparameters[[2]][[3]]
+   first_layer reduction dropout epochs
+23         512       0.5     0.5     10
+
+
+$hyperparameters[[3]]
+$hyperparameters[[3]][[1]]
+   first_layer reduction dropout epochs
+19         256      0.25     0.5     10
+
+$hyperparameters[[3]][[2]]
+   first_layer reduction dropout epochs
+22         256       0.5     0.5     10
+
+$hyperparameters[[3]][[3]]
+   first_layer reduction dropout epochs
+19         256      0.25     0.5     10
+
+
+$hyperparameters[[4]]
+$hyperparameters[[4]][[1]]
+   first_layer reduction dropout epochs
+23         512       0.5     0.5     10
+
+$hyperparameters[[4]][[2]]
+   first_layer reduction dropout epochs
+22         256       0.5     0.5     10
+
+$hyperparameters[[4]][[3]]
+   first_layer reduction dropout epochs
+23         512       0.5     0.5     10
+
+
+$hyperparameters[[5]]
+$hyperparameters[[5]][[1]]
+   first_layer reduction dropout epochs
+11         512       0.5     0.5      5
+
+$hyperparameters[[5]][[2]]
+   first_layer reduction dropout epochs
+19         256      0.25     0.5     10
+
+$hyperparameters[[5]][[3]]
+   first_layer reduction dropout epochs
+21        1024      0.25     0.5     10
+
+
+$hyperparameters[[6]]
+$hyperparameters[[6]][[1]]
+   first_layer reduction dropout epochs
+20         512      0.25     0.5     10
+
+$hyperparameters[[6]][[2]]
+   first_layer reduction dropout epochs
+20         512      0.25     0.5     10
+
+$hyperparameters[[6]][[3]]
+  first_layer reduction dropout epochs
+9        1024      0.25     0.5      5
+
+
+$hyperparameters[[7]]
+$hyperparameters[[7]][[1]]
+   first_layer reduction dropout epochs
+20         512      0.25     0.5     10
+
+$hyperparameters[[7]][[2]]
+   first_layer reduction dropout epochs
+22         256       0.5     0.5     10
+
+$hyperparameters[[7]][[3]]
+   first_layer reduction dropout epochs
+20         512      0.25     0.5     10
+
+
+$hyperparameters[[8]]
+$hyperparameters[[8]][[1]]
+   first_layer reduction dropout epochs
+22         256       0.5     0.5     10
+
+$hyperparameters[[8]][[2]]
+   first_layer reduction dropout epochs
+19         256      0.25     0.5     10
+
+$hyperparameters[[8]][[3]]
+   first_layer reduction dropout epochs
+22         256       0.5     0.5     10
+
+
+$hyperparameters[[9]]
+$hyperparameters[[9]][[1]]
+   first_layer reduction dropout epochs
+20         512      0.25     0.5     10
+
+$hyperparameters[[9]][[2]]
+   first_layer reduction dropout epochs
+22         256       0.5     0.5     10
+
+$hyperparameters[[9]][[3]]
+   first_layer reduction dropout epochs
+20         512      0.25     0.5     10
+
+
+$hyperparameters[[10]]
+$hyperparameters[[10]][[1]]
+   first_layer reduction dropout epochs
+22         256       0.5     0.5     10
+
+$hyperparameters[[10]][[2]]
+   first_layer reduction dropout epochs
+20         512      0.25     0.5     10
+
+$hyperparameters[[10]][[3]]
+   first_layer reduction dropout epochs
+22         256       0.5     0.5     10
+
+
+

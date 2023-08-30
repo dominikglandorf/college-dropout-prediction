@@ -11,7 +11,7 @@ setwd("~/EWS")
 source("read_data.R")
 source('models/hyperparameter_tuning.R')
 
-UP_TO_YEAR = 1
+UP_TO_YEAR = 2
 datasets = get_imputed_features(UP_TO_YEAR)
 
 print_to_file = function(path, content) {
@@ -53,10 +53,10 @@ train_predict_rf = function(train_data, param_combo) {
                      mtry=param_combo$mtry)
   function(test) predict(rf, newdata=test, type="prob")[,"TRUE"]
 }
-param_combos_rf = expand.grid(ntree = c(1000, 1500),
+param_combos_rf = expand.grid(ntree = c(500, 1000, 1500),
                               mtry =  c(3, 5, 6, 7) )
 rf_results = imputations_loop(datasets, outer_split, train_predict_rf, param_combos_rf,
-                              num_imps=10, sample_size=10000, no_pfi=F)
+                              num_imps=10, no_pfi=F, sample_size=10000)
 print_to_file(paste0("models/results/year_", UP_TO_YEAR, "_rf.txt"), rf_results)
 
 # SVM
@@ -73,7 +73,7 @@ param_combos_svm = expand.grid(cost=c(0.1, 0.5, 1),
                                class_weight_true=c(3, 5), #1
                                gamma=c(0.01 / data_dim, 0.1/data_dim, 1/data_dim)) #10
 svm_results = imputations_loop(datasets, outer_split, train_predict_svm, param_combos_svm,
-                               num_imps=10, sample_size=5000, no_pfi=T)
+                               num_imps=10, sample_size=5000, no_pfi=F)
 print_to_file(paste0("models/results/year_", UP_TO_YEAR, "_svm.txt"), svm_results)
 
 # NaiveBayes
@@ -84,7 +84,7 @@ train_predict_nB =  function(train_data, param_combo) {
 }
 param_combos_nb = expand.grid(laplace=c(0, 0.1, 0.5, 1), x=c(1))
 nB_results = imputations_loop(datasets, outer_split, train_predict_nB, param_combos_nb,
-                              num_imps=5, sample_size=10000, no_pfi=T)
+                              num_imps=10, no_pfi=T)
 print_to_file(paste0("models/results/year_", UP_TO_YEAR, "_nb.txt"), nB_results)
 
 # kNN
@@ -114,7 +114,7 @@ train_predict_kNN = function(train_data, param_combo) {
 param_combos_kNN = expand.grid(k=c(9, 19, 39, 59, 99, 199, 299), x=c(1))
 kNN_results = imputations_loop(datasets, outer_split, train_predict_kNN, param_combos_kNN,
                                num_imps=10, transform_dat=transform_dat, no_pfi=T)
-print_to_file("models/results/knn_results.txt", kNN_results)
+print_to_file(paste0("models/results/year_", UP_TO_YEAR, "_knn.txt"), kNN_results)
 
 # Neural Networks
 train_predict_nn = function(train_data, param_combo) {
@@ -141,7 +141,7 @@ train_predict_nn = function(train_data, param_combo) {
     metrics = "accuracy"
   )
   
-  history = model %>% fit(X_train, y_train, epochs = param_combo$epochs, batch_size = 128, validation_split = 0.2)
+  history = model %>% fit(X_train, y_train, epochs = param_combo$epochs, batch_size = 128, validation_split = 0.2, verbose=0)
   
   function(test) {
     test = bake(prep_recipe, new_data = test)
@@ -155,5 +155,7 @@ param_combos_nn = expand.grid(first_layer=c(256, 512, 1024),
                               dropout=c(0, 0.5),
                               epochs=c(5, 10))
 nn_results = imputations_loop(datasets, outer_split, train_predict_nn, param_combos_nn,
-                               num_imps=10, transform_dat=transform_dat)#sample_size=10000
+                               num_imps=10, transform_dat=transform_dat, sample_size=10000)
 print_to_file(paste0("models/results/year_", UP_TO_YEAR, "_nn.txt"), nn_results)
+
+save(outer_split, lr_results, rf_results, nB_results, kNN_results, nn_results, svm_results, file=paste0("models/results/year_", UP_TO_YEAR, "_results.Rdata"))
