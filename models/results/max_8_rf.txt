@@ -1,65 +1,65 @@
 $metrics
          mean      sd          
-F2score  0.8756504 0.001163384 
-AUPRC    0.9026804 0.0008769833
-accuracy 0.9619849 0.0001372968
-AUROC    0.9753675 0.0004153426
+F2score  0.7283176 0.002255459 
+AUPRC    0.7020409 0.003641279 
+accuracy 0.9626021 0.0003206774
+AUROC    0.9510103 0.000791895 
 
 $pfi
-               predictor   score.mean     score.sd
-33             num_terms 0.4616778962 0.0068091922
-39            year_study 0.8565498462 0.0016128709
-14            avg_passed 0.8748691659 0.0011931649
-7              avg_grade 0.8775774370 0.0012467792
-18                   ell 0.8845045922 0.0021224633
-31            num_majors 0.8951470739 0.0010015079
-29   major_school_name_1 0.8980730376 0.0009457195
-32           num_schools 0.8983759938 0.0012046149
-17    distance_from_home 0.8993658242 0.0017051556
-28         major_changes 0.8999190226 0.0013510658
-8          avg_in_school 0.9000823971 0.0013444542
-37         uc_read_score 0.9001616003 0.0010935236
-9          avg_n_courses 0.9002445128 0.0006539016
-11     avg_own_ethnicity 0.9004258559 0.0010061110
-24          geo_category 0.9006153763 0.0010024553
-16       citizenship_app 0.9006603519 0.0009722196
-34        school_changes 0.9007834739 0.0012200778
-26           int_student 0.9008051124 0.0008545744
-21                female 0.9010916005 0.0012238469
-10      avg_num_students 0.9011103512 0.0008900736
-6  avg_credits_rel_major 0.9011247366 0.0007181898
-13        avg_own_gender 0.9011527088 0.0009537067
-25                hs_gpa 0.9012387248 0.0009391634
-36  uc_math_score_recode 0.9013260732 0.0011191488
-19        ethnicity_smpl 0.9013719959 0.0011737666
-2         any_major_stem 0.9013911789 0.0009077236
-15        cal_res_at_app 0.9013936457 0.0013306395
-3                ap_best 0.9014561733 0.0011292295
-23      first_year_study 0.9015762168 0.0007568515
-5        avg_credits_lin 0.9015964737 0.0007953354
-27            low_income 0.9016779582 0.0010953650
-35    three_honors_terms 0.9017424503 0.0009519999
-1       age_at_enrolment 0.9017534351 0.0009215352
-30 mother_edu_level_code 0.9017745202 0.0010079315
-20 father_edu_level_code 0.9018242448 0.0009267398
-22      first_generation 0.9018243528 0.0009942978
-4            avg_credits 0.9019543197 0.0012632731
-38      uc_writing_score 0.9020405268 0.0007904317
-12     avg_own_first_gen 0.9020661472 0.0010764179
+               predictor  score.mean    score.sd
+33             num_terms 0.287178003 0.005709922
+14            avg_passed 0.654076734 0.004839422
+7              avg_grade 0.656233210 0.004574730
+39            year_study 0.657864685 0.004155301
+18                   ell 0.678982171 0.005004287
+29   major_school_name_1 0.690746304 0.004004458
+31            num_majors 0.690973168 0.002967835
+32           num_schools 0.695760240 0.004054499
+9          avg_n_courses 0.697139821 0.003439436
+8          avg_in_school 0.697675780 0.004597932
+11     avg_own_ethnicity 0.698444411 0.004607883
+36  uc_math_score_recode 0.698799351 0.004617861
+19        ethnicity_smpl 0.698971438 0.003997131
+37         uc_read_score 0.698984621 0.003866308
+6  avg_credits_rel_major 0.699150413 0.004481884
+21                female 0.699218110 0.003339479
+13        avg_own_gender 0.699391699 0.003564120
+30 mother_edu_level_code 0.699593022 0.003805343
+38      uc_writing_score 0.699736758 0.003692959
+3                ap_best 0.699924187 0.003570125
+4            avg_credits 0.700060641 0.003659536
+25                hs_gpa 0.700115377 0.003254409
+28         major_changes 0.700135822 0.003698354
+17    distance_from_home 0.700140637 0.002822557
+20 father_edu_level_code 0.700197662 0.003971340
+24          geo_category 0.700237277 0.003663982
+2         any_major_stem 0.700241092 0.003735461
+5        avg_credits_lin 0.700330049 0.003265792
+22      first_generation 0.700518243 0.003848398
+12     avg_own_first_gen 0.700522849 0.003083361
+27            low_income 0.700567971 0.003452526
+16       citizenship_app 0.700732950 0.003278920
+23      first_year_study 0.700768442 0.003552734
+26           int_student 0.700774173 0.003502059
+35    three_honors_terms 0.700783030 0.003586578
+10      avg_num_students 0.701147024 0.004333841
+1       age_at_enrolment 0.701203807 0.003680070
+15        cal_res_at_app 0.701214632 0.003783871
+34        school_changes 0.701526006 0.003738616
 
 $hyperparameters
 $hyperparameters[[1]]
 $hyperparameters[[1]][[1]]
-  ntree mtry
-9  1500    6
+   ntree mtry
+10   500    7
 
 $hyperparameters[[1]][[2]]
-   ntree mtry
-12  1500    7
+  ntree mtry
+8  1000    6
 
 $hyperparameters[[1]][[3]]
-  ntree mtry
-9  1500    6
+   ntree mtry
+11  1000    7
 
 
 $hyperparameters[[2]]
@@ -68,8 +68,8 @@ $hyperparameters[[2]][[1]]
 12  1500    7
 
 $hyperparameters[[2]][[2]]
-   ntree mtry
-12  1500    7
+  ntree mtry
+9  1500    6
 
 $hyperparameters[[2]][[3]]
    ntree mtry
@@ -78,12 +78,12 @@ $hyperparameters[[2]][[3]]
 
 $hyperparameters[[3]]
 $hyperparameters[[3]][[1]]
-   ntree mtry
-12  1500    7
+  ntree mtry
+7   500    6
 
 $hyperparameters[[3]][[2]]
-  ntree mtry
-9  1500    6
+   ntree mtry
+12  1500    7
 
 $hyperparameters[[3]][[3]]
   ntree mtry
@@ -92,12 +92,12 @@ $hyperparameters[[3]][[3]]
 
 $hyperparameters[[4]]
 $hyperparameters[[4]][[1]]
-   ntree mtry
-12  1500    7
+  ntree mtry
+9  1500    6
 
 $hyperparameters[[4]][[2]]
-   ntree mtry
-11  1000    7
+  ntree mtry
+7   500    6
 
 $hyperparameters[[4]][[3]]
    ntree mtry
@@ -106,86 +106,86 @@ $hyperparameters[[4]][[3]]
 
 $hyperparameters[[5]]
 $hyperparameters[[5]][[1]]
-   ntree mtry
-12  1500    7
+  ntree mtry
+9  1500    6
 
 $hyperparameters[[5]][[2]]
-   ntree mtry
-12  1500    7
+  ntree mtry
+8  1000    6
 
 $hyperparameters[[5]][[3]]
   ntree mtry
-8  1000    6
+7   500    6
 
 
 $hyperparameters[[6]]
 $hyperparameters[[6]][[1]]
    ntree mtry
-10   500    7
-
-$hyperparameters[[6]][[2]]
-   ntree mtry
 12  1500    7
 
-$hyperparameters[[6]][[3]]
+$hyperparameters[[6]][[2]]
   ntree mtry
 8  1000    6
+
+$hyperparameters[[6]][[3]]
+   ntree mtry
+12  1500    7
 
 
 $hyperparameters[[7]]
 $hyperparameters[[7]][[1]]
    ntree mtry
-11  1000    7
+10   500    7
 
 $hyperparameters[[7]][[2]]
   ntree mtry
-7   500    6
+8  1000    6
 
 $hyperparameters[[7]][[3]]
    ntree mtry
-11  1000    7
+12  1500    7
 
 
 $hyperparameters[[8]]
 $hyperparameters[[8]][[1]]
-   ntree mtry
-12  1500    7
+  ntree mtry
+7   500    6
 
 $hyperparameters[[8]][[2]]
    ntree mtry
-12  1500    7
+10   500    7
 
 $hyperparameters[[8]][[3]]
-   ntree mtry
-12  1500    7
+  ntree mtry
+9  1500    6
 
 
 $hyperparameters[[9]]
 $hyperparameters[[9]][[1]]
-   ntree mtry
-11  1000    7
-
-$hyperparameters[[9]][[2]]
   ntree mtry
 7   500    6
 
+$hyperparameters[[9]][[2]]
+  ntree mtry
+9  1500    6
+
 $hyperparameters[[9]][[3]]
    ntree mtry
-12  1500    7
+11  1000    7
 
 
 $hyperparameters[[10]]
 $hyperparameters[[10]][[1]]
-   ntree mtry
-12  1500    7
+  ntree mtry
+7   500    6
 
 $hyperparameters[[10]][[2]]
-   ntree mtry
-12  1500    7
+  ntree mtry
+8  1000    6
 
 $hyperparameters[[10]][[3]]
-  ntree mtry
-9  1500    6
+   ntree mtry
+12  1500    7
 
 
 

@@ -20,10 +20,10 @@ filter_fall_cohorts[is.na(filter_fall_cohorts)] = F
 
 students = students[filter_admit & filter_fall_cohorts,]
 
-dropout_rates = do.call(data.frame, aggregate(dropout ~ id_range, students, FUN = function(x) c(mean = mean(x), n = length(x))))
+dropout_rates = do.call(data.frame, aggregate(graduated ~ id_range, students, FUN = function(x) c(mean = mean(x), n = length(x))))
 
-plot1 = ggplot(data = subset(dropout_rates, dropout.n>5), aes(y=id_range, x=dropout.mean)) +
-  geom_point(aes(size = dropout.n), stat="identity") +
+plot1 = ggplot(data = subset(dropout_rates, graduated.n>5), aes(y=id_range, x=graduated.mean)) +
+  geom_point(aes(size = graduated.n), stat="identity") +
   theme_minimal() +
   theme(legend.position = "none") +
   labs(title = "Dropout rate by student sid",

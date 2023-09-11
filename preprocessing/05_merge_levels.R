@@ -3,25 +3,81 @@
 # todo: set working directory to source location
 source('read_data.R')
 
+
+get_number_of_major_changes = function(majors) {
+  majors = ifelse(majors == "UNDECL-UNAFF", NA, majors)
+  return(sum(majors != lag(majors), na.rm=T))
+}
+
+get_number_of_school_changes = function(schools) {
+  return(sum(schools != lag(schools), na.rm=T))
+}
+
+## STUDENT DATA
+# get student data, this data is almost fine for student-level prediction
+students = get_student_sub()
+
+# delete unsuitable predictors
+students = students %>% select(-cohort,
+                               -start_as_freshman,
+                               -admitdate,
+                               -passed_ap_abs)
+
+terms = get_term_features()
+student_term_info = terms %>% group_by(mellon_id) %>% 
+  summarise(first_code = min(term_code),
+            last_code = max(term_code)) %>%
+  # first four digits are the year of the term, latter two are the term
+  mutate(first_year = as.integer(substr(first_code, 0, 4)),
+         first_term = substr(first_code, 5, 6)) %>% 
+  # join month information for terms
+  left_join(term_part_codes %>% select(code, start_month),
+            by=c("first_term"="code"))
+
+students = students %>%
+  left_join(student_term_info %>% select(mellon_id, first_year, start_month)) %>%
+  # age at enrollment: month of first term - birth date
+  mutate(age_at_enrolment = first_year - birth_year + (start_month - birth_month) / 12) %>% 
+  select(-birth_year, -birth_month, -start_month, -first_year)
+
+# dropout
+max_time_frame = max(student_term_info$last_code) - 100 # at least four terms passed to decide about dropout
+students = students %>%
+  left_join(student_term_info %>% select(mellon_id, last_code)) %>% 
+  # drop students that are still enrolled within the timeframe
+  filter(last_code < max_time_frame) %>% 
+  mutate(dropout = !graduated) %>% 
+  select(-last_code, -graduated) # drop helper variables
+
+# span 0 
+write_csv(students %>% select(-mellon_id), file.path(path_data, paste0('features_aggregated_max_0.csv')))
+
+# for real spans
 spans = c("1"=0, "2"=11, "3"=22,
           "4"=100, "5"=111, "6"=122,
           "7"=200, "8"=211, "9"=222)
 
+## COURSE DATA
+courses = get_course_features()
+
+# course features depending on term info
+# add feature in_school: course was taken in one school of majors
+courses = courses %>%
+  # add schools of all four majors
+  left_join(terms %>% select(c('mellon_id','term_code', paste0('major_school_name_abbrev_', 1:4)))) %>%
+  # add school for department of course from mapping in config.R
+  mutate(school=dept_schools[dept_name_abbrev]) %>%
+  # in_school reflects whether the school of the course's department is one of the schools of the students major
+  mutate(in_school = (school == major_school_name_abbrev_1 |
+                        (!is.na(major_school_name_abbrev_2) & school == major_school_name_abbrev_2) |
+                        (!is.na(major_school_name_abbrev_3) & school == major_school_name_abbrev_3) |
+                        (!is.na(major_school_name_abbrev_4) & school == major_school_name_abbrev_4)
+  )) %>% 
+  # drop helper variables
+  select(-school, -paste0('major_school_name_abbrev_', 1:4))
+
 merge_up_to_span = function(nr, up_to_span) {
-  
-  ## STUDENT DATA
-  # get student data, this data is almost fine for student-level prediction
-  students = get_student_sub()
-  # delete unsuitable predictors
-  students = students %>% select(-cohort,
-                                 -start_as_freshman,
-                                 -admitdate,
-                                 -passed_ap_abs
-  )
-  
-  ## TERM DATA
-  terms = get_term_features()
-  
+
   enrollment_info = terms %>% 
     group_by(mellon_id) %>% 
     filter(term_code - min(term_code) <= up_to_span) %>%
@@ -33,57 +89,21 @@ merge_up_to_span = function(nr, up_to_span) {
                                      `100` = 4, `111` = 5, `122` = 6, `189` = 6,
                                      `200` = 7, `211` = 8, `222` = 9, `289` = 9))
   
-  students = students %>% left_join(enrollment_info)
+  students_span = students %>% left_join(enrollment_info)
   
-  # merge data from background and term levels
-  student_term_info = terms %>% group_by(mellon_id) %>% 
-    summarise(first_code = min(term_code),
-              last_code = max(term_code)) %>%
-    # first four digits are the year of the term, latter two are the term
-    mutate(first_year = as.integer(substr(first_code, 0, 4)),
-           first_term = substr(first_code, 5, 6)) %>% 
-    # join month information for terms
-    left_join(term_part_codes %>% select(code, start_month),
-              by=c("first_term"="code"))
+  # drop students that are already officially dropped out,
+  # i.e. students that have a term_span lower than terms of span - 3
+  # we keep students in the dataset that do not fulfill this criterion
+  # the students that have a term_span larger than nr - 4
+  students_span = students_span %>%
+    filter(term_span > as.integer(nr) - 4)
   
-  students = students %>%
-    left_join(student_term_info %>% select(mellon_id, first_year, start_month)) %>%
-    # age at enrollment: month of first term - birth date
-    mutate(age_at_enrolment = first_year - birth_year + (start_month - birth_month) / 12) %>% 
-    select(-birth_year, -birth_month, -start_month, -first_year)
-  
-  # dropout
-  max_time_frame = max(student_term_info$last_code) - 100 # at least four terms passed to decide about dropout
-  students = students %>%
-    left_join(student_term_info %>% select(mellon_id, last_code)) %>% 
-    # drop students that are still enrolled within the timeframe
-    filter(last_code < max_time_frame) %>% 
-    mutate(dropout = !graduated) %>% 
-    select(-last_code, -graduated) # drop helper variables
-  
-  ## COURSE DATA
-  courses = get_course_features()
-  
-  # course features depending on term info
-  # add feature in_school: course was taken in one school of majors
-  courses = courses %>%
-    # add schools of all four majors
-    left_join(terms %>% select(c('mellon_id','term_code', paste0('major_school_name_abbrev_', 1:4)))) %>%
-    # add school for department of course from mapping in config.R
-    mutate(school=dept_schools[dept_name_abbrev]) %>%
-    # in_school reflects whether the school of the course's department is one of the schools of the students major
-    mutate(in_school = (school == major_school_name_abbrev_1 |
-                          (!is.na(major_school_name_abbrev_2) & school == major_school_name_abbrev_2) |
-                          (!is.na(major_school_name_abbrev_3) & school == major_school_name_abbrev_3) |
-                          (!is.na(major_school_name_abbrev_4) & school == major_school_name_abbrev_4)
-    )) %>% 
-    # drop helper variables
-    select(-school, -paste0('major_school_name_abbrev_', 1:4))
+  print(paste(nr, "remaining students: ", nrow(students_span)))
   
   # term level features aggregated from course level
   term_course_info = courses %>%
     group_by(mellon_id) %>% 
-    filter(term_code - min(term_code) <= up_to_span) %>% # to speed up computation
+    filter(term_code - min(term_code) <= up_to_span) %>% 
     group_by(mellon_id, term_code) %>% 
     summarize(n_courses = n(),
               units_completed = sum(units_completed, na.rm=TRUE),
@@ -96,7 +116,7 @@ merge_up_to_span = function(nr, up_to_span) {
               rel_ownfirstgen_crs = mean(rel_ownfirstgen_crs, na.rm=TRUE))
   
   # cumulative term stats normalized by term number
-  terms = terms %>% 
+  terms_span = terms %>% 
     left_join(term_course_info) %>% 
     group_by(mellon_id) %>% 
     filter(term_code - min(term_code) <= up_to_span) %>% # to limit data
@@ -113,17 +133,18 @@ merge_up_to_span = function(nr, up_to_span) {
     ungroup()
   
   # add relative stats to term number, major and their interaction
-  units_term_num = terms %>%
+  units_term_num = terms_span %>%
     group_by(term_num) %>% 
     summarize(units_term = mean(avg_credits, na.rm=T))
-  units_major = terms %>%
+  units_major = terms_span %>%
     group_by(major_name_1) %>% 
     summarize(units_major = mean(avg_credits, na.rm=T))
-  units_term_major = terms %>%
+  units_term_major = terms_span %>%
     group_by(term_num, major_name_1) %>% 
     summarize(units_term_major = mean(avg_credits, na.rm=T))
+  
   # join to terms
-  terms = terms %>% 
+  terms_span = terms_span %>% 
     left_join(units_term_num) %>% 
     left_join(units_major) %>% 
     left_join(units_term_major) %>% 
@@ -135,17 +156,9 @@ merge_up_to_span = function(nr, up_to_span) {
   
   
   # term data aggregation to student level
-  get_number_of_major_changes = function(majors) {
-    majors = ifelse(majors == "UNDECL-UNAFF", NA, majors)
-    return(sum(majors != lag(majors), na.rm=T))
-  }
-  
-  get_number_of_school_changes = function(schools) {
-    return(sum(schools != lag(schools), na.rm=T))
-  }
   
   # create change scores
-  terms_changes = terms %>%
+  terms_changes = terms_span %>%
     group_by(mellon_id) %>% 
     arrange(term_num) %>% 
     summarise(avg_credits_lin = last(avg_credits)-first(avg_credits),
@@ -153,21 +166,17 @@ merge_up_to_span = function(nr, up_to_span) {
               school_changes = get_number_of_school_changes(major_school_name_1))
   
   # create score for information in first term
-  terms_first = terms %>%
+  terms_first = terms_span %>%
     filter(term_num == 1)
   
-  # select course data until shorter periods
-  #terms_until_x = terms %>%
-  #  filter(term_num == x)
-  
   # filter term information up to this point = highest term code
-  terms = terms %>%
+  terms_span = terms_span %>%
     group_by(mellon_id) %>% 
     filter(term_code == max(term_code))
   
   # join term data to student, right join to drop students that dropped out earlier
-  students = students %>%
-    inner_join(terms %>% select(mellon_id,
+  students_span = students_span %>%
+    inner_join(terms_span %>% select(mellon_id,
                                 year_study,
                                 num_majors,
                                 num_schools,
@@ -195,12 +204,12 @@ merge_up_to_span = function(nr, up_to_span) {
                                             "Sophomore" = "SophSenior",
                                             "Senior" = "SophSenior"))
   
-  students = students %>% select(-mellon_id)
+  students_span = students_span %>% select(-mellon_id)
   
   # save to storage
-  write_csv(students, file.path(path_data, paste0('features_aggregated_max_', nr, '.csv')))
+  write_csv(students_span, file.path(path_data, paste0('features_aggregated_max_', nr, '.csv')))
 }
 
-for (nr in names(spans)) {
+for (nr in names(spans[5:9])) {
   merge_up_to_span(nr, spans[nr])
 }

@@ -52,7 +52,8 @@ run_for_span = function(span) {
                              -uc_total_score,
                              -first_credits,
                              -first_credits_major,
-                             -term_span))
+                             -term_span
+                      ))
   # drop NA features
   datasets = lapply(datasets, function(dat) {
     na_cols <- colnames(dat)[apply(dat, 2, function(x) any(is.na(x)))]
@@ -68,4 +69,4 @@ run_for_span = function(span) {
 }
 
 # temporarily excluding 1 to 7
-sapply(8:9, run_for_span)
+sapply(0:9, run_for_span)
