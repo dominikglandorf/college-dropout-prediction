@@ -1,0 +1,92 @@
+$metrics
+         mean      sd          
+F2score  0.626618  0.001110306 
+AUPRC    0.6269252 0.0006767905
+accuracy 0.8947625 0.0002953033
+AUROC    0.8436938 0.0008680665
+
+$pfi
+               predictor   score.mean     score.sd
+7              avg_grade 0.7706703204 0.0032243611
+31           num_schools 0.8252079573 0.0031840397
+14            avg_passed 0.8270621353 0.0018412644
+32             num_terms 0.8296820219 0.0015181322
+38            year_study 0.8321958582 0.0017513669
+28   major_school_name_1 0.8324713287 0.0009051575
+18                   ell 0.8349059351 0.0004499103
+19        ethnicity_smpl 0.8352101589 0.0009687371
+30            num_majors 0.8382065169 0.0006846047
+24                hs_gpa 0.8400281686 0.0004552763
+3                ap_best 0.8403083368 0.0014864165
+11     avg_own_ethnicity 0.8409704823 0.0005843972
+15        cal_res_at_app 0.8410946749 0.0020864106
+17    distance_from_home 0.8412489369 0.0005320390
+13        avg_own_gender 0.8412629136 0.0005075978
+9          avg_n_courses 0.8414574414 0.0016008785
+8          avg_in_school 0.8421488279 0.0015521804
+21                female 0.8424413495 0.0007669577
+36         uc_read_score 0.8428542851 0.0012013808
+23          geo_category 0.8428814809 0.0010698748
+12     avg_own_first_gen 0.8430868011 0.0011133069
+25           int_student 0.8431517511 0.0009392759
+35  uc_math_score_recode 0.8432269625 0.0014296688
+29 mother_edu_level_code 0.8433043025 0.0007026348
+10      avg_num_students 0.8433468848 0.0016752404
+2         any_major_stem 0.8434828929 0.0009753843
+37      uc_writing_score 0.8435184099 0.0008576684
+20 father_edu_level_code 0.8435279713 0.0011112643
+5        avg_credits_lin 0.8435309295 0.0003240208
+27         major_changes 0.8435325127 0.0009769848
+22      first_year_study 0.8435360149 0.0010965394
+26            low_income 0.8435833844 0.0006450934
+33        school_changes 0.8436121276 0.0009084699
+1       age_at_enrolment 0.8436709382 0.0013870633
+16       citizenship_app 0.8436712076 0.0012074654
+34    three_honors_terms 0.8437115016 0.0008582523
+6  avg_credits_rel_major 0.8437358394 0.0002869700
+4            avg_credits 0.8443336172 0.0009057211
+
+$hyperparameters
+$hyperparameters[[1]]
+$hyperparameters[[1]][[1]]
+  ntree mtry
+1  1000    6
+
+$hyperparameters[[1]][[2]]
+  ntree mtry
+1  1000    6
+
+$hyperparameters[[1]][[3]]
+  ntree mtry
+1  1000    6
+
+
+$hyperparameters[[2]]
+$hyperparameters[[2]][[1]]
+  ntree mtry
+1  1000    6
+
+$hyperparameters[[2]][[2]]
+  ntree mtry
+1  1000    6
+
+$hyperparameters[[2]][[3]]
+  ntree mtry
+1  1000    6
+
+
+$hyperparameters[[3]]
+$hyperparameters[[3]][[1]]
+  ntree mtry
+1  1000    6
+
+$hyperparameters[[3]][[2]]
+  ntree mtry
+1  1000    6
+
+$hyperparameters[[3]][[3]]
+  ntree mtry
+1  1000    6
+
+
+

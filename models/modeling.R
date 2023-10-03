@@ -11,8 +11,9 @@ setwd("~/EWS")
 source("read_data.R")
 source('models/hyperparameter_tuning.R')
 
-UP_TO_YEAR = 2
-datasets = get_imputed_features(UP_TO_YEAR)
+UP_TO_SPAN = 3
+datasets = get_imputed_features_by_span(UP_TO_SPAN)
+UP_TO_YEAR = 1
 
 print_to_file = function(path, content) {
   file_conn <- file(path, "w")
@@ -45,6 +46,7 @@ param_combos_lr = expand.grid(para1 = list(1)) # this is just for generality of 
 lr_results = imputations_loop(datasets, outer_split, train_predict_lr, param_combos_lr,
                               num_imps=10, no_pfi=F)
 print_to_file(paste0("models/results/year_", UP_TO_YEAR, "_lr.txt"), lr_results)
+
 
 # random forest
 train_predict_rf = function(train_data, param_combo) {

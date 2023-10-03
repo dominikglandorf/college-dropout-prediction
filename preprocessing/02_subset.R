@@ -3,7 +3,7 @@ source('read_data.R')
 bg = get_student_vars()
 
 # CONFIGURATION
-if (!exists("first_cohort")) first_cohort = 2008
+if (!exists("first_cohort")) first_cohort = 2011
 if (!exists("last_cohort")) last_cohort = 2016
 
 filter_year = bg$cohort >= first_cohort & bg$cohort <= last_cohort & !is.na(bg$cohort)

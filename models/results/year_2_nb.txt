@@ -1,9 +1,9 @@
 $metrics
          mean      sd          
-F2score  0.7388549 0.001313545 
-AUPRC    0.7352788 0.0005478286
-accuracy 0.9290257 0.0003101129
-AUROC    0.8998077 0.0004809496
+F2score  0.6865885 0.001318656 
+AUPRC    0.679712  0.0007048951
+accuracy 0.9284564 0.0002621862
+AUROC    0.8851963 0.0004174039
 
 $hyperparameters
 $hyperparameters[[1]]
@@ -13,21 +13,21 @@ $hyperparameters[[1]][[1]]
 
 $hyperparameters[[1]][[2]]
   laplace x
-4       1 1
+3     0.5 1
 
 $hyperparameters[[1]][[3]]
   laplace x
-1       0 1
+4       1 1
 
 
 $hyperparameters[[2]]
 $hyperparameters[[2]][[1]]
   laplace x
-4       1 1
+3     0.5 1
 
 $hyperparameters[[2]][[2]]
   laplace x
-4       1 1
+2     0.1 1
 
 $hyperparameters[[2]][[3]]
   laplace x
@@ -41,7 +41,7 @@ $hyperparameters[[3]][[1]]
 
 $hyperparameters[[3]][[2]]
   laplace x
-2     0.1 1
+4       1 1
 
 $hyperparameters[[3]][[3]]
   laplace x
@@ -55,45 +55,45 @@ $hyperparameters[[4]][[1]]
 
 $hyperparameters[[4]][[2]]
   laplace x
-1       0 1
+2     0.1 1
 
 $hyperparameters[[4]][[3]]
   laplace x
-1       0 1
+3     0.5 1
 
 
 $hyperparameters[[5]]
 $hyperparameters[[5]][[1]]
   laplace x
-2     0.1 1
+4       1 1
 
 $hyperparameters[[5]][[2]]
   laplace x
-2     0.1 1
+3     0.5 1
 
 $hyperparameters[[5]][[3]]
   laplace x
-3     0.5 1
+1       0 1
 
 
 $hyperparameters[[6]]
 $hyperparameters[[6]][[1]]
   laplace x
-4       1 1
+3     0.5 1
 
 $hyperparameters[[6]][[2]]
   laplace x
-1       0 1
+3     0.5 1
 
 $hyperparameters[[6]][[3]]
   laplace x
-4       1 1
+3     0.5 1
 
 
 $hyperparameters[[7]]
 $hyperparameters[[7]][[1]]
   laplace x
-3     0.5 1
+4       1 1
 
 $hyperparameters[[7]][[2]]
   laplace x
@@ -101,31 +101,31 @@ $hyperparameters[[7]][[2]]
 
 $hyperparameters[[7]][[3]]
   laplace x
-4       1 1
+3     0.5 1
 
 
 $hyperparameters[[8]]
 $hyperparameters[[8]][[1]]
   laplace x
-4       1 1
+1       0 1
 
 $hyperparameters[[8]][[2]]
   laplace x
-1       0 1
+4       1 1
 
 $hyperparameters[[8]][[3]]
   laplace x
-4       1 1
+3     0.5 1
 
 
 $hyperparameters[[9]]
 $hyperparameters[[9]][[1]]
   laplace x
-1       0 1
+4       1 1
 
 $hyperparameters[[9]][[2]]
   laplace x
-1       0 1
+4       1 1
 
 $hyperparameters[[9]][[3]]
   laplace x
@@ -135,11 +135,11 @@ $hyperparameters[[9]][[3]]
 $hyperparameters[[10]]
 $hyperparameters[[10]][[1]]
   laplace x
-3     0.5 1
+4       1 1
 
 $hyperparameters[[10]][[2]]
   laplace x
-2     0.1 1
+1       0 1
 
 $hyperparameters[[10]][[3]]
   laplace x

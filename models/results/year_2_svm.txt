@@ -1,47 +1,191 @@
 $metrics
          mean      sd          
-F2score  0.802 0.001 
-AUPRC    0.778 0.001
-accuracy 0.938 0.000
-AUROC    0.918 0.000
+F2score  0.7574645 0.001552071 
+AUPRC    0.7175559 0.001857739 
+accuracy 0.9381056 0.0002231949
+AUROC    0.9026938 0.0005992665
 
-               predictor   score.mean     score.sd
-33             num_terms 0.3309673758 0.0036177353
-14            avg_passed 0.6994360710 0.0042832811
-32           num_schools 0.7686978712 0.0015693845
-18                   ell 0.7689438415 0.0013400744
-39            year_study 0.7693061084 0.0012679945
-7              avg_grade 0.7698740086 0.0015225658
-29   major_school_name_1 0.7736305404 0.0013852692
-19        ethnicity_smpl 0.7752408563 0.0013951095
-11     avg_own_ethnicity 0.7758887847 0.0010925466
-21                female 0.7761701822 0.0012454155
-31            num_majors 0.7762813669 0.0012401855
-17    distance_from_home 0.7763645509 0.0010891996
-15        cal_res_at_app 0.7766059451 0.0011270676
-2         any_major_stem 0.7768509241 0.0011992028
-36  uc_math_score_recode 0.7768536006 0.0009574861
-10      avg_num_students 0.7769340650 0.0009975401
-34        school_changes 0.7770556296 0.0012394988
-16       citizenship_app 0.7772020520 0.0010396518
-8          avg_in_school 0.7772424888 0.0011831949
-22      first_generation 0.7773967272 0.0011224410
-9          avg_n_courses 0.7774535883 0.0009313739
-4            avg_credits 0.7774829322 0.0010372053
-38      uc_writing_score 0.7774988464 0.0010333452
-37         uc_read_score 0.7775218288 0.0011520312
-30 mother_edu_level_code 0.7775834903 0.0011072608
-35    three_honors_terms 0.7775909037 0.0010421277
-20 father_edu_level_code 0.7775955945 0.0011260250
-1       age_at_enrolment 0.7776149244 0.0010467276
-12     avg_own_first_gen 0.7776316877 0.0010621991
-6  avg_credits_rel_major 0.7776413247 0.0010669951
-26           int_student 0.7776664365 0.0010249103
-28         major_changes 0.7776716634 0.0010007516
-24          geo_category 0.7776750533 0.0010623072
-27            low_income 0.7777033005 0.0010555780
-13        avg_own_gender 0.7777636049 0.0010460797
-25                hs_gpa 0.7777905723 0.0010697819
-5        avg_credits_lin 0.7778113880 0.0009802879
-23      first_year_study 0.7779026477 0.0010643529
-3                ap_best 0.7780348688 0.0010409618
+$pfi
+               predictor  score.mean    score.sd
+33             num_terms 0.308877011 0.004591432
+14            avg_passed 0.640227271 0.003365439
+7              avg_grade 0.703538218 0.004726435
+32           num_schools 0.705045838 0.002599015
+18                   ell 0.707078631 0.001866235
+39            year_study 0.708620394 0.001326880
+29   major_school_name_1 0.711893757 0.001618817
+31            num_majors 0.713955268 0.002611417
+11     avg_own_ethnicity 0.714064927 0.001967516
+19        ethnicity_smpl 0.714213121 0.001980305
+21                female 0.714333255 0.001950325
+17    distance_from_home 0.714495781 0.003095816
+2         any_major_stem 0.715479017 0.001691605
+4            avg_credits 0.715534204 0.002328743
+15        cal_res_at_app 0.715604311 0.001593202
+34        school_changes 0.715681653 0.001996118
+10      avg_num_students 0.715939854 0.001758018
+16       citizenship_app 0.716016352 0.001782826
+38      uc_writing_score 0.716210041 0.001980517
+9          avg_n_courses 0.716273212 0.001997965
+20 father_edu_level_code 0.716371963 0.001811296
+6  avg_credits_rel_major 0.716406673 0.002029426
+22      first_generation 0.716441333 0.001741052
+37         uc_read_score 0.716501928 0.001784119
+8          avg_in_school 0.716519625 0.001797205
+1       age_at_enrolment 0.716578987 0.001974195
+35    three_honors_terms 0.716629299 0.001766970
+26           int_student 0.716633462 0.001784807
+24          geo_category 0.716635792 0.001846062
+28         major_changes 0.716654830 0.002108653
+13        avg_own_gender 0.716660559 0.001974098
+27            low_income 0.716756988 0.001807706
+36  uc_math_score_recode 0.716819859 0.001770405
+25                hs_gpa 0.716830784 0.002075277
+30 mother_edu_level_code 0.716840617 0.001617219
+12     avg_own_first_gen 0.716845216 0.001579016
+5        avg_credits_lin 0.716906764 0.001858536
+3                ap_best 0.716930222 0.001843816
+23      first_year_study 0.717007893 0.001820164
+
+$hyperparameters
+$hyperparameters[[1]]
+$hyperparameters[[1]][[1]]
+  cost kernel class_weight_true  gamma
+9    1 radial                 3 0.0025
+
+$hyperparameters[[1]][[2]]
+   cost kernel class_weight_true gamma
+13  0.1 radial                 3 0.025
+
+$hyperparameters[[1]][[3]]
+  cost kernel class_weight_true  gamma
+9    1 radial                 3 0.0025
+
+
+$hyperparameters[[2]]
+$hyperparameters[[2]][[1]]
+  cost kernel class_weight_true  gamma
+9    1 radial                 3 0.0025
+
+$hyperparameters[[2]][[2]]
+  cost kernel class_weight_true  gamma
+9    1 radial                 3 0.0025
+
+$hyperparameters[[2]][[3]]
+  cost kernel class_weight_true  gamma
+9    1 radial                 3 0.0025
+
+
+$hyperparameters[[3]]
+$hyperparameters[[3]][[1]]
+  cost kernel class_weight_true  gamma
+9    1 radial                 3 0.0025
+
+$hyperparameters[[3]][[2]]
+  cost kernel class_weight_true  gamma
+9    1 radial                 3 0.0025
+
+$hyperparameters[[3]][[3]]
+  cost kernel class_weight_true  gamma
+9    1 radial                 3 0.0025
+
+
+$hyperparameters[[4]]
+$hyperparameters[[4]][[1]]
+  cost kernel class_weight_true  gamma
+9    1 radial                 3 0.0025
+
+$hyperparameters[[4]][[2]]
+  cost kernel class_weight_true  gamma
+9    1 radial                 3 0.0025
+
+$hyperparameters[[4]][[3]]
+  cost kernel class_weight_true  gamma
+9    1 radial                 3 0.0025
+
+
+$hyperparameters[[5]]
+$hyperparameters[[5]][[1]]
+  cost kernel class_weight_true  gamma
+9    1 radial                 3 0.0025
+
+$hyperparameters[[5]][[2]]
+  cost kernel class_weight_true  gamma
+9    1 radial                 3 0.0025
+
+$hyperparameters[[5]][[3]]
+  cost kernel class_weight_true  gamma
+9    1 radial                 3 0.0025
+
+
+$hyperparameters[[6]]
+$hyperparameters[[6]][[1]]
+  cost kernel class_weight_true  gamma
+9    1 radial                 3 0.0025
+
+$hyperparameters[[6]][[2]]
+   cost kernel class_weight_true gamma
+13  0.1 radial                 3 0.025
+
+$hyperparameters[[6]][[3]]
+  cost kernel class_weight_true  gamma
+9    1 radial                 3 0.0025
+
+
+$hyperparameters[[7]]
+$hyperparameters[[7]][[1]]
+  cost kernel class_weight_true  gamma
+9    1 radial                 3 0.0025
+
+$hyperparameters[[7]][[2]]
+  cost kernel class_weight_true  gamma
+9    1 radial                 3 0.0025
+
+$hyperparameters[[7]][[3]]
+  cost kernel class_weight_true  gamma
+9    1 radial                 3 0.0025
+
+
+$hyperparameters[[8]]
+$hyperparameters[[8]][[1]]
+  cost kernel class_weight_true  gamma
+9    1 radial                 3 0.0025
+
+$hyperparameters[[8]][[2]]
+  cost kernel class_weight_true  gamma
+9    1 radial                 3 0.0025
+
+$hyperparameters[[8]][[3]]
+  cost kernel class_weight_true  gamma
+9    1 radial                 3 0.0025
+
+
+$hyperparameters[[9]]
+$hyperparameters[[9]][[1]]
+  cost kernel class_weight_true  gamma
+9    1 radial                 3 0.0025
+
+$hyperparameters[[9]][[2]]
+   cost kernel class_weight_true gamma
+13  0.1 radial                 3 0.025
+
+$hyperparameters[[9]][[3]]
+  cost kernel class_weight_true  gamma
+9    1 radial                 3 0.0025
+
+
+$hyperparameters[[10]]
+$hyperparameters[[10]][[1]]
+  cost kernel class_weight_true  gamma
+9    1 radial                 3 0.0025
+
+$hyperparameters[[10]][[2]]
+   cost kernel class_weight_true gamma
+13  0.1 radial                 3 0.025
+
+$hyperparameters[[10]][[3]]
+  cost kernel class_weight_true  gamma
+9    1 radial                 3 0.0025
+
+
+

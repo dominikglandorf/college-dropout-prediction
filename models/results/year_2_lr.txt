@@ -1,51 +1,51 @@
 $metrics
          mean      sd          
-F2score  0.8034158 0.001197545 
-AUPRC    0.7736455 0.001332372 
-accuracy 0.9375409 0.0003048727
-AUROC    0.9136617 0.0002866207
+F2score  0.7582838 0.001660301 
+AUPRC    0.7119101 0.001423857 
+accuracy 0.937672  0.0002008733
+AUROC    0.8985846 0.0003290146
 
 $pfi
                predictor  score.mean    score.sd
-33             num_terms 0.328048872 0.006385856
-14            avg_passed 0.734789008 0.004546948
-39            year_study 0.748603291 0.002973447
-18                   ell 0.754599965 0.001715933
-29   major_school_name_1 0.761116484 0.002271271
-19        ethnicity_smpl 0.762363792 0.002284675
-7              avg_grade 0.764857814 0.001523111
-16       citizenship_app 0.769855811 0.001343566
-32           num_schools 0.770225808 0.001673249
-8          avg_in_school 0.770959544 0.001328928
-26           int_student 0.771101710 0.001470765
-21                female 0.771123972 0.001656846
-10      avg_num_students 0.771138237 0.001489175
-37         uc_read_score 0.771256504 0.001565243
-2         any_major_stem 0.771441594 0.001566757
-23      first_year_study 0.771839303 0.001390734
-15        cal_res_at_app 0.771922574 0.001224685
-11     avg_own_ethnicity 0.772096413 0.001386889
-36  uc_math_score_recode 0.772145523 0.001341976
-34        school_changes 0.772383014 0.001307413
-4            avg_credits 0.772437383 0.001368425
-13        avg_own_gender 0.772491368 0.001317309
-17    distance_from_home 0.772527996 0.001321646
-30 mother_edu_level_code 0.772599199 0.001320392
-6  avg_credits_rel_major 0.772718483 0.001323107
-22      first_generation 0.772753215 0.001342882
-38      uc_writing_score 0.772760822 0.001293533
-9          avg_n_courses 0.772771981 0.001313865
-27            low_income 0.772868353 0.001327659
-28         major_changes 0.772944989 0.001367817
-35    three_honors_terms 0.772945967 0.001305344
-5        avg_credits_lin 0.772949066 0.001359946
-31            num_majors 0.772970988 0.001334985
-24          geo_category 0.772989015 0.001353977
-25                hs_gpa 0.772989075 0.001384275
-12     avg_own_first_gen 0.772989981 0.001334142
-3                ap_best 0.773090739 0.001347126
-20 father_edu_level_code 0.773116620 0.001312574
-1       age_at_enrolment 0.773152141 0.001445850
+33             num_terms 0.317881346 0.005241648
+14            avg_passed 0.667538511 0.002204507
+39            year_study 0.685784317 0.002682774
+18                   ell 0.690628765 0.003501800
+29   major_school_name_1 0.694976927 0.002420725
+19        ethnicity_smpl 0.697316419 0.003082704
+7              avg_grade 0.703092136 0.002268805
+32           num_schools 0.705687079 0.002755690
+21                female 0.708173774 0.001983260
+16       citizenship_app 0.708422140 0.001627775
+37         uc_read_score 0.708884694 0.001364578
+2         any_major_stem 0.709073745 0.001459081
+8          avg_in_school 0.709116007 0.001867620
+10      avg_num_students 0.709442894 0.001211610
+26           int_student 0.709513506 0.001613059
+17    distance_from_home 0.709631950 0.001812956
+15        cal_res_at_app 0.709676921 0.001367784
+36  uc_math_score_recode 0.710373767 0.001574077
+23      first_year_study 0.710377992 0.001558125
+34        school_changes 0.710391747 0.001538817
+22      first_generation 0.710497577 0.001183962
+4            avg_credits 0.710593449 0.001578753
+11     avg_own_ethnicity 0.710714195 0.001601948
+38      uc_writing_score 0.710742904 0.001400248
+13        avg_own_gender 0.710761904 0.001397430
+20 father_edu_level_code 0.710825329 0.001475358
+9          avg_n_courses 0.710953780 0.001233130
+31            num_majors 0.710996809 0.001535093
+12     avg_own_first_gen 0.711004410 0.001426725
+28         major_changes 0.711026449 0.001463512
+6  avg_credits_rel_major 0.711035834 0.001458904
+30 mother_edu_level_code 0.711041883 0.001419644
+35    three_honors_terms 0.711089966 0.001486766
+1       age_at_enrolment 0.711092663 0.001317093
+25                hs_gpa 0.711118323 0.001318943
+27            low_income 0.711129879 0.001426410
+5        avg_credits_lin 0.711144375 0.001453201
+3                ap_best 0.711155370 0.001433084
+24          geo_category 0.711221717 0.001325745
 
 $hyperparameters
 $hyperparameters[[1]]

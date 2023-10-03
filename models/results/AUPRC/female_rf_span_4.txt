@@ -1,0 +1,190 @@
+$metrics
+         mean      sd          
+F2score  0.7888202 0.001393737 
+AUPRC    0.7116666 0.002106762 
+accuracy 0.9422372 0.0002478213
+AUROC    0.88198   0.0009995545
+
+$pfi
+               predictor  score.mean    score.sd
+32             num_terms 0.347995543 0.023617178
+7              avg_grade 0.668832650 0.002386556
+38            year_study 0.684315827 0.001550830
+14            avg_passed 0.684549932 0.002870316
+31           num_schools 0.695309635 0.003920237
+18                   ell 0.701000854 0.002852859
+19        ethnicity_smpl 0.703820713 0.002103253
+28   major_school_name_1 0.705022724 0.002534757
+11     avg_own_ethnicity 0.706361736 0.001877872
+9          avg_n_courses 0.706714039 0.002053791
+30            num_majors 0.707807979 0.001846272
+17    distance_from_home 0.708025739 0.001964337
+24                hs_gpa 0.708279235 0.002152919
+3                ap_best 0.708384074 0.002252585
+13        avg_own_gender 0.708868540 0.001765908
+1       age_at_enrolment 0.708985716 0.002171545
+25           int_student 0.709055298 0.002010993
+33        school_changes 0.709177570 0.002225542
+15        cal_res_at_app 0.709221810 0.002243856
+10      avg_num_students 0.709264827 0.001923144
+35  uc_math_score_recode 0.709366261 0.002604068
+5        avg_credits_lin 0.709453892 0.002268125
+12     avg_own_first_gen 0.709864140 0.002647617
+37      uc_writing_score 0.709871240 0.002342931
+22      first_year_study 0.710035321 0.002348496
+16       citizenship_app 0.710089307 0.002096127
+21      first_generation 0.710107014 0.001848400
+36         uc_read_score 0.710124305 0.002393892
+34    three_honors_terms 0.710139890 0.002201592
+27         major_changes 0.710160278 0.002159889
+8          avg_in_school 0.710165493 0.001959621
+26            low_income 0.710232219 0.002123782
+2         any_major_stem 0.710260535 0.002304263
+23          geo_category 0.710317360 0.002081321
+20 father_edu_level_code 0.710404563 0.001960958
+29 mother_edu_level_code 0.710405439 0.002227907
+4            avg_credits 0.710576139 0.001909327
+6  avg_credits_rel_major 0.710744123 0.002043087
+
+$hyperparameters
+$hyperparameters[[1]]
+$hyperparameters[[1]][[1]]
+  ntree mtry
+4   500    5
+
+$hyperparameters[[1]][[2]]
+  ntree mtry
+5  1000    5
+
+$hyperparameters[[1]][[3]]
+  ntree mtry
+6  1500    5
+
+
+$hyperparameters[[2]]
+$hyperparameters[[2]][[1]]
+  ntree mtry
+4   500    5
+
+$hyperparameters[[2]][[2]]
+  ntree mtry
+6  1500    5
+
+$hyperparameters[[2]][[3]]
+  ntree mtry
+2  1000    3
+
+
+$hyperparameters[[3]]
+$hyperparameters[[3]][[1]]
+  ntree mtry
+3  1500    3
+
+$hyperparameters[[3]][[2]]
+  ntree mtry
+4   500    5
+
+$hyperparameters[[3]][[3]]
+  ntree mtry
+1   500    3
+
+
+$hyperparameters[[4]]
+$hyperparameters[[4]][[1]]
+  ntree mtry
+2  1000    3
+
+$hyperparameters[[4]][[2]]
+  ntree mtry
+5  1000    5
+
+$hyperparameters[[4]][[3]]
+  ntree mtry
+5  1000    5
+
+
+$hyperparameters[[5]]
+$hyperparameters[[5]][[1]]
+  ntree mtry
+6  1500    5
+
+$hyperparameters[[5]][[2]]
+  ntree mtry
+6  1500    5
+
+$hyperparameters[[5]][[3]]
+  ntree mtry
+3  1500    3
+
+
+$hyperparameters[[6]]
+$hyperparameters[[6]][[1]]
+  ntree mtry
+6  1500    5
+
+$hyperparameters[[6]][[2]]
+  ntree mtry
+6  1500    5
+
+$hyperparameters[[6]][[3]]
+  ntree mtry
+6  1500    5
+
+
+$hyperparameters[[7]]
+$hyperparameters[[7]][[1]]
+  ntree mtry
+3  1500    3
+
+$hyperparameters[[7]][[2]]
+  ntree mtry
+6  1500    5
+
+$hyperparameters[[7]][[3]]
+  ntree mtry
+6  1500    5
+
+
+$hyperparameters[[8]]
+$hyperparameters[[8]][[1]]
+  ntree mtry
+9  1500    6
+
+$hyperparameters[[8]][[2]]
+  ntree mtry
+4   500    5
+
+$hyperparameters[[8]][[3]]
+  ntree mtry
+5  1000    5
+
+
+$hyperparameters[[9]]
+$hyperparameters[[9]][[1]]
+  ntree mtry
+2  1000    3
+
+$hyperparameters[[9]][[2]]
+  ntree mtry
+7   500    6
+
+$hyperparameters[[9]][[3]]
+  ntree mtry
+2  1000    3
+
+
+$hyperparameters[[10]]
+$hyperparameters[[10]][[1]]
+  ntree mtry
+3  1500    3
+
+$hyperparameters[[10]][[2]]
+  ntree mtry
+5  1000    5
+
+$hyperparameters[[10]][[3]]
+  ntree mtry
+2  1000    3
+
+
+

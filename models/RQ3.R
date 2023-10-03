@@ -33,10 +33,10 @@ run_rf = function(datasets, outer_split, filename) {
                        mtry=param_combo$mtry)
     function(test) predict(rf, newdata=test, type="prob")[,"TRUE"]
   }
-  param_combos_rf = expand.grid(ntree = c(500, 1000, 1500),
-                                mtry =  c(3, 5, 6, 7) )
+  param_combos_rf = expand.grid(ntree = c(1000),
+                                mtry =  c(6) )
   rf_results = imputations_loop(datasets, outer_split, train_predict_rf, param_combos_rf,
-                                num_imps=10, no_pfi=F)
+                                num_imps=3, no_pfi=F)
   print_to_file(paste0("models/results/", filename), rf_results)
   rf_results
 }
@@ -64,6 +64,25 @@ datasets = lapply(datasets, function(dat) {
   if (length(na_cols)>0) print(paste("Dropped", na_cols, "because of NAs"))
   return(dat[, !(names(dat) %in% na_cols)])
 })
+
+# URM
+urm_datasets = lapply(datasets, function(dat) dat %>%
+                        filter(!is.na(data_to_impute$ethnicity_smpl)) %>%
+                        filter(ethnicity_smpl == "Asian / Asian American" | ethnicity_smpl == "White non-Hispanic") %>%
+                        select(-ethnicity_smpl))
+urm_outer_split = get_outer_split(urm_datasets[[1]])
+#urm_lr_results = run_lr(urm_datasets, urm_outer_split, "urm_lr.txt")
+urm_rf_results = run_rf(urm_datasets, urm_outer_split, paste0("urm_rf_span_", UP_TO_SPAN, ".txt"))
+
+non_urm_datasets = lapply(datasets, function(dat) dat %>%
+                            filter(!is.na(data_to_impute$ethnicity_smpl)) %>%
+                            filter(ethnicity_smpl != "Asian / Asian American" & ethnicity_smpl != "White non-Hispanic") %>%
+                            select(-ethnicity_smpl))
+non_urm_outer_split = get_outer_split(non_urm_datasets[[1]])
+#non_urm_lr_results = run_lr(non_urm_datasets, non_urm_outer_split, "non_urm_lr.txt")
+non_urm_rf_results = run_rf(non_urm_datasets, non_urm_outer_split, paste0("non_urm_rf_span_", UP_TO_SPAN, ".txt"))
+
+save(urm_outer_split, non_urm_outer_split, urm_rf_results, non_urm_rf_results, file=paste0("models/results/urm_results_span_", UP_TO_SPAN, ".Rdata"))
 
 # STEM major vs non STEM majors
 stem_datasets = lapply(datasets, function(dat) dat %>%
@@ -120,24 +139,7 @@ non_low_income_rf_results = run_rf(non_low_income_datasets, non_low_income_outer
 
 save(low_income_outer_split, non_low_income_outer_split, low_income_rf_results, non_low_income_rf_results, file=paste0("models/results/low_income_results_span_", UP_TO_SPAN, ".Rdata"))
 
-# URM
-urm_datasets = lapply(datasets, function(dat) dat %>%
-                        filter(!is.na(data_to_impute$ethnicity_smpl)) %>%
-                        filter(ethnicity_smpl == "Asian / Asian American" | ethnicity_smpl == "White non-Hispanic") %>%
-                        select(-ethnicity_smpl))
-urm_outer_split = get_outer_split(urm_datasets[[1]])
-#urm_lr_results = run_lr(urm_datasets, urm_outer_split, "urm_lr.txt")
-urm_rf_results = run_rf(urm_datasets, urm_outer_split, paste0("urm_rf_span_", UP_TO_SPAN, ".txt"))
 
-non_urm_datasets = lapply(datasets, function(dat) dat %>%
-                            filter(!is.na(data_to_impute$ethnicity_smpl)) %>%
-                                   filter(ethnicity_smpl != "Asian / Asian American" & ethnicity_smpl != "White non-Hispanic") %>%
-                                   select(-ethnicity_smpl))
-non_urm_outer_split = get_outer_split(non_urm_datasets[[1]])
-#non_urm_lr_results = run_lr(non_urm_datasets, non_urm_outer_split, "non_urm_lr.txt")
-non_urm_rf_results = run_rf(non_urm_datasets, non_urm_outer_split, paste0("non_urm_rf_span_", UP_TO_SPAN, ".txt"))
-
-save(urm_outer_split, non_urm_outer_split, urm_rf_results, non_urm_rf_results, file=paste0("models/results/urm_results_span_", UP_TO_SPAN, ".Rdata"))
 
 # first generation
 first_generation_datasets = lapply(datasets, function(dat) dat %>%

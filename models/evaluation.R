@@ -15,7 +15,7 @@ accuracy_by_threshold = function(predicted_scores, true_labels) {
 }
 
 Fbetascore_by_threshold = function(predicted_scores, true_labels, beta=2) {
-  Fscores = sapply(thresholds, function(t) FBeta_Score(predicted_scores>t, true_labels, positive=TRUE, beta=beta))
+  Fscores = sapply(thresholds, function(t) FBeta_Score(true_labels, predicted_scores>=t, positive=TRUE, beta=beta))
   F2_data = data.frame(threshold=thresholds, metric=Fscores)
   best_thres = thresholds[which.max(Fscores)]
   return(list(Fscores = F2_data,
@@ -106,9 +106,20 @@ get_all_metrics = function(predicted_scores, true_labels) {
               AUROC=as.numeric(auroc)))
 }
 
+get_baseline = function(metric, dropout)  {
+  # F2 score best will be reached for assigning everyone as dropout (recall=1, precision=dropout)
+  precision=dropout
+  recall=1
+  if (metric == "F2score") return(5*precision*recall/(4*precision+recall))
+  if (metric == "accuracy") return(1 - dropout)
+  if (metric == "AUROC") return(0.5)
+  if (metric == "AUPRC") return(precision)
+}
+
 
 feature_importance = function(model_predict, test) {
-  scores = c()
+  auroc_scores = c()
+  auprc_scores = c()
   true_labels = as.logical(test$dropout)
   for (feature in names(test %>% select(-dropout))) {
     permuted = test
@@ -117,10 +128,11 @@ feature_importance = function(model_predict, test) {
     predicted_scores = model_predict(permuted)
     
     #F2 = Fbetascore_by_threshold(predicted_scores, true_labels)
-    prauc = PRAUC(predicted_scores, true_labels)
-    scores = c(scores, prauc)#F2$best_metric)
+    #prauc = PRAUC(predicted_scores, true_labels)
+    auroc_scores = c(auroc_scores, AUC(predicted_scores, true_labels))
+    #auprc_scores = c(auprc_scores, get_auprc(predicted_scores, true_labels))#F2$best_metric)
   }
-  pfi = data.frame(predictor=names(test %>% select(-dropout)), score=scores)
+  pfi = data.frame(predictor=names(test %>% select(-dropout)), score=auroc_scores)
   return(pfi[order(pfi$score),])
 }
 
