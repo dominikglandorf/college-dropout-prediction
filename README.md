@@ -1,5 +1,5 @@
 # Temporal and Between-Group Variability in College Dropout Prediction
-This analysis corresponds to the full paper with the above title at Learning Analytics & Knowledge 2024. The project aims to investigate college dropout prediction from administrative data. The supplementary material is located [here](https://raw.githubusercontent.com/dominikglandorf/college-dropout-prediction/main/Supplementary_Material.pdf).
+This analysis corresponds to the full paper with the above title at Learning Analytics & Knowledge 2024. The project aims to investigate college dropout prediction from administrative data. The supplementary material is located [here](https://github.com/dominikglandorf/college-dropout-prediction/blob/main/Supplementary_Material.pdf).
 
 # Prerequisites
 To reproduce the preprocessing and the analyses, you must have [R](https://www.r-project.org) installed. Most scripts will automatically install the required packages. You should always set the working directory to the project's main repository. You also need to request access to the data, which we unfortunately cannot share with persons other than research group members of the [UCI Measuring Undergraduate Success Trajectories project](https://sites.uci.edu/ucimustproject/).
