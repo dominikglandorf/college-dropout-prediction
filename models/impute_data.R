@@ -47,4 +47,4 @@ impute_for_span = function(span) {
   return()
 }
 
-sapply(5:9, impute_for_span)
+sapply(0:9, impute_for_span)

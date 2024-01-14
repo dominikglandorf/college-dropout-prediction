@@ -1,5 +1,4 @@
-#library(tidyverse)
-# Customized so that even if the installation is not present, the script will run: ####
+# This file provides convenience functions to access the original and processed datasets
 if(!require(tidyverse)) install.packages('tidyverse')
 
 source("config.R")
